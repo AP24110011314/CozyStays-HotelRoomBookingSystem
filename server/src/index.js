@@ -1,4 +1,7 @@
 import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -20,7 +23,13 @@ export function createApp() {
 
   app.use(helmet());
   app.use(cors({
-    origin: env.clientUrl,
+    origin: (origin, callback) => {
+      if (!origin || env.clientUrls.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked for origin: ${origin}`));
+      }
+    },
     credentials: true,
   }));
   app.use(morgan('dev'));
@@ -62,7 +71,7 @@ async function start() {
 }
 
 // Only start the server if this file is run directly (not imported)
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   start();
 }
 

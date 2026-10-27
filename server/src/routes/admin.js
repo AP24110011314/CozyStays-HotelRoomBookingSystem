@@ -15,6 +15,9 @@ const bookingsListSchema = z.object({
   from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   guestEmail: z.string().email().optional(),
+  room: z.string().optional(),
+  reference: z.string().optional(),
+  search: z.string().optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
 });
@@ -29,6 +32,14 @@ const failedEmailsSchema = z.object({
   limit: z.coerce.number().int().positive().max(50).default(10),
 });
 
+const roomsListSchema = z.object({
+  search: z.string().optional(),
+  type: z.enum(['single', 'double', 'deluxe', 'suite']).optional(),
+  active: z.string().optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(50),
+});
+
 const retrySchema = z.object({
   id: z.string(),
 });
@@ -39,7 +50,7 @@ const idSchema = z.object({
 
 const createRoomSchema = z.object({
   name: z.string().min(1).max(100),
-  type: z.enum(['single', 'double', 'suite']),
+  type: z.enum(['single', 'double', 'deluxe', 'suite']),
   description: z.string().min(1).max(2000),
   basePrice: z.number().int().positive(),
   maxGuests: z.number().int().positive(),
@@ -49,7 +60,7 @@ const createRoomSchema = z.object({
 
 const updateRoomSchema = z.object({
   name: z.string().min(1).max(100).optional(),
-  type: z.enum(['single', 'double', 'suite']).optional(),
+  type: z.enum(['single', 'double', 'deluxe', 'suite']).optional(),
   description: z.string().min(1).max(2000).optional(),
   basePrice: z.number().int().positive().optional(),
   maxGuests: z.number().int().positive().optional(),
@@ -66,6 +77,7 @@ router.get('/failed-emails', validateQuery(failedEmailsSchema), adminController.
 router.post('/failed-emails/:id/retry', validateParams(retrySchema), adminController.retryEmail);
 
 // Admin room management
+router.get('/rooms', validateQuery(roomsListSchema), adminController.listRooms);
 router.post('/rooms', validateBody(createRoomSchema), adminController.createRoom);
 router.patch('/rooms/:id', validateParams(idSchema), validateBody(updateRoomSchema), adminController.updateRoom);
 router.patch('/rooms/:id/toggle', validateParams(idSchema), adminController.toggleRoom);

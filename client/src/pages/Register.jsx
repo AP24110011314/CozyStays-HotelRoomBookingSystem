@@ -3,8 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Hotel, User, Mail, Lock, UserPlus, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -17,6 +19,7 @@ const registerSchema = z.object({
 });
 
 export default function Register() {
+  useDocumentTitle('Register');
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,90 +46,120 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-indigo-600">Hotel Booking</Link>
-          <h1 className="mt-6 text-2xl font-bold text-gray-900">Create your account</h1>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center space-y-2">
+          <Link to="/" className="inline-flex items-center gap-2.5 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md">
+              <Hotel className="w-6 h-6" />
+            </div>
+            <span className="text-2xl font-extrabold text-slate-900 tracking-tight">Hotel Booking</span>
+          </Link>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Create Account</h1>
+          <p className="text-xs sm:text-sm text-slate-500">Join now to book rooms and track your reservations</p>
         </div>
 
-        <div className="card p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="label">Full Name</label>
-              <input
-                id="name"
-                type="text"
-                autoComplete="name"
-                {...register('name')}
-                className="input"
-                placeholder="John Doe"
-              />
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-md">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Full Name
+              </label>
+              <div className="relative">
+                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <input
+                  id="name"
+                  type="text"
+                  {...register('name')}
+                  placeholder="Jane Doe"
+                  className="w-full pl-10 text-base rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2.5"
+                />
+              </div>
               {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.name.message}</p>
               )}
             </div>
 
-            <div>
-              <label htmlFor="email" className="label">Email</label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                {...register('email')}
-                className="input"
-                placeholder="you@example.com"
-              />
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <input
+                  id="email"
+                  type="email"
+                  {...register('email')}
+                  placeholder="jane@example.com"
+                  className="w-full pl-10 text-base rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2.5"
+                />
+              </div>
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.email.message}</p>
               )}
             </div>
 
-            <div>
-              <label htmlFor="password" className="label">Password</label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                {...register('password')}
-                className="input"
-                placeholder="••••••••"
-              />
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <input
+                  id="password"
+                  type="password"
+                  {...register('password')}
+                  placeholder="••••••••"
+                  className="w-full pl-10 text-base rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2.5"
+                />
+              </div>
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.password.message}</p>
               )}
             </div>
 
-            <div>
-              <label htmlFor="confirmPassword" className="label">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                {...register('confirmPassword')}
-                className="input"
-                placeholder="••••••••"
-              />
+            <div className="space-y-1.5">
+              <label htmlFor="confirmPassword" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  {...register('confirmPassword')}
+                  placeholder="••••••••"
+                  className="w-full pl-10 text-base rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2.5"
+                />
+              </div>
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+                <p className="text-xs text-rose-600 font-medium">{errors.confirmPassword.message}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full"
+              className="btn-primary w-full justify-center py-3 text-sm font-bold min-h-[48px] shadow-sm mt-2"
             >
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {isLoading ? (
+                'Creating account...'
+              ) : (
+                <span className="flex items-center gap-2">
+                  <UserPlus className="w-4 h-4" />
+                  Create Account
+                </span>
+              )}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <div className="mt-6 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link to="/login" className="text-indigo-600 hover:text-indigo-500 font-medium">
+            <Link to="/login" className="font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-0.5">
               Sign in
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>

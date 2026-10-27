@@ -1,4 +1,4 @@
-import { Room, RoomNight } from '../models/index.js';
+import { Room, RoomNight, Booking } from '../models/index.js';
 import { AppError, ERROR_CODES } from '../utils/errors.js';
 import { toUTCDateOnly, dateRange } from '../utils/dates.js';
 
@@ -34,10 +34,24 @@ export async function toggleRoomActive(id) {
 }
 
 export async function deleteRoom(id) {
-  const room = await Room.findByIdAndDelete(id);
+  const room = await Room.findById(id);
   if (!room) {
     throw new AppError(ERROR_CODES.NOT_FOUND, 'Room not found');
   }
+
+  // Guarded delete: cannot delete if active or future bookings exist
+  const now = new Date();
+  const activeOrFutureBookings = await Booking.countDocuments({
+    room: id,
+    checkOut: { $gt: now },
+    status: { $ne: 'cancelled' },
+  });
+
+  if (activeOrFutureBookings > 0) {
+    throw new AppError(ERROR_CODES.CONFLICT, 'Cannot delete room with active or future bookings');
+  }
+
+  await Room.findByIdAndDelete(id);
   return { success: true };
 }
 

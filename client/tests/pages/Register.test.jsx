@@ -32,7 +32,7 @@ describe('Register Page', () => {
   it('renders register form with name, email, password, and confirm password fields', () => {
     renderRegister();
     expect(screen.getByLabelText('Full Name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Email')).toBeInTheDocument();
+    expect(screen.getByLabelText('Email Address')).toBeInTheDocument();
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
     expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe('Register Page', () => {
   it('shows validation error for short password', async () => {
     renderRegister();
     fireEvent.change(screen.getByLabelText('Full Name'), { target: { value: 'Test User' } });
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText('Email Address'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: '123' } });
     fireEvent.change(screen.getByLabelText('Confirm Password'), { target: { value: '123' } });
     fireEvent.click(screen.getByRole('button', { name: /create account/i }));
@@ -63,7 +63,7 @@ describe('Register Page', () => {
   it('shows validation error when passwords do not match', async () => {
     renderRegister();
     fireEvent.change(screen.getByLabelText('Full Name'), { target: { value: 'Test User' } });
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText('Email Address'), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
     fireEvent.change(screen.getByLabelText('Confirm Password'), { target: { value: 'password456' } });
     fireEvent.click(screen.getByRole('button', { name: /create account/i }));

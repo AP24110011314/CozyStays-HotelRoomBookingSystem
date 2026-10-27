@@ -13,11 +13,25 @@ export async function getStats() {
     checkOut: { $gt: new Date() },
   });
 
+  const now = new Date();
+  const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const todayEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+
+  const bookingsToday = await Booking.countDocuments({
+    createdAt: { $gte: todayStart, $lt: todayEnd },
+    status: { $ne: 'cancelled' },
+  });
+
+  const checkInsToday = await Booking.countDocuments({
+    checkIn: { $gte: todayStart, $lt: todayEnd },
+    status: { $ne: 'cancelled' },
+  });
+
   // Occupancy % for next 30 days
   const thirtyDaysFromNow = new Date();
   thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
-  const totalRoomNights = await Room.countDocuments() * 30;
+  const totalRoomNights = (await Room.countDocuments()) * 30;
   const bookedRoomNights = await RoomNight.countDocuments({
     date: { $gte: new Date(), $lt: thirtyDaysFromNow },
   });
@@ -43,6 +57,8 @@ export async function getStats() {
   return {
     totalRooms,
     activeBookings,
+    bookingsToday,
+    checkInsToday,
     occupancyPct,
     revenue30d,
   };
@@ -102,7 +118,7 @@ export async function getOccupancy(params) {
   }
 
   // Build response
-  const roomData = rooms.map(room => {
+  const roomData = rooms.map((room) => {
     const roomIdStr = room._id.toString();
     const nightsMap = occupancyMap.get(roomIdStr) || new Map();
 
@@ -133,7 +149,7 @@ export async function getOccupancy(params) {
 }
 
 export async function listBookings(params) {
-  const { status, from, to, guestEmail, page = 1, limit = 10 } = params;
+  const { status, from, to, guestEmail, room, reference, search, page = 1, limit = 10 } = params;
 
   const query = {};
 
@@ -160,6 +176,10 @@ export async function listBookings(params) {
     if (to) query.checkIn.$lte = toUTCDateOnly(to);
   }
 
+  if (room) {
+    query.room = room;
+  }
+
   if (guestEmail) {
     const user = await User.findOne({ email: guestEmail.toLowerCase() });
     if (user) {
@@ -167,6 +187,26 @@ export async function listBookings(params) {
     } else {
       query.user = null; // No match
     }
+  }
+
+  if (reference) {
+    query.reference = new RegExp(reference.trim(), 'i');
+  }
+
+  if (search) {
+    const searchTrim = search.trim();
+    const matchingUsers = await User.find({
+      $or: [
+        { email: new RegExp(searchTrim, 'i') },
+        { name: new RegExp(searchTrim, 'i') },
+      ],
+    }).select('_id');
+    const userIds = matchingUsers.map((u) => u._id);
+
+    query.$or = [
+      { reference: new RegExp(searchTrim, 'i') },
+      { user: { $in: userIds } },
+    ];
   }
 
   const total = await Booking.countDocuments(query);
@@ -181,7 +221,7 @@ export async function listBookings(params) {
     .populate('user', 'name email')
     .lean();
 
-  const data = bookings.map(booking => ({
+  const data = bookings.map((booking) => ({
     id: booking._id.toString(),
     reference: booking.reference,
     guest: booking.user ? { name: booking.user.name, email: booking.user.email } : null,
@@ -204,7 +244,6 @@ export async function cancelBooking(bookingId) {
   }
 
   if (booking.status === 'cancelled') {
-    // Idempotent - return already cancelled booking
     return booking;
   }
 
@@ -217,7 +256,7 @@ export async function cancelBooking(bookingId) {
 
   // Enqueue cancellation email
   const { enqueueCancellationEmail } = await import('./email.js');
-  enqueueCancellationEmail(booking).catch(err => console.error('Failed to enqueue cancellation email:', err));
+  enqueueCancellationEmail(booking).catch((err) => console.error('Failed to enqueue cancellation email:', err));
 
   return booking;
 }
@@ -237,7 +276,7 @@ export async function listFailedEmails(params) {
     .limit(limit)
     .lean();
 
-  const data = emails.map(email => ({
+  const data = emails.map((email) => ({
     id: email._id.toString(),
     to: email.to,
     subject: email.subject,
@@ -254,6 +293,49 @@ export async function listFailedEmails(params) {
 
 export async function retryEmail(emailId) {
   return workerRetryEmail(emailId);
+}
+
+export async function listRooms(params = {}) {
+  const { search, type, active, page = 1, limit = 50 } = params;
+  const query = {};
+
+  if (active !== undefined && active !== '') {
+    query.active = active === 'true' || active === true;
+  }
+  if (type) {
+    query.type = type;
+  }
+  if (search) {
+    query.$or = [
+      { name: new RegExp(search.trim(), 'i') },
+      { description: new RegExp(search.trim(), 'i') },
+    ];
+  }
+
+  const total = await Room.countDocuments(query);
+  const totalPages = Math.ceil(total / limit);
+  const skip = (page - 1) * limit;
+
+  const rooms = await Room.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const data = rooms.map((room) => ({
+    id: room._id.toString(),
+    name: room.name,
+    type: room.type,
+    description: room.description,
+    basePrice: room.basePrice,
+    maxGuests: room.maxGuests,
+    amenities: room.amenities,
+    photos: room.photos,
+    active: room.active,
+    createdAt: room.createdAt,
+  }));
+
+  return { data, meta: { page, limit, total, totalPages } };
 }
 
 export async function createRoom(data) {

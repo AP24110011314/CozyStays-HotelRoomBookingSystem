@@ -5,6 +5,7 @@ import {
   cancelBooking,
   listFailedEmails,
   retryEmail,
+  listRooms,
   createRoom,
   updateRoom,
   toggleRoom,
@@ -61,6 +62,15 @@ export const adminController = {
     try {
       const email = await retryEmail(req.validatedParams.id);
       res.json({ data: email });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async listRooms(req, res, next) {
+    try {
+      const result = await listRooms(req.validatedQuery || req.query);
+      res.json(result);
     } catch (error) {
       next(error);
     }

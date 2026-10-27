@@ -6,8 +6,10 @@ import { Booking, RoomNight } from '../src/models/index.js';
 import { dateRange } from '../src/utils/dates.js';
 
 async function reconcile() {
-  await mongoose.connect(env.mongodbUri);
-  console.log('Connected to MongoDB');
+  await mongoose.connect(env.mongodbUri, {
+    serverSelectionTimeoutMS: 10000,
+  });
+  console.log(`Connected to MongoDB: ${mongoose.connection.name}`);
 
   // Find all RoomNight entries
   const roomNights = await RoomNight.find({}).lean();

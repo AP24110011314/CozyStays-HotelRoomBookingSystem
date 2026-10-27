@@ -8,6 +8,7 @@ import RoomDetail from './pages/RoomDetail';
 import BookingCreate from './pages/BookingCreate';
 import BookingList from './pages/BookingList';
 import BookingDetail from './pages/BookingDetail';
+import NotFound from './pages/NotFound';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminRooms from './pages/admin/Rooms';
@@ -69,18 +70,33 @@ function AppRoutes() {
         </PublicRoute>
       } />
 
-      <Route element={
-        <ProtectedRoute>
-          <Layout />
-        </ProtectedRoute>
-      }>
+      <Route element={<Layout />}>
+        {/* Public Browsing Routes */}
         <Route path="/" element={<Rooms />} />
+        <Route path="/rooms" element={<Rooms />} />
         <Route path="/rooms/:id" element={<RoomDetail />} />
-        <Route path="/rooms/:id/book" element={<BookingCreate />} />
-        <Route path="/bookings" element={<BookingList />} />
-        <Route path="/bookings/:id" element={<BookingDetail />} />
+
+        {/* Protected Guest Routes */}
+        <Route path="/rooms/:id/book" element={
+          <ProtectedRoute>
+            <BookingCreate />
+          </ProtectedRoute>
+        } />
+        <Route path="/bookings" element={
+          <ProtectedRoute>
+            <BookingList />
+          </ProtectedRoute>
+        } />
+        <Route path="/bookings/:id" element={
+          <ProtectedRoute>
+            <BookingDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="/404" element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
+      {/* Protected Admin Routes */}
       <Route element={
         <ProtectedRoute adminOnly>
           <AdminLayout />
@@ -92,8 +108,6 @@ function AppRoutes() {
         <Route path="/admin/emails" element={<AdminEmails />} />
         <Route path="/admin/occupancy" element={<AdminOccupancy />} />
       </Route>
-
-      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

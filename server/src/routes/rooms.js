@@ -12,7 +12,7 @@ const searchSchema = z.object({
   guests: z.coerce.number().int().positive().optional(),
   minPrice: z.coerce.number().int().nonnegative().optional(),
   maxPrice: z.coerce.number().int().nonnegative().optional(),
-  type: z.enum(['single', 'double', 'suite']).optional(),
+  type: z.enum(['single', 'double', 'deluxe', 'suite']).optional(),
   amenities: z.string().optional(),
   sort: z.enum(['priceAsc', 'priceDesc', 'name', 'type']).optional(),
   page: z.coerce.number().int().positive().default(1),

@@ -5,29 +5,27 @@ A full-stack hotel/room booking system built with Node.js, Express, MongoDB, Rea
 ## Stack
 - **Server**: Express, Mongoose, Zod, JWT, bcryptjs, Helmet, CORS, Rate-limit, Morgan, Nodemailer
 - **Client**: React 18, Vite, Tailwind CSS, React Router, TanStack Query, Axios, React Hook Form + Zod, React Day Picker, date-fns
-- **Database**: MongoDB (local, no Docker)
+- **Database**: MongoDB Atlas (cloud database, default) or local MongoDB (optional alternative)
 - **Tests**: Vitest, Supertest, mongodb-memory-server (server); Vitest, React Testing Library (client)
 
 ## Quick Start
 
 ### Prerequisites
 - macOS, Node 20+
-- MongoDB via Homebrew: `brew install mongodb-community@7.0`
+- MongoDB Atlas cluster connection URI (default) or optional local MongoDB (`brew install mongodb-community@7.0`)
 
 ### Setup
 ```bash
-# Start MongoDB
-brew services start mongodb-community@7.0
-
-# Server
+# 1. Server
 cd server
 cp .env.example .env
+# Configure MONGODB_URI with your Atlas connection string and set JWT_SECRET
 npm install
-npm run seed
+npm run seed -- --yes
 npm run dev
 
-# Client (separate terminal)
-cd client
+# 2. Client (separate terminal)
+cd ../client
 cp .env.example .env
 npm install
 npm run dev

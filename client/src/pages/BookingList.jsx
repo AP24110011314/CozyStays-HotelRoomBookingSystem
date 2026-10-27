@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { Calendar, ChevronRight, ChevronLeft, ArrowRight, BedDouble } from 'lucide-react';
 import api from '../api/client';
 import toast from 'react-hot-toast';
+import { formatINR } from '../utils/currency';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const statusLabels = {
   upcoming: 'Upcoming',
@@ -20,6 +23,7 @@ const statusColors = {
 };
 
 export default function BookingList() {
+  useDocumentTitle('My Bookings');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
 
@@ -33,137 +37,194 @@ export default function BookingList() {
     },
   });
 
-  const cancelBooking = async (bookingId, bookingRef) => {
+  const cancelBooking = async (e, bookingId, bookingRef) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!window.confirm(`Are you sure you want to cancel booking ${bookingRef}?`)) return;
     try {
       await api.delete(`/bookings/${bookingId}`);
       toast.success('Booking cancelled');
-      // Invalidate queries to refresh the list
       window.location.reload();
     } catch (error) {
       toast.error(error.response?.data?.error?.message || 'Failed to cancel booking');
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="animate-pulse space-y-4">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="card p-6">
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            <div className="mt-4 h-4 bg-gray-200 rounded w-1/2"></div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  const bookingsList = data?.data || [];
+  const meta = data?.meta || { total: 0, totalPages: 1, page: 1 };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-        <div className="flex gap-2">
-          {['', 'upcoming', 'active', 'past', 'cancelled'].map((s) => (
-            <button
-              key={s}
-              onClick={() => { setStatus(s || ''); setPage(1); }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                status === s || (s === '' && !status)
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
-              }`}
-            >
-              {s ? statusLabels[s] : 'All'}
-            </button>
-          ))}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">My Bookings</h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Review your upcoming, active, and past reservations
+          </p>
         </div>
+        <Link
+          to="/"
+          className="btn-primary inline-flex items-center gap-2 text-xs sm:text-sm px-4 py-2.5 min-h-[44px] self-start sm:self-auto"
+        >
+          <BedDouble className="w-4 h-4" />
+          Book another room
+        </Link>
       </div>
 
-      {data?.data && data.data.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-600">No bookings found</p>
-          <Link to="/" className="text-indigo-600 hover:text-indigo-500 mt-4 inline-block">Browse rooms</Link>
+      {/* Status Filter Tabs (horizontal scroll on mobile) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {[
+          { key: '', label: 'All Bookings' },
+          { key: 'upcoming', label: 'Upcoming' },
+          { key: 'active', label: 'Active' },
+          { key: 'completed', label: 'Past / Completed' },
+          { key: 'cancelled', label: 'Cancelled' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => {
+              setStatus(tab.key);
+              setPage(1);
+            }}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap min-h-[44px] transition-all ${
+              status === tab.key
+                ? 'bg-indigo-600 text-white shadow-sm'
+                : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Bookings List */}
+      {isLoading ? (
+        <div className="space-y-4 animate-pulse">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl p-5 border border-slate-200/80 space-y-3">
+              <div className="h-4 bg-slate-200 rounded w-1/4"></div>
+              <div className="h-6 bg-slate-200 rounded w-1/2"></div>
+              <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+            </div>
+          ))}
+        </div>
+      ) : bookingsList.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-3xl border border-slate-200/80 p-8 space-y-4">
+          <Calendar className="w-12 h-12 text-slate-300 mx-auto" />
+          <h3 className="text-base font-bold text-slate-900">No reservations found</h3>
+          <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto">
+            {status ? `You have no ${status} bookings.` : 'You haven\'t made any room reservations yet.'}
+          </p>
+          <Link to="/" className="btn-primary inline-flex items-center gap-2 text-xs px-4 py-2 mt-2">
+            Browse Available Rooms
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       ) : (
-        <>
-          <div className="space-y-4">
-            {data?.data?.map((booking) => (
-              <Link
-                key={booking.id}
-                to={`/bookings/${booking.id}`}
-                className="card p-4 hover:shadow-md transition-shadow block"
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center">
-                      {booking.room?.photos?.[0] ? (
-                        <img src={booking.room.photos[0]} alt={booking.room.name} className="w-full h-full object-cover rounded-lg" />
-                      ) : (
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      )}
+        <div className="space-y-4">
+          {bookingsList.map((booking) => (
+            <Link
+              key={booking.id}
+              to={`/bookings/${booking.id}`}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 block group"
+            >
+              {/* Left room info */}
+              <div className="flex items-center gap-4">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                  {booking.room?.photos?.[0] ? (
+                    <img
+                      src={booking.room.photos[0]}
+                      alt={booking.room.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                      No Photo
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{booking.room?.name}</h3>
-                      <p className="text-sm text-gray-600">{booking.room?.type}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col md:items-end gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className={`${statusColors[booking.status]} text-sm`}>
-                        {statusLabels[booking.status]}
-                      </span>
-                      <span className="font-mono text-sm text-gray-600">{booking.reference}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-600">
-                        {format(new Date(booking.checkIn), 'MMM d')} - {format(new Date(booking.checkOut), 'MMM d, yyyy')}
-                      </p>
-                      <p className="font-semibold text-gray-900">${(booking.totalPrice / 100).toFixed(2)}</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
-                {booking.canCancel && booking.status !== 'cancelled' && (
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        cancelBooking(booking.id, booking.reference);
-                      }}
-                      className="btn-danger text-sm"
-                    >
-                      Cancel Booking
-                    </button>
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                      {booking.reference}
+                    </span>
+                    <span className={`${statusColors[booking.status]} px-2 py-0.5 text-[11px] font-semibold uppercase`}>
+                      {statusLabels[booking.status]}
+                    </span>
                   </div>
-                )}
-              </Link>
-            ))}
-          </div>
+                  <h3 className="text-base font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                    {booking.room?.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 capitalize">
+                    {booking.room?.type} Suite &bull; {booking.guests} Guest{booking.guests !== 1 ? 's' : ''}
+                  </p>
+                </div>
+              </div>
 
-          {data?.meta && data.meta.totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="btn-secondary"
-              >
-                Previous
-              </button>
-              <span className="text-gray-600">Page {page} of {data.meta.totalPages}</span>
-              <button
-                onClick={() => setPage(p => Math.min(data.meta.totalPages, p + 1))}
-                disabled={page === data.meta.totalPages}
-                className="btn-secondary"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
+              {/* Middle dates & pricing */}
+              <div className="flex flex-row md:flex-col justify-between md:items-end text-xs text-slate-600 border-t md:border-t-0 pt-3 md:pt-0">
+                <div className="text-left md:text-right">
+                  <span className="text-slate-400 block text-[11px]">Stay Dates</span>
+                  <span className="font-semibold text-slate-800">
+                    {format(new Date(booking.checkIn), 'MMM d')} - {format(new Date(booking.checkOut), 'MMM d, yyyy')}
+                  </span>
+                </div>
+                <div className="text-right mt-1">
+                  <span className="text-slate-400 block text-[11px]">Total Paid</span>
+                  <span className="text-base font-extrabold text-indigo-600">
+                    {formatINR(booking.totalPrice)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Action buttons */}
+              <div className="flex items-center justify-end gap-2 border-t md:border-t-0 pt-3 md:pt-0">
+                {booking.canCancel && booking.status !== 'cancelled' && (
+                  <button
+                    type="button"
+                    onClick={(e) => cancelBooking(e, booking.id, booking.reference)}
+                    className="btn-danger text-xs px-3 py-2 min-h-[36px]"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 group-hover:text-indigo-600 flex items-center justify-center">
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {meta.totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 pt-4">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            className="btn-secondary text-xs px-3 py-2 min-h-[44px] inline-flex items-center gap-1 disabled:opacity-40"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Previous
+          </button>
+          <span className="px-4 text-xs font-semibold text-slate-600">
+            Page {meta.page} of {meta.totalPages}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
+            disabled={page >= meta.totalPages}
+            className="btn-secondary text-xs px-3 py-2 min-h-[44px] inline-flex items-center gap-1 disabled:opacity-40"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       )}
     </div>
   );

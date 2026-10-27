@@ -4,18 +4,21 @@
 - macOS (tested on 13+)
 - Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 - Node 20+: `brew install node@20` → `echo 'export PATH="/opt/homebrew/opt/node@20/bin:$PATH"' >> ~/.zshrc`
-- MongoDB 7.0: `brew install mongodb-community@7.0`
+- MongoDB Atlas (Cloud database, default) or optional local MongoDB (`brew install mongodb-community@7.0`)
 
-## MongoDB
+## Database Configuration
+
+### MongoDB Atlas (Default)
+1. Create a cluster on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Under **Network Access**, add your current IP address (or `0.0.0.0/0` for development).
+3. Under **Database Access**, create a database user and password.
+4. Obtain your connection string and add it to `server/.env` as `MONGODB_URI`:
+   `mongodb+srv://<db_user>:<db_password>@<cluster>.mongodb.net/hotel_booking?retryWrites=true&w=majority`
+
+### Local MongoDB (Optional Alternative)
 ```bash
-# Start service
+# Start local service if preferring local database
 brew services start mongodb-community@7.0
-
-# Verify
-mongosh --eval "db.runCommand({ connectionStatus: 1 })"
-
-# Database created automatically on first write: hotel_booking
-# Connection string: mongodb://127.0.0.1:27017/hotel_booking
 ```
 
 ## Project Setup
@@ -25,12 +28,16 @@ cd /Users/ammu/Projects/Hotel\ Booking
 # Server
 cd server
 cp .env.example .env
+# Edit server/.env with your MONGODB_URI and JWT_SECRET
 npm install
+npm run seed -- --yes
+npm run dev
 
 # Client
 cd ../client
 cp .env.example .env
 npm install
+npm run dev
 ```
 
 ## Environment Files
@@ -39,19 +46,19 @@ npm install
 ```bash
 PORT=5001
 NODE_ENV=development
-MONGODB_URI=mongodb://127.0.0.1:27017/hotel_booking
+MONGODB_URI=mongodb+srv://<db_user>:<db_password>@<cluster>.mongodb.net/hotel_booking?retryWrites=true&w=majority
 JWT_SECRET=generate-with-openssl-rand-base64-32
 JWT_EXPIRES_IN=15m
 CLIENT_URL=http://localhost:5173
+CANCELLATION_WINDOW_HOURS=48
+MAX_STAY_NIGHTS=30
 
 # SMTP (Mailtrap)
-SMTP_HOST=smtp.mailtrap.io
+SMTP_HOST=sandbox.smtp.mailtrap.io
 SMTP_PORT=2525
 SMTP_USER=your-mailtrap-user
 SMTP_PASS=your-mailtrap-pass
 SMTP_FROM=noreply@hotel-booking.test
-
-# Optional: Ethereal fallback if no SMTP creds
 ```
 
 ### `client/.env.example`

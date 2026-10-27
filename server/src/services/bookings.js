@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import env from '../config/env.js';
 import { Booking, Room, RoomNight } from '../models/index.js';
 import { AppError, ERROR_CODES } from '../utils/errors.js';
 import { toUTCDateOnly, dateRange } from '../utils/dates.js';
@@ -31,6 +32,9 @@ export async function createBooking(userId, data) {
   const nights = dateRange(checkInDate, checkOutDate);
   if (nights.length === 0) {
     throw new AppError(ERROR_CODES.VALIDATION_ERROR, 'Stay must be at least 1 night');
+  }
+  if (nights.length > env.maxStayNights) {
+    throw new AppError(ERROR_CODES.VALIDATION_ERROR, `Stay cannot exceed ${env.maxStayNights} nights`);
   }
 
   // Atomic claim via unique index on RoomNight { room, date }
@@ -213,6 +217,9 @@ export async function modifyBooking(bookingId, userId, role, data) {
   }
 
   const newNights = dateRange(newCheckIn, newCheckOut);
+  if (newNights.length > env.maxStayNights) {
+    throw new AppError(ERROR_CODES.VALIDATION_ERROR, `Stay cannot exceed ${env.maxStayNights} nights`);
+  }
   const oldNights = dateRange(booking.checkIn, booking.checkOut);
 
   // Nights to ADD (new - old)
@@ -271,11 +278,11 @@ export async function cancelBooking(bookingId, userId, isAdmin) {
     return getBookingWithRoom(booking._id); // idempotent
   }
 
-  // 48h window: checkIn - now > 48 hours (admin bypass)
+  // Cancellation window: checkIn - now > cancellationWindowHours (admin bypass)
   if (!isAdmin) {
     const hoursUntilCheckIn = (booking.checkIn - new Date()) / (1000 * 60 * 60);
-    if (hoursUntilCheckIn <= 48) {
-      throw new AppError(ERROR_CODES.CANCEL_WINDOW_EXPIRED, 'Cancellation window expired (48 hours before check-in)');
+    if (hoursUntilCheckIn <= env.cancellationWindowHours) {
+      throw new AppError(ERROR_CODES.CANCEL_WINDOW_EXPIRED, `Cancellation window expired (${env.cancellationWindowHours} hours before check-in)`);
     }
   }
 
@@ -306,7 +313,7 @@ export function canCancel(booking, isAdmin) {
   if (booking.status === 'cancelled') return false;
   if (isAdmin) return true;
   const hoursUntilCheckIn = (booking.checkIn - new Date()) / (1000 * 60 * 60);
-  return hoursUntilCheckIn > 48;
+  return hoursUntilCheckIn > env.cancellationWindowHours;
 }
 
 async function getBookingWithRoom(bookingId) {
