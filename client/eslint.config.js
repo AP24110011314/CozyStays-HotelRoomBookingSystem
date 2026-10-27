@@ -14,6 +14,14 @@ export default [
         browser: true,
         es2022: true,
         React: 'writable',
+        window: 'readonly',
+        document: 'readonly',
+        localStorage: 'readonly',
+        URLSearchParams: 'readonly',
+        console: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        fetch: 'readonly',
       },
       parserOptions: {
         ecmaFeatures: {
@@ -35,6 +43,7 @@ export default [
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
+      'react/prop-types': 'off',
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
