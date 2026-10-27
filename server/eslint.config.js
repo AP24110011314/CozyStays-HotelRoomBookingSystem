@@ -33,6 +33,7 @@ export default [
         Set: 'readonly',
         Date: 'readonly',
         RegExp: 'readonly',
+        Intl: 'readonly',
       },
     },
     plugins: {

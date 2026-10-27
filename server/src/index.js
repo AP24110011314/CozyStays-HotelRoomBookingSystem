@@ -1,11 +1,9 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 import env from './config/env.js';
 import { connectDB } from './config/db.js';
@@ -17,38 +15,43 @@ import { adminRoutes } from './routes/admin.js';
 import { healthRoutes } from './routes/health.js';
 import { startEmailWorker } from './workers/emailWorker.js';
 
-const app = express();
+export function createApp() {
+  const app = express();
 
-app.use(helmet());
-app.use(cors({
-  origin: env.clientUrl,
-  credentials: true,
-}));
-app.use(morgan('dev'));
-app.use(express.json());
+  app.use(helmet());
+  app.use(cors({
+    origin: env.clientUrl,
+    credentials: true,
+  }));
+  app.use(morgan('dev'));
+  app.use(express.json());
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { error: { code: 'RATE_LIMITED', message: 'Too many requests' } },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api/', limiter);
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { error: { code: 'RATE_LIMITED', message: 'Too many requests' } },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+  app.use('/api/', limiter);
 
-app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/admin', adminRoutes);
+  app.use('/api/health', healthRoutes);
+  app.use('/api/auth', authRoutes);
+  app.use('/api/rooms', roomRoutes);
+  app.use('/api/bookings', bookingRoutes);
+  app.use('/api/admin', adminRoutes);
 
-app.use(notFoundHandler);
-app.use(errorHandler);
+  app.use(notFoundHandler);
+  app.use(errorHandler);
+
+  return app;
+}
 
 async function start() {
   try {
     await connectDB();
     startEmailWorker();
+    const app = createApp();
     app.listen(env.port, () => {
       console.log(`Server running on port ${env.port} (${env.nodeEnv})`);
     });
@@ -58,4 +61,9 @@ async function start() {
   }
 }
 
-start();
+// Only start the server if this file is run directly (not imported)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  start();
+}
+
+export { start };

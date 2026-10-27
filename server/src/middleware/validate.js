@@ -1,4 +1,5 @@
 import { ZodError } from 'zod';
+
 import { AppError, ERROR_CODES } from '../utils/errors.js';
 
 export function validate(schema) {

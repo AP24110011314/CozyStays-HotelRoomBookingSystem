@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+
 import env from './env.js';
 
 let transporter = null;

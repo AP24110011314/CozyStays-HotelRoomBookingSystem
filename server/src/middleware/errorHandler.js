@@ -1,7 +1,7 @@
-import { isAppError, AppError, ERROR_CODES } from '../utils/errors.js';
+import { isAppError, ERROR_CODES } from '../utils/errors.js';
 import env from '../config/env.js';
 
-export function errorHandler(err, req, res, next) {
+export function errorHandler(err, req, res, _next) {
   console.error('Error:', err);
 
   if (isAppError(err)) {
