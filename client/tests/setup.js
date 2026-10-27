@@ -1,6 +1,21 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// Mock localStorage with actual storage
+const localStorageStore = {};
+
+const localStorageMock = {
+  getItem: vi.fn((key) => localStorageStore[key] || null),
+  setItem: vi.fn((key, value) => { localStorageStore[key] = value; }),
+  removeItem: vi.fn((key) => { delete localStorageStore[key]; }),
+  clear: vi.fn(() => { Object.keys(localStorageStore).forEach(key => delete localStorageStore[key]); }),
+};
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -25,3 +40,6 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 
 // Mock scrollTo
 window.scrollTo = vi.fn();
+
+// Export the store for tests to clear if needed
+global.__localStorageStore = localStorageStore;
