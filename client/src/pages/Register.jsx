@@ -97,7 +97,7 @@ export default function Register() {
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[10px] font-semibold bg-white/20 backdrop-blur-md text-ivory px-2 py-0.5 rounded-md"
+                className="text-[11px] font-bold bg-[#0c1f19]/90 border border-brass/50 text-white px-2.5 py-1 rounded-md shadow-xs"
               >
                 {chip}
               </span>
@@ -144,10 +144,10 @@ export default function Register() {
         {/* Bottom Content: Tagline + Specifications Grid */}
         <div className="relative z-10 space-y-6 pt-12">
           <div className="space-y-2 max-w-xl">
-            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-ivory">
+            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
               {HOTEL_CONFIG.tagline}
             </h2>
-            <p className="text-sm text-taupe-100 leading-relaxed">
+            <p className="text-sm text-taupe-100 font-medium leading-relaxed drop-shadow-sm">
               Create your account to unlock instant bookings, easy cancellations, and transparent payment options.
             </p>
           </div>

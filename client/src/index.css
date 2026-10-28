@@ -139,27 +139,69 @@
 }
 
 /* React Day Picker styling */
+.rdp {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  --rdp-cell-size: 36px !important;
+}
+
 .rdp-months {
   display: flex !important;
   flex-direction: row !important;
   justify-content: center !important;
   align-items: flex-start !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .rdp-month {
   margin: 0 !important;
+  padding: 0 !important;
   width: 100% !important;
 }
 
 .rdp-table {
-  border-collapse: separate !important;
-  border-spacing: 0.15rem 0.25rem !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
   margin: 0 auto !important;
+}
+
+.rdp-head_row,
+.rdp-row {
+  display: table-row !important;
   width: 100% !important;
 }
 
+.rdp-head_cell {
+  display: table-cell !important;
+  width: 14.285% !important;
+  text-align: center !important;
+  padding: 4px 0 !important;
+  vertical-align: middle !important;
+}
+
 .rdp-cell {
-  padding: 0 !important;
+  display: table-cell !important;
+  width: 14.285% !important;
+  text-align: center !important;
+  padding: 2px 0 !important;
+  vertical-align: middle !important;
+}
+
+.rdp-button {
+  border-radius: 8px !important;
+}
+
+/* Ensure disabled and past dates are clearly legible instead of washed out/invisible */
+.rdp-button[disabled]:not(.rdp-day_selected) {
+  opacity: 1 !important;
+  color: #9C9890 !important;
+  cursor: not-allowed !important;
+  background: transparent !important;
 }
 
 .rdp-nav {

@@ -90,7 +90,7 @@ export default function Login() {
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[10px] font-semibold bg-white/20 backdrop-blur-md text-ivory px-2 py-0.5 rounded-md"
+                className="text-[11px] font-bold bg-[#0c1f19]/90 border border-brass/50 text-white px-2.5 py-1 rounded-md shadow-xs"
               >
                 {chip}
               </span>
@@ -138,10 +138,10 @@ export default function Login() {
         {/* Bottom Content: Tagline + Specifications Grid */}
         <div className="relative z-10 space-y-6 pt-12">
           <div className="space-y-2 max-w-xl">
-            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-ivory">
+            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
               {HOTEL_CONFIG.tagline}
             </h2>
-            <p className="text-sm text-taupe-100 leading-relaxed">
+            <p className="text-sm text-taupe-100 font-medium leading-relaxed drop-shadow-sm">
               Sign in to manage your bookings, make quick modifications, and access exclusive guest rates.
             </p>
           </div>
@@ -273,21 +273,21 @@ export default function Login() {
           </div>
 
           {/* Demo Credentials Box */}
-          <div className="bg-forest-50 border border-forest-100 rounded-2xl p-3.5 text-xs text-forest space-y-1.5 text-center">
-            <div className="flex items-center justify-between text-charcoal font-semibold px-1">
-              <span>Demo Guest Credentials:</span>
+          <div className="bg-forest-50 border border-forest-200 rounded-2xl p-3.5 text-xs space-y-2 text-center">
+            <div className="flex items-center justify-between text-charcoal font-bold px-1">
+              <span className="text-xs font-bold text-forest">Demo Guest Credentials:</span>
               <button
                 type="button"
                 onClick={() => {
                   setValue('email', 'guest1@test.com', { shouldValidate: true });
                   setValue('password', 'Guest@12345', { shouldValidate: true });
                 }}
-                className="text-[11px] text-forest hover:text-forest-700 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
+                className="text-[11px] bg-forest text-ivory px-2.5 py-1 rounded-lg font-semibold hover:bg-forest-600 transition-colors cursor-pointer shadow-xs"
               >
                 Auto-fill
               </button>
             </div>
-            <p className="font-mono text-[11px] text-forest bg-white py-1.5 px-3 rounded-xl border border-taupe block select-all">
+            <p className="font-mono text-xs font-semibold text-charcoal bg-white py-2 px-3 rounded-xl border border-taupe block select-all">
               guest1@test.com / Guest@12345
             </p>
           </div>
