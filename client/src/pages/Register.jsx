@@ -89,7 +89,7 @@ export default function Register() {
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-charcoal-900/40 to-transparent flex flex-col justify-end p-5">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-sm w-fit mb-2"
+            className="inline-flex items-center gap-2 mac-glass-badge px-3 py-1.5 rounded-xl w-fit mb-2"
           >
             <div className="w-7 h-7 rounded-lg bg-brass text-charcoal flex items-center justify-center shadow-xs">
               <Hotel className="w-4 h-4 text-charcoal stroke-[2.2]" />
@@ -100,7 +100,7 @@ export default function Register() {
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[11px] font-bold bg-black/30 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 rounded-md shadow-xs drop-shadow-sm"
+                className="text-[11px] font-bold mac-glass-badge text-white px-2.5 py-1 rounded-lg drop-shadow-sm"
               >
                 {chip}
               </span>
@@ -130,13 +130,13 @@ export default function Register() {
         <div className="relative z-10">
           <Link
             to="/"
-            className="inline-flex items-center gap-3 bg-black/30 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/20 shadow-md group hover:bg-black/40 hover:border-white/40 transition-all"
+            className="inline-flex items-center gap-3.5 mac-glass-card mac-glass-hover px-4 py-2.5 rounded-2xl group transition-all"
           >
-            <div className="w-10 h-10 rounded-xl bg-brass text-charcoal flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-brass-300 via-brass to-brass-600 text-charcoal flex items-center justify-center shadow-md shadow-brass-500/20 group-hover:scale-105 transition-transform">
               <Hotel className="w-5 h-5 text-charcoal stroke-[2.2]" />
             </div>
             <div>
-              <span className="text-lg font-black tracking-tight text-white block leading-none drop-shadow-sm">
+              <span className="text-lg font-black tracking-tight text-white block leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
                 {HOTEL_CONFIG.name}
               </span>
               <span className="text-[10px] text-brass-300 tracking-wider uppercase font-extrabold block mt-0.5 drop-shadow-sm">
@@ -148,11 +148,11 @@ export default function Register() {
 
         {/* Bottom Content: Tagline + Specifications Grid */}
         <div className="relative z-10 space-y-3.5 xl:space-y-4 pt-6 xl:pt-8">
-          <div className="space-y-1.5 max-w-xl bg-black/30 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-md">
-            <h2 className="text-xl xl:text-2xl font-black tracking-tight text-white leading-snug drop-shadow-sm">
+          <div className="space-y-1.5 max-w-xl mac-glass-card rounded-2xl p-4.5 xl:p-5">
+            <h2 className="text-xl xl:text-2xl font-black tracking-tight text-white leading-snug drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
               {HOTEL_CONFIG.tagline}
             </h2>
-            <p className="text-xs text-white/90 font-medium leading-relaxed drop-shadow-sm">
+            <p className="text-xs text-white/95 font-medium leading-relaxed drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]">
               Create your account to unlock instant bookings, easy cancellations, and transparent payment options.
             </p>
           </div>

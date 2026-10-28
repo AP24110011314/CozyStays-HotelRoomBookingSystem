@@ -55,15 +55,17 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
           return (
             <div
               key={spec.id}
-              className={`flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl transition-all ${
+              className={`flex items-start gap-2.5 p-2.5 sm:p-3 rounded-2xl transition-all ${
                 isOverlay
-                  ? 'bg-black/30 backdrop-blur-md border border-white/20 shadow-md hover:bg-black/40 hover:border-white/40'
+                  ? 'mac-glass mac-glass-hover'
                   : 'bg-white border border-taupe shadow-xs hover:border-forest/40'
               }`}
             >
               <div
-                className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-xs ${
-                  isOverlay ? 'bg-brass text-charcoal' : 'bg-forest text-ivory'
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-xs ${
+                  isOverlay
+                    ? 'bg-gradient-to-b from-brass-300 via-brass to-brass-600 text-charcoal shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)]'
+                    : 'bg-forest text-ivory'
                 }`}
               >
                 <Icon
@@ -75,14 +77,14 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
               <div className="min-w-0">
                 <p
                   className={`text-xs font-bold leading-tight ${
-                    isOverlay ? 'text-white drop-shadow-sm' : 'text-charcoal'
+                    isOverlay ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]' : 'text-charcoal'
                   }`}
                 >
                   {spec.title}
                 </p>
                 <p
                   className={`text-[11px] mt-0.5 leading-snug font-medium ${
-                    isOverlay ? 'text-white/90 drop-shadow-sm' : 'text-charcoal-700'
+                    isOverlay ? 'text-white/95 drop-shadow-[0_1px_2px_rgba(0,0,0,0.7)]' : 'text-charcoal-700'
                   }`}
                 >
                   {spec.description}
@@ -97,7 +99,7 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
       <div
         className={`pt-2.5 xl:pt-3 flex flex-wrap items-center justify-between gap-3 text-xs ${
           isOverlay
-            ? 'bg-black/30 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/20 shadow-md'
+            ? 'mac-glass-card rounded-2xl px-4 py-3 shadow-lg'
             : 'border-t border-taupe text-charcoal font-semibold'
         }`}
         data-testid="hotel-trust-row"
@@ -107,9 +109,15 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
           return (
             <div key={badge.id} className="flex items-center gap-1.5 font-bold">
               <BadgeIcon
-                className={`w-3.5 h-3.5 ${isOverlay ? 'text-brass-300' : 'text-forest'}`}
+                className={`w-4 h-4 ${isOverlay ? 'text-brass-300 drop-shadow-sm' : 'text-forest'}`}
               />
-              <span className={isOverlay ? 'text-white drop-shadow-sm' : 'text-charcoal'}>
+              <span
+                className={
+                  isOverlay
+                    ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]'
+                    : 'text-charcoal'
+                }
+              >
                 {badge.text}
               </span>
             </div>
