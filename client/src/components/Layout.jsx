@@ -20,9 +20,9 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-ivory text-charcoal">
-      {/* Top Navbar: Forest Green with Ivory Text */}
-      <header className="bg-forest text-ivory shadow-sm border-b border-forest-600 sticky top-0 z-40">
+    <div className="min-h-screen flex flex-col bg-ivory/40 text-charcoal">
+      {/* Top Navbar: Forest Green with Ivory Text and macOS frosted glass translucency */}
+      <header className="bg-forest/90 backdrop-blur-xl saturate-180 text-ivory shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_-1px_0_rgba(255,255,255,0.08)] border-b border-forest-600/80 sticky top-0 z-40 transition-all">
         <div className="container-main">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
@@ -65,7 +65,7 @@ export default function Layout() {
             <div className="hidden md:flex items-center gap-3">
               {user ? (
                 <>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-forest-700/80 border border-forest-600 text-ivory text-xs font-medium">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-forest-700/80 backdrop-blur-md border border-forest-600 text-ivory text-xs font-medium shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]">
                     <User className="w-3.5 h-3.5 text-brass" />
                     <span>{user.name}</span>
                     <span className="text-forest-400">|</span>

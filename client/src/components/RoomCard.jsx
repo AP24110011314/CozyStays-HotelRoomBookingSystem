@@ -22,7 +22,7 @@ export default function RoomCard({ room, checkIn, checkOut }) {
   return (
     <Link
       to={`/rooms/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}`}
-      className="card-hover group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-taupe shadow-xs transition-all duration-300 hover:shadow-md hover:border-taupe-400"
+      className="card-hover group flex flex-col h-full overflow-hidden"
       aria-label={`View ${room.name} - ${room.type} room`}
     >
       {/* Image Section: 4:3 aspect ratio, lazy loaded */}
@@ -44,14 +44,14 @@ export default function RoomCard({ room, checkIn, checkOut }) {
 
         {/* Type Badge */}
         <div className="absolute top-3 right-3">
-          <span className="badge-forest px-3 py-1 text-xs font-semibold shadow-xs">
+          <span className="badge-forest mac-glass-badge px-3 py-1 text-xs font-semibold shadow-xs">
             {room.type.charAt(0).toUpperCase() + room.type.slice(1)}
           </span>
         </div>
 
         {/* Status Badge */}
         {!room.active && (
-          <span className="absolute top-3 left-3 badge-brick text-xs font-semibold">Inactive</span>
+          <span className="absolute top-3 left-3 badge-brick mac-glass-badge text-xs font-semibold">Inactive</span>
         )}
       </div>
 
@@ -71,21 +71,21 @@ export default function RoomCard({ room, checkIn, checkOut }) {
           {room.amenities?.slice(0, 4).map((amenity) => (
             <span
               key={amenity}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-taupe-100 text-charcoal-700"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-taupe/40 backdrop-blur-xs text-charcoal-700 border border-taupe/50"
             >
               {getAmenityIcon(amenity)}
               <span>{amenity}</span>
             </span>
           ))}
           {room.amenities && room.amenities.length > 4 && (
-            <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold bg-forest-50 text-forest">
+            <span className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold bg-forest-50 text-forest border border-forest-200">
               +{room.amenities.length - 4}
             </span>
           )}
         </div>
 
         {/* Price & Total */}
-        <div className="mt-auto pt-3.5 border-t border-taupe/80 flex items-center justify-between">
+        <div className="mt-auto pt-3.5 border-t border-taupe/60 flex items-center justify-between">
           <div className="flex flex-col">
             <span className="text-xl sm:text-2xl font-bold text-forest">{formatINR(room.basePrice)}</span>
             <span className="text-charcoal/60 text-xs font-medium">/ night</span>

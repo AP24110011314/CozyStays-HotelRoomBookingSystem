@@ -109,14 +109,14 @@ export default function AdminDashboard() {
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="card p-5 sm:p-6 transition-all hover:shadow-md hover:border-taupe-400">
+            <div key={stat.label} className="card-hover p-5 sm:p-6 group">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-semibold text-charcoal/60 uppercase tracking-wider">{stat.label}</p>
                   <p className="text-2xl sm:text-3xl font-bold text-charcoal mt-1.5">{stat.value}</p>
                   <p className="text-xs text-charcoal/50 mt-1">{stat.description}</p>
                 </div>
-                <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center flex-shrink-0 ${stat.color}`}>
+                <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center flex-shrink-0 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.7)] ${stat.color}`}>
                   <Icon className="w-6 h-6" />
                 </div>
               </div>
@@ -131,10 +131,10 @@ export default function AdminDashboard() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             to="/admin/rooms"
-            className="card p-5 sm:p-6 transition-all hover:shadow-md hover:border-forest group flex flex-col justify-between"
+            className="card-hover p-5 sm:p-6 group flex flex-col justify-between"
           >
             <div>
-              <div className="w-10 h-10 rounded-xl bg-forest-50 text-forest flex items-center justify-center mb-4 border border-forest-100">
+              <div className="w-10 h-10 rounded-xl bg-forest-50/90 text-forest flex items-center justify-center mb-4 border border-forest-100 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
                 <BedDouble className="w-5 h-5" />
               </div>
               <h3 className="font-bold text-charcoal group-hover:text-forest transition-colors">Manage Rooms</h3>
@@ -147,10 +147,10 @@ export default function AdminDashboard() {
 
           <Link
             to="/admin/bookings"
-            className="card p-5 sm:p-6 transition-all hover:shadow-md hover:border-forest group flex flex-col justify-between"
+            className="card-hover p-5 sm:p-6 group flex flex-col justify-between"
           >
             <div>
-              <div className="w-10 h-10 rounded-xl bg-forest-50 text-forest flex items-center justify-center mb-4 border border-forest-100">
+              <div className="w-10 h-10 rounded-xl bg-forest-50/90 text-forest flex items-center justify-center mb-4 border border-forest-100 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
                 <ClipboardList className="w-5 h-5" />
               </div>
               <h3 className="font-bold text-charcoal group-hover:text-forest transition-colors">Manage Bookings</h3>
@@ -163,10 +163,10 @@ export default function AdminDashboard() {
 
           <Link
             to="/admin/occupancy"
-            className="card p-5 sm:p-6 transition-all hover:shadow-md hover:border-forest group flex flex-col justify-between"
+            className="card-hover p-5 sm:p-6 group flex flex-col justify-between"
           >
             <div>
-              <div className="w-10 h-10 rounded-xl bg-forest-50 text-forest flex items-center justify-center mb-4 border border-forest-100">
+              <div className="w-10 h-10 rounded-xl bg-forest-50/90 text-forest flex items-center justify-center mb-4 border border-forest-100 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
                 <BarChart3 className="w-5 h-5" />
               </div>
               <h3 className="font-bold text-charcoal group-hover:text-forest transition-colors">Occupancy Calendar</h3>
@@ -179,10 +179,10 @@ export default function AdminDashboard() {
 
           <Link
             to="/admin/emails"
-            className="card p-5 sm:p-6 transition-all hover:shadow-md hover:border-forest group flex flex-col justify-between"
+            className="card-hover p-5 sm:p-6 group flex flex-col justify-between"
           >
             <div>
-              <div className="w-10 h-10 rounded-xl bg-brass-50 text-brass-700 flex items-center justify-center mb-4 border border-brass-200">
+              <div className="w-10 h-10 rounded-xl bg-brass-50/90 text-brass-700 flex items-center justify-center mb-4 border border-brass-200 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
                 <Mail className="w-5 h-5" />
               </div>
               <h3 className="font-bold text-charcoal group-hover:text-brass-700 transition-colors">Email Outbox</h3>

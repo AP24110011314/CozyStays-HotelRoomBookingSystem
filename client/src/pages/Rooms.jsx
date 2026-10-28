@@ -179,16 +179,20 @@ export default function Rooms() {
 
   return (
     <div className="space-y-8">
-      {/* Page Hero Header */}
-      <div className="bg-forest rounded-3xl text-ivory p-6 sm:p-10 shadow-lg relative overflow-hidden">
+      {/* Page Hero Header: macOS Liquid Vibrant Emerald Surface */}
+      <div className="relative rounded-3xl text-ivory p-6 sm:p-10 overflow-hidden bg-gradient-to-br from-forest-800 via-forest to-forest-900 border border-forest-600/60 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.3),0_12px_36px_-4px_rgba(27,77,62,0.35)]">
+        {/* Soft liquid light orbs */}
+        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-brass/15 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-sage/20 blur-3xl pointer-events-none" />
+
         <div className="relative max-w-2xl space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 text-ivory backdrop-blur-md">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mac-glass-badge text-ivory">
             ✨ Guaranteed Best Rates Online
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white drop-shadow-xs">
             Find Your Dream Stay
           </h1>
-          <p className="text-ivory/80 text-sm sm:text-base leading-relaxed">
+          <p className="text-ivory/85 text-sm sm:text-base leading-relaxed">
             Discover boutique rooms, serene suites, and modern comforts with live cloud availability and instant confirmation.
           </p>
         </div>
@@ -202,7 +206,7 @@ export default function Rooms() {
           className="hidden lg:flex flex-col gap-4 w-[320px] shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-1"
         >
           {/* 1. One-Month Calendar Card */}
-          <div className="bg-white rounded-2xl p-4 border border-taupe shadow-xs space-y-3">
+          <div className="card p-4 space-y-3">
             <div className="flex items-center justify-between pb-1 border-b border-taupe/60">
               <span className="text-xs font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-forest" />
@@ -225,7 +229,7 @@ export default function Rooms() {
             />
 
             {/* 2. Selected-Range Summary */}
-            <div className="pt-2 border-t border-taupe text-center bg-ivory/60 rounded-xl p-2.5">
+            <div className="pt-2 border-t border-taupe/60 text-center mac-subpanel p-2.5">
               <p className="text-xs font-bold text-forest">
                 {selectedRangeSummary}
               </p>
@@ -236,7 +240,7 @@ export default function Rooms() {
           </div>
 
           {/* 3. Guests Stepper */}
-          <div className="bg-white rounded-2xl p-4 border border-taupe shadow-xs space-y-2">
+          <div className="card p-4 space-y-2">
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-forest block">Guests</label>
@@ -247,7 +251,7 @@ export default function Rooms() {
                   type="button"
                   onClick={() => handleGuestsChange(guestCountNum - 1)}
                   disabled={guestCountNum <= 1}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center border border-taupe text-charcoal hover:bg-taupe/40 disabled:opacity-30 transition-all active:scale-95 cursor-pointer"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center border border-taupe text-charcoal hover:bg-forest/10 hover:border-forest/40 disabled:opacity-30 transition-all active:scale-95 cursor-pointer shadow-2xs"
                   aria-label="Decrease guests"
                 >
                   <Minus className="w-3.5 h-3.5" />
@@ -259,7 +263,7 @@ export default function Rooms() {
                   type="button"
                   onClick={() => handleGuestsChange(guestCountNum + 1)}
                   disabled={guestCountNum >= 10}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center border border-taupe text-charcoal hover:bg-taupe/40 disabled:opacity-30 transition-all active:scale-95 cursor-pointer"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center border border-taupe text-charcoal hover:bg-forest/10 hover:border-forest/40 disabled:opacity-30 transition-all active:scale-95 cursor-pointer shadow-2xs"
                   aria-label="Increase guests"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -269,7 +273,7 @@ export default function Rooms() {
           </div>
 
           {/* 4. FilterPanel */}
-          <div className="bg-white rounded-2xl p-5 border border-taupe shadow-xs space-y-5">
+          <div className="card p-5 space-y-5">
             <div className="flex items-center justify-between border-b border-taupe pb-3">
               <h3 className="font-bold text-forest flex items-center gap-2 text-sm">
                 <Filter className="w-4 h-4 text-forest" />
@@ -293,7 +297,7 @@ export default function Rooms() {
               <select
                 value={type}
                 onChange={(e) => updateParam('type', e.target.value)}
-                className="w-full text-sm rounded-xl border border-taupe focus:border-forest focus:ring-forest bg-white py-2 px-3 text-charcoal"
+                className="input py-2 px-3 text-sm cursor-pointer"
               >
                 <option value="">All Types</option>
                 {ROOM_TYPES.map((t) => (
@@ -313,14 +317,14 @@ export default function Rooms() {
                   placeholder="Min"
                   value={minPrice}
                   onChange={(e) => updateParam('minPrice', e.target.value)}
-                  className="w-full text-sm rounded-xl border border-taupe focus:border-forest focus:ring-forest bg-white py-2 px-3 text-charcoal"
+                  className="input py-2 px-3 text-sm"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={maxPrice}
                   onChange={(e) => updateParam('maxPrice', e.target.value)}
-                  className="w-full text-sm rounded-xl border border-taupe focus:border-forest focus:ring-forest bg-white py-2 px-3 text-charcoal"
+                  className="input py-2 px-3 text-sm"
                 />
               </div>
             </div>
@@ -331,7 +335,7 @@ export default function Rooms() {
               <select
                 value={sort}
                 onChange={(e) => updateParam('sort', e.target.value)}
-                className="w-full text-sm rounded-xl border border-taupe focus:border-forest focus:ring-forest bg-white py-2 px-3 text-charcoal"
+                className="input py-2 px-3 text-sm cursor-pointer"
               >
                 <option value="priceAsc">Price: Low to High</option>
                 <option value="priceDesc">Price: High to Low</option>
@@ -374,11 +378,11 @@ export default function Rooms() {
           {/* MOBILE & TABLET CONTROLS (below 1024px) */}
           <div className="lg:hidden space-y-3">
             {/* Collapsible Dates Card */}
-            <div className="bg-white rounded-2xl border border-taupe shadow-xs overflow-hidden">
+            <div className="card overflow-hidden">
               <button
                 type="button"
                 onClick={() => setIsMobileDatesOpen(!isMobileDatesOpen)}
-                className="w-full p-4 flex items-center justify-between text-left hover:bg-ivory/50 transition-colors"
+                className="w-full p-4 flex items-center justify-between text-left hover:bg-forest/5 transition-colors"
                 aria-expanded={isMobileDatesOpen}
               >
                 <div className="flex items-center gap-2.5">
@@ -397,7 +401,7 @@ export default function Rooms() {
               </button>
 
               {isMobileDatesOpen && (
-                <div className="p-3 pt-0 border-t border-taupe/60 space-y-3 bg-ivory/30">
+                <div className="p-3 pt-0 border-t border-taupe/60 space-y-3 mac-subpanel rounded-none">
                   <DateRangePicker
                     checkIn={checkIn}
                     checkOut={checkOut}
@@ -415,7 +419,7 @@ export default function Rooms() {
               <button
                 type="button"
                 onClick={openDrawer}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-taupe text-xs font-bold text-charcoal bg-white hover:bg-taupe/30 min-h-[44px] transition-colors"
+                className="card flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-charcoal hover:bg-white min-h-[44px] transition-all active:scale-[0.98]"
               >
                 <SlidersHorizontal className="w-4 h-4 text-forest" />
                 <span>Filters</span>
@@ -429,7 +433,7 @@ export default function Rooms() {
               <select
                 value={sort}
                 onChange={(e) => updateParam('sort', e.target.value)}
-                className="text-xs rounded-xl border border-taupe py-2.5 px-3 bg-white font-medium text-charcoal min-h-[44px]"
+                className="input text-xs py-2.5 px-3 font-medium text-charcoal min-h-[44px] w-auto shrink-0"
                 aria-label="Sort options"
               >
                 <option value="priceAsc">Price: Low-High</option>
@@ -441,7 +445,7 @@ export default function Rooms() {
           </div>
 
           {/* Results Summary Bar */}
-          <div className="bg-white rounded-2xl p-4 border border-taupe shadow-xs flex items-center justify-between gap-3">
+          <div className="card p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="text-sm font-bold text-charcoal">
                 {isLoading ? 'Searching rooms...' : `${meta.total} Room${meta.total !== 1 ? 's' : ''} Available`}

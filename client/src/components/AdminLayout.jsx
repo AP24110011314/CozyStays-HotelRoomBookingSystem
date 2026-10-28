@@ -30,9 +30,9 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-ivory text-charcoal">
-      {/* Top Navbar: Forest Green with Ivory Text */}
-      <header className="bg-forest text-ivory shadow-sm border-b border-forest-600 sticky top-0 z-40">
+    <div className="min-h-screen flex flex-col bg-ivory/40 text-charcoal">
+      {/* Top Navbar: Forest Green with Ivory Text and macOS frosted glass translucency */}
+      <header className="bg-forest/90 backdrop-blur-xl saturate-180 text-ivory shadow-[0_4px_24px_rgba(0,0,0,0.12),inset_0_-1px_0_rgba(255,255,255,0.08)] border-b border-forest-600/80 sticky top-0 z-40 transition-all">
         <div className="container-main">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
