@@ -13,6 +13,7 @@ vi.mock('../../src/api/client', () => ({
     get: vi.fn(),
     defaults: { headers: {} },
   },
+  setAuthErrorHandler: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -55,13 +56,14 @@ const renderWithProviders = (component) => {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <AuthProvider>
           <Routes>
             <Route path="/" element={component} />
+            <Route path="/login" element={<div data-testid="login-page">Login Page</div>} />
           </Routes>
-        </MemoryRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </MemoryRouter>
     </QueryClientProvider>
   );
 };
@@ -165,7 +167,7 @@ describe('AuthContext', () => {
     fireEvent.click(screen.getByTestId('logout-btn'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('user').textContent).toBe('null');
+      expect(screen.getByTestId('login-page')).toBeInTheDocument();
     });
 
     expect(getStoredToken()).toBeNull();

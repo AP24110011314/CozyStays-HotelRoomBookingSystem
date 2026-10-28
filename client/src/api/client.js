@@ -16,12 +16,26 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let onAuthErrorCallback = null;
+
+export function setAuthErrorHandler(handler) {
+  onAuthErrorCallback = handler;
+}
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthEndpoint =
+      error.config?.url?.includes('/auth/login') ||
+      error.config?.url?.includes('/auth/register');
+
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       removeStoredToken();
-      window.location.href = '/login';
+      if (typeof onAuthErrorCallback === 'function') {
+        onAuthErrorCallback();
+      } else if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
