@@ -45,18 +45,28 @@ export function createApp() {
 
   app.use(express.json());
 
+  // Public unthrottled endpoints
+  app.use('/health', healthRoutes);
+  app.use('/api/health', healthRoutes);
+  app.use('/api/config', configRoutes);
+
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: { error: { code: 'RATE_LIMITED', message: 'Too many requests' } },
+    max: env.nodeEnv === 'production' ? 1000 : 10000,
+    skip: (req) =>
+      env.nodeEnv === 'development' ||
+      env.nodeEnv === 'test' ||
+      req.ip === '127.0.0.1' ||
+      req.ip === '::1' ||
+      req.ip === '::ffff:127.0.0.1' ||
+      req.path.startsWith('/health') ||
+      req.path.startsWith('/config'),
+    message: { error: { code: 'RATE_LIMITED', message: 'Too many requests, please try again later' } },
     standardHeaders: true,
     legacyHeaders: false,
   });
   app.use('/api/', limiter);
 
-  app.use('/health', healthRoutes);
-  app.use('/api/health', healthRoutes);
-  app.use('/api/config', configRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/rooms', roomRoutes);
   app.use('/api/bookings', bookingRoutes);
