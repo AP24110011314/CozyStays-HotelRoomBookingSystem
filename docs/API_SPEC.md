@@ -72,38 +72,72 @@
 ## Bookings (Guest)
 ### POST `/bookings`
 **Auth**: guest
-**Body**: `{ roomId, checkIn, checkOut, guests }`
-**Response 201**: `{ data: BookingWithRoom }`
+**Body**: `{ roomId, checkIn, checkOut, guests, paymentMethod? }` (`paymentMethod`: `'online'` | `'pay_at_hotel'`, default `'pay_at_hotel'`)
+**Response 201**: `{ data: BookingWithRoom, payment?: { provider, orderId, amount, currency, keyId } }`
 
-**BookingWithPrice**: `{ id, reference, room: RoomSummary, checkIn, checkOut, guests, totalPrice, status, canCancel, createdAt }`
+**BookingWithRoom**: `{ id, reference, room: RoomSummary, checkIn, checkOut, guests, totalPrice, status, paymentMethod, paymentStatus, holdExpiresAt, canCancel, createdAt }`
 
 ### GET `/bookings`
 **Auth**: guest
-**Query**: `status` (upcoming|active|past|cancelled), `page`, `limit`
+**Query**: `status` (upcoming|active|completed|cancelled|pending_payment|expired), `page`, `limit`
 **Response 200**: `{ data: BookingWithRoom[], meta: { page, limit, total, totalPages } }`
 
 ### GET `/bookings/:id`
 **Auth**: guest (owner) or admin
 **Response 200**: `{ data: BookingWithRoom }`
 
+### POST `/bookings/:id/pay`
+**Auth**: guest (owner) or admin
+**Response 200**: `{ data: { provider, orderId, amount, currency, keyId, holdExpiresAt } }`
+
 ### PATCH `/bookings/:id`
 **Auth**: guest (owner) or admin
 **Body**: `{ checkIn?, checkOut?, guests? }` (at least one)
-**Response 200**: `{ data: BookingWithRoom }`
+**Response 200**: `{ data: BookingWithRoom, refund?: { amount, status } }`
 
 ### DELETE `/bookings/:id`
 **Auth**: guest (owner) or admin
-**Response 200**: `{ data: BookingWithRoom }` (cancelled)
+**Response 200**: `{ data: BookingWithRoom, refund?: { amount, status } }` (cancelled)
 
-## Bookings (Admin)
+## Payments
+### POST `/payments/verify`
+**Auth**: guest (owner)
+**Body**: `{ bookingId, razorpayOrderId, razorpayPaymentId, razorpaySignature }` (or `{ bookingId, mockSuccess: true }` for mock provider)
+**Response 200**: `{ data: { booking: BookingWithRoom, payment: Payment } }`
+
+### POST `/payments/webhook`
+**Auth**: none (HMAC signature in `X-Razorpay-Signature` verified with `RAZORPAY_WEBHOOK_SECRET`)
+**Body**: raw JSON payload
+**Response 200**: `{ received: true }`
+
+### GET `/payments/booking/:bookingId`
+**Auth**: guest (owner) or admin
+**Response 200**: `{ data: Payment }`
+
+## Bookings & Payments (Admin)
 ### GET `/admin/bookings`
 **Auth**: admin
-**Query**: `status`, `from`, `to`, `guestEmail`, `page`, `limit`
+**Query**: `status`, `paymentStatus`, `from`, `to`, `guestEmail`, `page`, `limit`
 **Response 200**: `{ data: BookingWithRoom[], meta }`
 
 ### DELETE `/admin/bookings/:id`
 **Auth**: admin
-**Response 200**: `{ data: BookingWithRoom }` (cancelled, bypasses 48h)
+**Response 200**: `{ data: BookingWithRoom, refund?: { amount, status } }` (cancelled, bypasses 48h)
+
+### GET `/admin/payments`
+**Auth**: admin
+**Query**: `status`, `from`, `to`, `q`, `page`, `limit`
+**Response 200**: `{ data: Payment[], meta }`
+
+### POST `/admin/bookings/:id/mark-paid`
+**Auth**: admin
+**Body**: `{ amount?, note? }`
+**Response 200**: `{ data: { booking: BookingWithRoom, payment: Payment } }`
+
+### POST `/admin/payments/:id/refund`
+**Auth**: admin
+**Body**: `{ amount?, reason? }`
+**Response 200**: `{ data: { payment: Payment, refund: { providerRefundId, amount } } }`
 
 ## Admin Dashboard
 ### GET `/admin/stats`

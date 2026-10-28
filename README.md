@@ -106,6 +106,7 @@ See `docs/` for complete specifications:
 - [Email System](docs/EMAIL_SYSTEM.md) — Outbox, worker, templates
 - [Frontend Spec](docs/FRONTEND_SPEC.md) — Pages, components, state
 - [Testing](docs/TESTING.md) — Test matrices, QA checklist
+- [Payments](docs/PAYMENTS.md) — Payment flows, statuses, Razorpay & Mock providers, webhooks
 - [Setup macOS](docs/SETUP_MAC.md) — Local environment
 - [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) — Phase-by-phase tasks
 

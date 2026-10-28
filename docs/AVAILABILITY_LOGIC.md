@@ -94,6 +94,37 @@ function createBooking(userId, roomId, checkIn, checkOut, guests):
   return booking
 ```
 
+## Payment Hold & Expiry Logic (Online Bookings)
+For online payments, rooms must be protected from double-booking while the guest completes payment without permanently locking inventory if the guest abandons checkout.
+
+### 1. Atomic Hold Creation
+- When `POST /api/bookings` is called with `paymentMethod: 'online'`:
+  - `RoomNight` rows for `[checkIn, checkOut)` are claimed atomically via the unique index `{ room: 1, date: 1 }`.
+  - The booking is created with `status: 'pending_payment'`, `paymentMethod: 'online'`, `paymentStatus: 'pending'`, and `holdExpiresAt = new Date(Date.now() + env.paymentHoldMinutes * 60 * 1000)`.
+  - A payment order is initiated with the configured payment provider (`mock` or `razorpay`).
+  - Other guests searching for these dates will receive 409 `ROOM_UNAVAILABLE` while the hold is active.
+
+### 2. Hold Expiry & Automatic Release
+- **Background Worker**: An in-process cron/interval job runs every 60 seconds:
+  ```javascript
+  const expiredBookings = await Booking.find({
+    status: 'pending_payment',
+    holdExpiresAt: { $lt: new Date() }
+  });
+  for (const b of expiredBookings) {
+    b.status = 'expired';
+    b.paymentStatus = 'failed';
+    await b.save();
+    await RoomNight.deleteMany({ booking: b._id });
+    await Payment.updateMany({ booking: b._id, status: 'pending' }, { status: 'failed', failureReason: 'Hold expired' });
+  }
+  ```
+- **Lazy Expiry on Access**:
+  - Whenever `GET /api/bookings/:id` or `POST /api/bookings/:id/pay` is invoked on a `pending_payment` booking where `now > holdExpiresAt`, the booking is lazily expired and its `RoomNight` records are purged.
+- **Verification Guard**:
+  - If payment verification succeeds after the hold has expired, the server attempts an atomic re-claim of `RoomNight` rows.
+  - If another guest has since claimed any of those nights, verification fails with 409 `ROOM_UNAVAILABLE` and triggers an automatic refund of the captured funds.
+
 ## Modify Booking (Change Dates/Guests)
 ```
 function modifyBooking(bookingId, userId, newCheckIn, newCheckOut, newGuests):

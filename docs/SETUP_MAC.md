@@ -59,6 +59,18 @@ SMTP_PORT=2525
 SMTP_USER=your-mailtrap-user
 SMTP_PASS=your-mailtrap-pass
 SMTP_FROM=noreply@hotel-booking.test
+
+# Currency & Standard Times
+CURRENCY=INR
+CHECK_IN_TIME="2:00 PM"
+CHECK_OUT_TIME="11:00 AM"
+
+# Payments (Default 'mock' for local simulation without keys; 'razorpay' for test/live keys)
+PAYMENT_PROVIDER=mock
+RAZORPAY_KEY_ID=rzp_test_placeholder_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret_placeholder
+RAZORPAY_WEBHOOK_SECRET=your_razorpay_webhook_secret_placeholder
+PAYMENT_HOLD_MINUTES=15
 ```
 
 ### `client/.env.example`

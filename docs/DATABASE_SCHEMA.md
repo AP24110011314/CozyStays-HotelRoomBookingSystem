@@ -44,20 +44,53 @@
   checkIn: Date,           // UTC date-only (00:00:00.000Z), required
   checkOut: Date,          // UTC date-only, required
   guests: Number,          // required, 1..room.maxGuests
-  totalPrice: Number,      // required, cents, server-computed
-  status: String,          // derived: 'upcoming' | 'active' | 'completed' | 'cancelled'
+  totalPrice: Number,      // required, cents/paise (integer), server-computed
+  status: String,          // 'pending_payment' | 'confirmed' | 'cancelled' | 'expired'
+  paymentMethod: String,   // 'online' | 'pay_at_hotel'
+  paymentStatus: String,   // 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded' | 'pay_at_hotel'
+  holdExpiresAt: Date,     // hold deadline for pending_payment online bookings
   createdAt: Date,
   updatedAt: Date,
   cancelledAt: Date        // set when cancelled
 }
 ```
-**Indexes**: `{ user: 1, createdAt: -1 }`, `{ room: 1, checkIn: 1 }`, `{ reference: 1 }` unique, `{ status: 1 }`
+**Indexes**: `{ user: 1, createdAt: -1 }`, `{ room: 1, checkIn: 1 }`, `{ reference: 1 }` unique, `{ status: 1 }`, `{ holdExpiresAt: 1 }`
 
-**Derived Status Logic** (computed on read, not stored):
-- `upcoming`: `now < checkIn`
-- `active`: `checkIn <= now < checkOut`
-- `completed`: `now >= checkOut` AND `status !== 'cancelled'`
-- `cancelled`: explicit cancellation
+**Derived Status Logic** (computed on read for confirmed bookings):
+- If `status === 'pending_payment'`: `pending_payment`
+- If `status === 'expired'`: `expired`
+- If `status === 'cancelled'`: `cancelled`
+- If `status === 'confirmed'`:
+  - `upcoming`: `now < checkIn`
+  - `active`: `checkIn <= now < checkOut`
+  - `completed`: `now >= checkOut`
+
+### payments
+```javascript
+{
+  _id: ObjectId,
+  booking: ObjectId,       // ref bookings, required
+  user: ObjectId,          // ref users, required
+  amount: Number,          // integer minor units (paise/cents), required
+  currency: String,        // 'INR', 'USD', etc., required
+  method: String,          // 'online' | 'pay_at_hotel', required
+  provider: String,        // 'razorpay' | 'mock' | null
+  providerOrderId: String, // unique provider order reference
+  providerPaymentId: String, // unique provider transaction id
+  status: String,          // 'pending' | 'paid' | 'failed' | 'refunded' | 'partially_refunded' | 'pay_at_hotel'
+  refundedAmount: Number,  // integer minor units, default 0
+  refunds: [{
+    providerRefundId: String,
+    amount: Number,
+    createdAt: Date
+  }],
+  failureReason: String,   // error message on failure
+  paidAt: Date,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
+**Indexes**: `{ booking: 1 }`, `{ providerOrderId: 1 }` unique sparse, `{ providerPaymentId: 1 }` unique sparse, `{ user: 1 }`, `{ status: 1 }`
 
 ### room_nights
 ```javascript

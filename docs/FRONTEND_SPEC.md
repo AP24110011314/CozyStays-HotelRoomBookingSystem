@@ -76,43 +76,41 @@
 - Link to Login
 - On success → auto-login → `/`
 
+### Booking Create / Checkout (`/booking/create`)
+- Room summary card with photos, capacity, check-in & check-out dates, nights count.
+- **Payment Method Selector**:
+  - Radio card: **Pay Online** (Credit/Debit Card, UPI, Netbanking). Shows instantaneous confirmation with provider integration.
+  - Radio card: **Pay at Hotel** (Pay directly during check-in).
+- **Price Summary**:
+  - Nights × Price per night, Total Price formatted using `Intl.NumberFormat` with currency from `/api/config/public`.
+- **Checkout Action**:
+  - Pay at hotel: "Confirm Booking" button → immediate confirmation.
+  - Pay online: "Pay and Confirm" button → claims hold, starts countdown timer for `holdExpiresAt`, and launches Razorpay checkout (or Mock checkout modal when `PAYMENT_PROVIDER=mock`).
+  - Mock Checkout Modal: displays order details, "Pay successfully" and "Fail payment" buttons.
+
 ### My Bookings (`/bookings`)
-- **Tabs**: Upcoming, Active, Past, Cancelled
+- **Tabs**: All, Upcoming, Active, Completed, Cancelled, Pending Payment
 - **List**: BookingCard per booking
   - Room image, name, type
   - Dates, guests, totalPrice
-  - Status badge
+  - Booking status badge & **Payment badge** (Paid green, Pay at hotel blue, Pending payment amber, Refunded gray, Failed/Expired red)
+  - Pending payment: live countdown timer with "Pay now" and "Cancel" buttons
+  - Cancelled: displays refund amount if applicable
   - "View Details" → `/bookings/:id`
-  - "Cancel" (if `canCancel`) → confirm modal → DELETE
 - **Pagination**
 
 ### Booking Detail (`/bookings/:id`)
-- Full booking info
-- Room details
-- Timeline: Booked → Check-in → Check-out
+- Full booking info + room details
+- Payment summary: method, status, amount paid / due, transaction/order reference
+- If `pending_payment`: countdown to hold expiration, "Pay Now" modal trigger, and immediate cancel button
+- Timeline: Booked → Paid/Pay at Hotel → Check-in → Check-out
 - Actions: Modify (if upcoming), Cancel (if `canCancel`)
-- **Modify**: Opens modal with date picker, guests → PATCH → refresh
-
-### Booking Confirm (`/booking/confirm`)
-- Success page after booking
-- Shows reference, room, dates, total
-- "View My Bookings" button
-- Email sent notice
-
-### Admin Dashboard (`/admin`)
-- **Stats cards** (grid): Total Rooms, Active Bookings, Occupancy %, Revenue (30d)
-- **Quick links** to Rooms, Bookings, Occupancy, Failed Emails
-
-### Admin Rooms (`/admin/rooms`)
-- **Table**: Name, Type, Base Price, Max Guests, Active, Actions
-- **Create/Edit Modal**: Form with all fields
-- **Toggle Active**: Inline switch
-- **Delete**: Confirm modal
 
 ### Admin Bookings (`/admin/bookings`)
-- **Filters**: Status, Date range (from/to), Guest email
-- **Table**: Reference, Guest, Room, Dates, Guests, Total, Status, Actions
-- **Cancel**: Any booking (bypasses 48h)
+- **Filters**: Status, Payment Status, Date range (from/to), Guest email, Room, Search
+- **Table**: Reference, Guest, Room, Dates, Guests, Total, Status, Payment (method & status), Actions
+- **Mark as Paid**: Button for pay-at-hotel bookings to record payment upon guest arrival
+- **Cancel & Refund**: Cancels booking and records refund details; highlights refund failures for manual administrative review
 
 ### Admin Occupancy (`/admin/occupancy`)
 - **Month selector** (prev/next, current default)

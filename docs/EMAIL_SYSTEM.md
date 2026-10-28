@@ -19,19 +19,20 @@ See [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md#email_outbox)
 All templates receive: `booking`, `room`, `user`, `nights`, `totalPrice`, `reference`
 
 ### 1. Booking Confirmation
+- **Trigger**: Dispatched only when the booking is `confirmed` (for Pay at Hotel, dispatched immediately upon booking creation; for Pay Online, dispatched upon successful payment verification).
 - **Subject**: `Booking Confirmed — {{reference}}`
-- **HTML**: Booking details, room info, dates, guests, total, cancellation policy (48h)
-- **Text**: Plain-text version
+- **HTML**: Booking details, room info, stay dates, guest count, price summary, payment method (`Pay Online` or `Pay at Hotel`), payment status, amount paid / due at check-in, provider reference, and cancellation policy.
+- **Text**: Plain-text version with full payment summary
 - **Attachment**: `booking-{{reference}}.ics`
 
 ### 2. Booking Modification
 - **Subject**: `Booking Modified — {{reference}}`
-- **HTML**: Old vs new dates/guests/price, room info
+- **HTML**: Old vs new dates/guests/price, room info, payment adjustment summary (including any automatic refund amount credited back to original payment method).
 - **Attachment**: Updated `.ics`
 
 ### 3. Booking Cancellation
 - **Subject**: `Booking Cancelled — {{reference}}`
-- **HTML**: Cancelled booking details, refund info (if applicable)
+- **HTML**: Cancelled booking details, refund breakdown (refund amount, provider refund ID, and estimated timeline of 5–7 business days for online card/UPI payments; or "No charges applied" for pay-at-hotel).
 - **Attachment**: Cancellation `.ics`
 
 ## .ics Generation

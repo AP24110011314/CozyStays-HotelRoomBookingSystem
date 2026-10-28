@@ -53,6 +53,16 @@
    - Mock transporter to hang (timeout) → verify stuck recovery re-queues after 10min
    - Verify booking creation succeeds when email worker is down
 
+### 4. Payment Test Suite (mongodb-memory-server + Mock Provider)
+- **Pay at Hotel**: `POST /bookings` creates confirmed booking and Payment `pay_at_hotel`.
+- **Online Hold**: `POST /bookings` creates `pending_payment`, holds nights (concurrent guest receives 409), and sets `holdExpiresAt`.
+- **Signature Verification**: Valid signature confirms booking; invalid signature rejected; amount mismatch rejected; duplicate calls idempotent.
+- **Hold Expiry**: Expiry cron releases `RoomNight` rows; room reappears in search; late confirmation handles re-claim or refund.
+- **Webhook Handling**: Webhook signature verification and idempotent event processing (`payment.captured`, `payment.failed`, `refund.processed`).
+- **Cancellation Refund**: Cancelling paid booking in window issues provider refund; admin cancel bypasses window and refunds.
+- **Modification Refund / Restriction**: Lower total automatically refunds difference; higher total returns 409 `PAYMENT_REQUIRED_FOR_CHANGE`.
+- **Security**: Client amount is never trusted; server always computes total from room price and dates.
+
 ### Test Utilities
 - `createTestUser(role)` → returns { user, token }
 - `createTestRoom(overrides)` → returns room

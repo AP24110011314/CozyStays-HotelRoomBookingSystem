@@ -59,12 +59,21 @@ A full-stack hotel booking system allowing guests to search available rooms, mak
 - 8 sample bookings with matching RoomNight rows
 - **Refuses to run when `NODE_ENV=production`**
 
+### 8. Payment Processing (In Scope)
+- **Payment Methods**: Pay online (Cards, UPI, Netbanking via Razorpay or simulated Mock Provider) and Pay at hotel.
+- **Provider Architecture**: Swappable provider interface (`mock` or `razorpay`) configured via `PAYMENT_PROVIDER`.
+- **Payment Lifecycle**: `pending` → `paid` / `pay_at_hotel` / `failed` / `refunded` / `partially_refunded`.
+- **Hold & Expiry**: Online booking creates `pending_payment` status and holds `RoomNight` rows until `holdExpiresAt` (default 15 mins). Worker releases nights and expires bookings if unpaid.
+- **Idempotent Verification**: Timing-safe HMAC signature verification on `POST /api/payments/verify`, backup via webhook.
+- **Cancellation & Refunds**: Cancelling a paid booking inside window triggers automatic provider refund. Modifying to lower price triggers differential refund; modifying to higher price returns 409 prompting rebook.
+- **Admin Management**: Payments list, manual mark-as-paid for pay-at-hotel bookings, and manual full/partial refund actions.
+
 ## Non-Functional
 - No Docker, no Redis, no multi-doc transactions
-- macOS, Node 20+, MongoDB local
+- macOS, Node 20+, MongoDB Atlas
 - Server port 5001 (AirPlay on 5000), Client 5173
 - CORS: exact CLIENT_URL only
 - ES modules throughout
 
 ## Out of Scope (Stretch)
-- Payments, reviews, multi-property, loyalty, PWA, i18n, SMS, channel manager
+- Reviews, multi-property, loyalty, PWA, i18n, SMS, channel manager
