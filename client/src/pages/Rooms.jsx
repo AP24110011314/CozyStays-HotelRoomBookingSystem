@@ -203,11 +203,11 @@ export default function Rooms() {
         {/* DESKTOP SIDEBAR (1024px and up): Exactly 320px wide, ordered: Calendar -> Summary -> Guests -> Filters */}
         <aside
           aria-label="Search and filter sidebar"
-          className="hidden lg:flex flex-col gap-4 w-[320px] shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-1"
+          className="hidden lg:flex flex-col gap-4 w-[320px] shrink-0 self-start"
         >
           {/* 1. One-Month Calendar Card */}
-          <div className="card p-4 space-y-3">
-            <div className="flex items-center justify-between pb-1 border-b border-taupe/60">
+          <div className="card p-4 space-y-2.5">
+            <div className="flex items-center justify-between pb-1.5 border-b border-taupe/60">
               <span className="text-xs font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-forest" />
                 Select Dates
@@ -226,10 +226,11 @@ export default function Rooms() {
               checkOut={checkOut}
               onChange={handleDateChange}
               onClear={handleClearDates}
+              showClearButton={false}
             />
 
             {/* 2. Selected-Range Summary */}
-            <div className="pt-2 border-t border-taupe/60 text-center mac-subpanel p-2.5">
+            <div className="mac-subpanel p-2.5 text-center mt-2">
               <p className="text-xs font-bold text-forest">
                 {selectedRangeSummary}
               </p>
@@ -273,8 +274,8 @@ export default function Rooms() {
           </div>
 
           {/* 4. FilterPanel */}
-          <div className="card p-5 space-y-5">
-            <div className="flex items-center justify-between border-b border-taupe pb-3">
+          <div className="card p-4 space-y-4">
+            <div className="flex items-center justify-between border-b border-taupe/60 pb-2">
               <h3 className="font-bold text-forest flex items-center gap-2 text-sm">
                 <Filter className="w-4 h-4 text-forest" />
                 Filter Rooms
@@ -292,12 +293,12 @@ export default function Rooms() {
             </div>
 
             {/* Room Type */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold uppercase tracking-wider text-charcoal/70">Room Type</label>
               <select
                 value={type}
                 onChange={(e) => updateParam('type', e.target.value)}
-                className="input py-2 px-3 text-sm cursor-pointer"
+                className="w-full text-xs sm:text-sm rounded-xl border border-taupe/90 bg-white/90 backdrop-blur-md py-2.5 px-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-forest cursor-pointer"
               >
                 <option value="">All Types</option>
                 {ROOM_TYPES.map((t) => (
@@ -309,7 +310,7 @@ export default function Rooms() {
             </div>
 
             {/* Price Range */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold uppercase tracking-wider text-charcoal/70">Price Range (₹)</label>
               <div className="grid grid-cols-2 gap-2">
                 <input
@@ -317,25 +318,25 @@ export default function Rooms() {
                   placeholder="Min"
                   value={minPrice}
                   onChange={(e) => updateParam('minPrice', e.target.value)}
-                  className="input py-2 px-3 text-sm"
+                  className="w-full text-xs sm:text-sm rounded-xl border border-taupe/90 bg-white/90 backdrop-blur-md py-2 px-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
                 />
                 <input
                   type="number"
                   placeholder="Max"
                   value={maxPrice}
                   onChange={(e) => updateParam('maxPrice', e.target.value)}
-                  className="input py-2 px-3 text-sm"
+                  className="w-full text-xs sm:text-sm rounded-xl border border-taupe/90 bg-white/90 backdrop-blur-md py-2 px-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
                 />
               </div>
             </div>
 
             {/* Sort Order */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-xs font-bold uppercase tracking-wider text-charcoal/70">Sort By</label>
               <select
                 value={sort}
                 onChange={(e) => updateParam('sort', e.target.value)}
-                className="input py-2 px-3 text-sm cursor-pointer"
+                className="w-full text-xs sm:text-sm rounded-xl border border-taupe/90 bg-white/90 backdrop-blur-md py-2.5 px-3 text-charcoal focus:outline-none focus:ring-2 focus:ring-forest cursor-pointer"
               >
                 <option value="priceAsc">Price: Low to High</option>
                 <option value="priceDesc">Price: High to Low</option>
@@ -345,14 +346,14 @@ export default function Rooms() {
             </div>
 
             {/* Amenities Multi-select */}
-            <div className="space-y-2 pt-2 border-t border-taupe">
+            <div className="space-y-2 pt-2.5 border-t border-taupe/60">
               <label className="text-xs font-bold uppercase tracking-wider text-charcoal/70">Amenities</label>
               <div className="space-y-2">
                 {COMMON_AMENITIES.map((item) => {
                   const currentList = amenities ? amenities.split(',').filter(Boolean) : [];
                   const isChecked = currentList.includes(item);
                   return (
-                    <label key={item} className="flex items-center gap-2 text-xs text-charcoal cursor-pointer select-none">
+                    <label key={item} className="flex items-center gap-2 text-xs text-charcoal hover:text-forest cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={isChecked}
@@ -362,7 +363,7 @@ export default function Rooms() {
                             : currentList.filter((a) => a !== item);
                           updateParam('amenities', nextList.join(','));
                         }}
-                        className="rounded border-taupe text-forest focus:ring-forest w-4 h-4"
+                        className="rounded border-taupe text-forest focus:ring-forest w-4 h-4 cursor-pointer"
                       />
                       <span>{item}</span>
                     </label>

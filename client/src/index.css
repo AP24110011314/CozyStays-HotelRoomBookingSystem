@@ -223,7 +223,7 @@
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
-  --rdp-cell-size: 36px !important;
+  --rdp-cell-size: 32px !important;
 }
 
 .rdp-months {
@@ -260,7 +260,7 @@
   display: table-cell !important;
   width: 14.285% !important;
   text-align: center !important;
-  padding: 4px 0 !important;
+  padding: 3px 0 !important;
   vertical-align: middle !important;
 }
 
@@ -268,12 +268,28 @@
   display: table-cell !important;
   width: 14.285% !important;
   text-align: center !important;
-  padding: 2px 0 !important;
+  padding: 1.5px 0 !important;
   vertical-align: middle !important;
 }
 
 .rdp-button {
+  width: 32px !important;
+  height: 32px !important;
   border-radius: 8px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Hide number input spinners for clean compact inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 /* Ensure disabled and past dates are clearly legible instead of washed out/invisible */

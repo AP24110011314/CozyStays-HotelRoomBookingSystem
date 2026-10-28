@@ -10,6 +10,7 @@ export default function DateRangePicker({
   onChange,
   disabledDates = [],
   onClear,
+  showClearButton = true,
   className = '',
 }) {
   const [range, setRange] = useState({
@@ -65,13 +66,13 @@ export default function DateRangePicker({
           caption_label: 'text-sm font-bold text-forest tracking-tight',
           nav: 'flex items-center gap-1',
           nav_button:
-            'w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-charcoal hover:text-forest hover:bg-taupe/40 border border-taupe/70 shadow-2xs transition-all active:scale-95',
+            'w-7 h-7 rounded-lg flex items-center justify-center text-charcoal hover:text-forest hover:bg-taupe/40 border border-taupe/70 shadow-2xs transition-all active:scale-95',
           table: 'w-full table-fixed border-collapse',
           head_row: '',
           head_cell: 'text-center text-[11px] font-bold text-charcoal/70 uppercase tracking-wider py-1',
           row: '',
           cell: 'text-center p-0.5 relative',
-          day: 'w-8 h-8 sm:w-9 sm:h-9 mx-auto rounded-lg text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center justify-center text-charcoal hover:bg-forest/10 hover:text-forest',
+          day: 'w-8 h-8 mx-auto rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-center text-charcoal hover:bg-forest/10 hover:text-forest',
         }}
         modifiersClassNames={{
           selected: 'bg-forest text-ivory font-bold hover:bg-forest shadow-xs',
@@ -84,7 +85,7 @@ export default function DateRangePicker({
         }}
       />
 
-      {hasSelection && onClear && (
+      {showClearButton && hasSelection && onClear && (
         <div className="pt-2 mt-2 border-t border-taupe/70 text-right">
           <button
             type="button"
