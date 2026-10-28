@@ -36,9 +36,16 @@ npm run dev
 - Client: http://localhost:5173
 - Health: http://localhost:5001/api/health
 
-### Default Accounts
-- Admin: `admin@hotel.test` / `Admin@12345`
-- Guests: `guest1@test.com` / `Guest@12345`, `guest2@test.com` / `Guest@12345`
+### Demo Users & Credentials
+
+| Role | Email | Password | Permissions & Notes |
+|------|-------|----------|---------------------|
+| **Guest (Default Demo)** | `guest1@test.com` | `Guest@12345` | Standard guest account with pre-seeded reservations. Includes a 1-click **Auto-fill** button on the `/login` page. |
+| **Guest (Secondary)** | `guest2@test.com` | `Guest@12345` | Additional guest account for testing concurrent reservations and multi-user availability. |
+| **Admin** | `admin@hotel.test` | `Admin@12345` | Full access to `/admin` dashboard, room catalog CRUD, bookings management, occupancy calendar, refunds, and email queue. |
+
+> [!TIP]
+> On the client login page (`http://localhost:5173/login`), click the **Auto-fill** button in the demo credentials card to automatically populate the demo guest login and sign in with one click.
 
 ## Scripts
 | Location | Command | Description |
