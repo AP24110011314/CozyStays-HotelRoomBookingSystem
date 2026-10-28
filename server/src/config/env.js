@@ -5,7 +5,19 @@ const isTest = process.env.NODE_ENV === 'test' || Boolean(process.env.VITEST);
 const envSchema = z.object({
   APP_NAME: z.string().default('CozyStays'),
   PORT: z.coerce.number().int().positive().default(5001),
-  NODE_ENV: z.enum(['development', 'production', 'test']).default(isTest ? 'test' : 'development'),
+  NODE_ENV: z.preprocess(
+    (val) => {
+      if (typeof val === 'string') {
+        const clean = val.replace(/^["']|["']$/g, '').trim().toLowerCase();
+        if (!clean) return isTest ? 'test' : 'development';
+        if (clean === 'prod') return 'production';
+        if (clean === 'dev') return 'development';
+        return clean;
+      }
+      return val ?? (isTest ? 'test' : 'development');
+    },
+    z.enum(['development', 'production', 'test']).default(isTest ? 'test' : 'development'),
+  ),
   MONGODB_URI: isTest
     ? z.string().optional()
     : z.string({
