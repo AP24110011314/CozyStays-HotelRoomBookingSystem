@@ -112,4 +112,30 @@ A comprehensive line-by-line audit of the codebase against `docs/IMPLEMENTATION_
 
 ## Conclusion
 The base implementation is 100% complete with 0 BROKEN, 0 MISSING, and 0 PARTIAL items.
-Ready to proceed with **Part B** (Login and Register redesign with hotel photo and specifications) and **Part C** (Payment methods implementation).
+All enhancements for **Part B** (Login and Register redesign with hotel photo and specifications) and **Part C** (Payment methods implementation) have been built, verified, and audited live.
+
+---
+
+## Part B & Part C Addendum Audit
+
+### Part B: Login & Register Redesign
+- [x] Local hotel photography (`hotel-login.jpg`, `hotel-login.webp`) under 300KB, 1600px, properly credited in `README.md` — **DONE**
+- [x] Responsive split layout: desktop 2-col with photo overlay and spec list; mobile compact 200px banner with 3 chips, form, and full spec grid below — **DONE**
+- [x] Dynamic specifications block driven by `client/src/config/hotel.js` and live cancellation policy from `GET /api/config/public` — **DONE**
+- [x] Password visibility toggle, inline validation errors, loading state on submit, accessible error alert banner — **DONE**
+- [x] Preserves `?next=` query redirect destination — **DONE**
+
+### Part C: Payment Methods & Management
+- [x] Payment collection with unique sparse indexes on `providerOrderId` and `providerPaymentId` — **DONE**
+- [x] Payment provider architecture: Mock provider (`PAYMENT_PROVIDER=mock`) with simulated gateway dialog and Razorpay provider (`PAYMENT_PROVIDER=razorpay`) with test keys — **DONE**
+- [x] Dynamic Razorpay checkout script loader (`https://checkout.razorpay.com/v1/checkout.js`) — **DONE**
+- [x] Checkout payment method selector (Radio cards for "Pay Online" and "Pay at Hotel") — **DONE**
+- [x] Real-time 15-minute room hold on `pending_payment` with live `HoldCountdown` timer — **DONE**
+- [x] Automated in-process hold expiry worker running every 60s releasing expired room holds — **DONE**
+- [x] Timing-safe HMAC-SHA256 signature verification (`POST /api/payments/verify`) with idempotency — **DONE**
+- [x] Automatic refunds on booking cancellation within window — **DONE**
+- [x] Automatic differential refund on booking modification to cheaper stay; 409 conflict on more expensive stay — **DONE**
+- [x] Admin mark-as-paid endpoint and action button for Pay-at-Hotel bookings — **DONE**
+- [x] Admin Payments management portal (`/admin/payments`) with transaction auditing and refund dialog — **DONE**
+- [x] Realistic Rupee amounts (₹1,500 – ₹15,000) seeded into MongoDB Atlas with sample payments — **DONE**
+- [x] Live automated 28/28 feature audit suite executed and passing with 0 errors — **DONE**
