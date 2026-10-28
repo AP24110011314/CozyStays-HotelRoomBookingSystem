@@ -79,18 +79,21 @@ export default function Login() {
             className="w-full h-full object-cover opacity-60"
           />
         </picture>
-        <div className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/70 to-transparent flex flex-col justify-end p-5">
-          <Link to="/" className="inline-flex items-center gap-2 text-ivory mb-1.5">
-            <div className="w-8 h-8 rounded-lg bg-brass text-charcoal flex items-center justify-center shadow-xs">
-              <Hotel className="w-4 h-4" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-charcoal-900/40 to-transparent flex flex-col justify-end p-5">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-taupe shadow-sm w-fit mb-2"
+          >
+            <div className="w-7 h-7 rounded-lg bg-forest text-brass flex items-center justify-center shadow-xs">
+              <Hotel className="w-4 h-4 text-brass" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-ivory">{HOTEL_CONFIG.name}</span>
+            <span className="text-base font-black tracking-tight text-charcoal">{HOTEL_CONFIG.name}</span>
           </Link>
-          <div className="flex flex-wrap gap-1.5 mt-1">
+          <div className="flex flex-wrap gap-1.5">
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[11px] font-bold bg-forest-950/90 border border-brass/50 text-white px-2.5 py-1 rounded-md shadow-xs"
+                className="text-[11px] font-bold bg-white/95 border border-taupe text-charcoal px-2.5 py-1 rounded-md shadow-xs"
               >
                 {chip}
               </span>
@@ -100,7 +103,7 @@ export default function Login() {
       </div>
 
       {/* DESKTOP LEFT COLUMN: Photo, Specs & Branding (1024px and up) */}
-      <div className="hidden lg:flex lg:col-span-7 relative flex-col justify-between p-6 lg:p-8 xl:p-12 text-ivory min-h-screen bg-forest-950 overflow-y-auto">
+      <div className="hidden lg:flex lg:col-span-7 relative flex-col justify-between p-6 lg:p-8 xl:p-10 text-ivory min-h-screen bg-charcoal-900 overflow-y-auto">
         {/* Background Image with optimized <picture> */}
         <picture className="absolute inset-0 z-0">
           <source srcSet="/images/hotel-login.webp" type="image/webp" />
@@ -108,27 +111,29 @@ export default function Login() {
             src="/images/hotel-login.jpg"
             alt={`Exterior and amenities of ${HOTEL_CONFIG.name}`}
             width="1600"
-            height="1067"
+            height="900"
             loading="eager"
-            className="w-full h-full object-cover scale-105"
+            className="w-full h-full object-cover"
           />
         </picture>
 
-        {/* Soft dark gradient overlays */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-forest-950 via-forest-950/90 to-forest-950/70" />
-        <div className="absolute inset-0 z-0 bg-forest-950/50 mix-blend-multiply" />
+        {/* Subtle dark gradient overlay so the wide view hotel photo is beautifully visible */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-charcoal-900/65 via-charcoal-900/40 to-charcoal-900/25" />
 
         {/* Top Branding */}
         <div className="relative z-10">
-          <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-2xl bg-brass text-charcoal flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-              <Hotel className="w-6 h-6" />
+          <Link
+            to="/"
+            className="inline-flex items-center gap-3 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-taupe shadow-md group hover:bg-white transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl bg-forest text-brass flex items-center justify-center shadow-xs">
+              <Hotel className="w-5 h-5 text-brass" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-white block">
+              <span className="text-lg font-black tracking-tight text-charcoal block leading-none">
                 {HOTEL_CONFIG.name}
               </span>
-              <span className="text-xs text-brass tracking-wider uppercase font-bold">
+              <span className="text-[10px] text-brass-700 tracking-wider uppercase font-extrabold block mt-0.5">
                 Luxury Stays & Suites
               </span>
             </div>
@@ -136,18 +141,18 @@ export default function Login() {
         </div>
 
         {/* Bottom Content: Tagline + Specifications Grid */}
-        <div className="relative z-10 space-y-4 xl:space-y-6 pt-6 xl:pt-10">
-          <div className="space-y-1.5 max-w-xl">
-            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
+        <div className="relative z-10 space-y-3.5 xl:space-y-4 pt-6 xl:pt-8">
+          <div className="space-y-1.5 max-w-xl bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-taupe shadow-md">
+            <h2 className="text-xl xl:text-2xl font-black tracking-tight text-charcoal leading-snug">
               {HOTEL_CONFIG.tagline}
             </h2>
-            <p className="text-sm text-taupe-100 font-medium leading-relaxed drop-shadow-sm">
+            <p className="text-xs text-charcoal-700 font-medium leading-relaxed">
               Sign in to manage your bookings, make quick modifications, and access exclusive guest rates.
             </p>
           </div>
 
           {/* Specifications */}
-          <div className="pt-1">
+          <div className="pt-0.5">
             <HotelSpecs
               variant="overlay"
               cancellationHours={config?.cancellationWindowHours}
