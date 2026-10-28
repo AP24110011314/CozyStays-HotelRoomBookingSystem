@@ -24,7 +24,7 @@ export default function HoldCountdown({ expiresAt, onExpire, className = '' }) {
 
   if (!expiresAt || timeLeft <= 0) {
     return (
-      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 ${className}`}>
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-brick-50 text-brick border border-brick-200 ${className}`}>
         <Clock className="w-3.5 h-3.5" />
         Hold Expired
       </span>
@@ -39,8 +39,8 @@ export default function HoldCountdown({ expiresAt, onExpire, className = '' }) {
     <span
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
         isUrgent
-          ? 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
-          : 'bg-amber-50 text-amber-800 border-amber-200'
+          ? 'bg-brick-50 text-brick border-brick-200 animate-pulse font-bold'
+          : 'bg-brass-50 text-brass-800 border-brass font-bold'
       } ${className}`}
       title={`Hold expires at ${new Date(expiresAt).toLocaleTimeString()}`}
     >

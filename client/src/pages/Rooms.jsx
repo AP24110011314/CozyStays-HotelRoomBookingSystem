@@ -476,8 +476,8 @@ export default function Rooms() {
               ))}
             </div>
           ) : error ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-rose-200 p-8">
-              <p className="text-rose-700 text-base font-bold">Failed to load rooms</p>
+            <div className="text-center py-16 bg-white rounded-2xl border border-brick-200 p-8">
+              <p className="text-brick text-base font-bold">Failed to load rooms</p>
               <p className="text-charcoal/70 text-sm mt-1">Please try again or check your dates.</p>
             </div>
           ) : roomsList.length === 0 ? (

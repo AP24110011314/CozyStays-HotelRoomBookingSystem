@@ -1,35 +1,45 @@
-import { CheckCircle2, Clock, Hotel, RotateCcw, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Clock, Hotel, RotateCcw, AlertCircle, XCircle } from 'lucide-react';
 
 const paymentStatusConfig = {
   paid: {
     label: 'Paid',
     icon: CheckCircle2,
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    className: 'bg-forest text-ivory border-forest shadow-2xs',
   },
   pay_at_hotel: {
     label: 'Pay at Hotel',
     icon: Hotel,
-    className: 'bg-blue-50 text-blue-700 border-blue-200',
+    className: 'bg-taupe-100 text-forest font-bold border-taupe',
   },
   pending: {
-    label: 'Payment Pending',
+    label: 'Pending Payment',
     icon: Clock,
-    className: 'bg-amber-50 text-amber-700 border-amber-200',
+    className: 'bg-brass-50 text-brass-800 border-brass font-bold',
+  },
+  pending_payment: {
+    label: 'Pending Payment',
+    icon: Clock,
+    className: 'bg-brass-50 text-brass-800 border-brass font-bold',
   },
   refunded: {
     label: 'Refunded',
     icon: RotateCcw,
-    className: 'bg-slate-100 text-slate-700 border-slate-200',
+    className: 'bg-taupe-100 text-charcoal/80 border-taupe',
   },
   partially_refunded: {
     label: 'Partially Refunded',
     icon: RotateCcw,
-    className: 'bg-purple-50 text-purple-700 border-purple-200',
+    className: 'bg-taupe-100 text-charcoal/80 border-taupe',
   },
   failed: {
     label: 'Payment Failed',
     icon: AlertCircle,
-    className: 'bg-rose-50 text-rose-700 border-rose-200',
+    className: 'bg-brick-50 text-brick border-brick-200 font-bold',
+  },
+  expired: {
+    label: 'Hold Expired',
+    icon: XCircle,
+    className: 'bg-brick-50 text-brick border-brick-200 font-bold',
   },
 };
 
@@ -37,7 +47,7 @@ export default function PaymentBadge({ status = 'pending', className = '', showI
   const config = paymentStatusConfig[status] || {
     label: status,
     icon: Clock,
-    className: 'bg-slate-100 text-slate-700 border-slate-200',
+    className: 'bg-taupe-100 text-charcoal/80 border-taupe',
   };
 
   const Icon = config.icon;
@@ -51,4 +61,3 @@ export default function PaymentBadge({ status = 'pending', className = '', showI
     </span>
   );
 }
-

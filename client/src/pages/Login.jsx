@@ -65,9 +65,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col lg:grid lg:grid-cols-12 overflow-x-hidden">
+    <div className="min-h-screen bg-ivory flex flex-col lg:grid lg:grid-cols-12 overflow-x-hidden">
       {/* MOBILE HEADER BANNER (Visible below 1024px) */}
-      <div className="lg:hidden relative w-full h-52 sm:h-56 bg-slate-900 overflow-hidden shrink-0">
+      <div className="lg:hidden relative w-full h-52 sm:h-56 bg-forest-900 overflow-hidden shrink-0">
         <picture>
           <source srcSet="/images/hotel-login.webp" type="image/webp" />
           <img
@@ -79,18 +79,18 @@ export default function Login() {
             className="w-full h-full object-cover opacity-60"
           />
         </picture>
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent flex flex-col justify-end p-5">
-          <Link to="/" className="inline-flex items-center gap-2 text-white mb-1.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+        <div className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/70 to-transparent flex flex-col justify-end p-5">
+          <Link to="/" className="inline-flex items-center gap-2 text-ivory mb-1.5">
+            <div className="w-8 h-8 rounded-lg bg-brass text-charcoal flex items-center justify-center shadow-xs">
               <Hotel className="w-4 h-4" />
             </div>
-            <span className="text-lg font-bold tracking-tight">{HOTEL_CONFIG.name}</span>
+            <span className="text-lg font-bold tracking-tight text-ivory">{HOTEL_CONFIG.name}</span>
           </Link>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[10px] font-semibold bg-white/20 backdrop-blur-md text-white px-2 py-0.5 rounded-md"
+                className="text-[10px] font-semibold bg-white/20 backdrop-blur-md text-ivory px-2 py-0.5 rounded-md"
               >
                 {chip}
               </span>
@@ -100,7 +100,7 @@ export default function Login() {
       </div>
 
       {/* DESKTOP LEFT COLUMN: Photo, Specs & Branding (1024px and up) */}
-      <div className="hidden lg:flex lg:col-span-7 relative flex-col justify-between p-10 xl:p-14 text-white overflow-hidden min-h-screen bg-slate-950">
+      <div className="hidden lg:flex lg:col-span-7 relative flex-col justify-between p-10 xl:p-14 text-ivory overflow-hidden min-h-screen bg-forest-950">
         {/* Background Image with optimized <picture> */}
         <picture className="absolute inset-0 z-0">
           <source srcSet="/images/hotel-login.webp" type="image/webp" />
@@ -115,20 +115,20 @@ export default function Login() {
         </picture>
 
         {/* Soft dark gradient overlays */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/30" />
-        <div className="absolute inset-0 z-0 bg-indigo-950/20 mix-blend-multiply" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-forest-950 via-forest-950/80 to-forest-950/40" />
+        <div className="absolute inset-0 z-0 bg-forest-950/30 mix-blend-multiply" />
 
         {/* Top Branding */}
         <div className="relative z-10">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="w-11 h-11 rounded-2xl bg-indigo-600/90 backdrop-blur-md text-white flex items-center justify-center shadow-lg shadow-indigo-600/40 group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-2xl bg-brass text-charcoal flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
               <Hotel className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-white block">
+              <span className="text-xl font-black tracking-tight text-ivory block">
                 {HOTEL_CONFIG.name}
               </span>
-              <span className="text-xs text-indigo-200 tracking-wider uppercase font-semibold">
+              <span className="text-xs text-brass tracking-wider uppercase font-semibold">
                 Luxury Stays & Suites
               </span>
             </div>
@@ -138,10 +138,10 @@ export default function Login() {
         {/* Bottom Content: Tagline + Specifications Grid */}
         <div className="relative z-10 space-y-6 pt-12">
           <div className="space-y-2 max-w-xl">
-            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-white">
+            <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-ivory">
               {HOTEL_CONFIG.tagline}
             </h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-taupe-100 leading-relaxed">
               Sign in to manage your bookings, make quick modifications, and access exclusive guest rates.
             </p>
           </div>
@@ -161,13 +161,13 @@ export default function Login() {
         <div className="w-full max-w-md mx-auto space-y-6">
           {/* Header */}
           <div className="space-y-1.5">
-            <div className="hidden lg:flex items-center gap-2 text-indigo-600 font-semibold text-xs tracking-wider uppercase mb-1">
+            <div className="hidden lg:flex items-center gap-2 text-forest font-semibold text-xs tracking-wider uppercase mb-1">
               <span>Guest Portal</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal tracking-tight">
               Welcome Back
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500">
+            <p className="text-xs sm:text-sm text-charcoal/60">
               Sign in to continue to your reservations and account
             </p>
           </div>
@@ -176,9 +176,9 @@ export default function Login() {
           {errorMessage && (
             <div
               role="alert"
-              className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm flex items-start gap-2.5 animate-fadeIn"
+              className="p-3.5 rounded-xl bg-brick-50 border border-brick-200 text-brick-700 text-sm flex items-start gap-2.5 animate-fadeIn"
             >
-              <AlertCircle className="w-5 h-5 shrink-0 text-rose-500 mt-0.5" />
+              <AlertCircle className="w-5 h-5 shrink-0 text-brick mt-0.5" />
               <div className="flex-1 text-xs sm:text-sm font-medium">{errorMessage}</div>
             </div>
           )}
@@ -188,23 +188,23 @@ export default function Login() {
             <div className="space-y-1.5">
               <label
                 htmlFor="email"
-                className="text-xs font-bold uppercase tracking-wider text-slate-700"
+                className="text-xs font-bold uppercase tracking-wider text-charcoal/80"
               >
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <Mail className="w-4 h-4 text-charcoal/40 absolute left-3.5 top-3.5" />
                 <input
                   id="email"
                   type="email"
                   {...register('email')}
                   placeholder="name@example.com"
                   autoComplete="email"
-                  className="w-full pl-10 pr-3 text-base rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2.5 min-h-[44px]"
+                  className="input pl-10 pr-3"
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-rose-600 font-medium">{errors.email.message}</p>
+                <p className="text-xs text-brick font-medium">{errors.email.message}</p>
               )}
             </div>
 
@@ -212,43 +212,43 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <label
                   htmlFor="password"
-                  className="text-xs font-bold uppercase tracking-wider text-slate-700"
+                  className="text-xs font-bold uppercase tracking-wider text-charcoal/80"
                 >
                   Password
                 </label>
               </div>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-charcoal/40 absolute left-3.5 top-3.5" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   {...register('password')}
                   placeholder="••••••••"
                   autoComplete="current-password"
-                  className="w-full pl-10 pr-11 text-base rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-2.5 min-h-[44px]"
+                  className="input pl-10 pr-11"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-slate-600 rounded-lg min-w-[32px] min-h-[32px] flex items-center justify-center transition-colors"
+                  className="absolute right-2.5 top-2.5 p-1 text-charcoal/40 hover:text-charcoal rounded-lg min-w-[32px] min-h-[32px] flex items-center justify-center transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-rose-600 font-medium">{errors.password.message}</p>
+                <p className="text-xs text-brick font-medium">{errors.password.message}</p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-primary w-full justify-center py-3 text-sm font-bold min-h-[48px] shadow-sm hover:shadow-md transition-all active:scale-[0.99] mt-2"
+              className="btn-primary w-full justify-center py-3 text-sm font-bold min-h-[48px] shadow-xs hover:shadow-sm transition-all active:scale-[0.99] mt-2"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-charcoal/30 border-t-charcoal rounded-full animate-spin" />
                   Signing in...
                 </span>
               ) : (
@@ -261,11 +261,11 @@ export default function Login() {
           </form>
 
           {/* Switch to Register */}
-          <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
+          <div className="pt-4 border-t border-taupe text-center text-xs text-charcoal/60">
             Don&apos;t have an account?{' '}
             <Link
               to={nextUrl !== '/' ? `/register?next=${encodeURIComponent(nextUrl)}` : '/register'}
-              className="font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 ml-1"
+              className="font-bold text-forest hover:text-forest-600 inline-flex items-center gap-1 ml-1"
             >
               Sign up
               <ArrowRight className="w-3.5 h-3.5" />
@@ -273,8 +273,8 @@ export default function Login() {
           </div>
 
           {/* Demo Credentials Box */}
-          <div className="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-3.5 text-xs text-indigo-900 space-y-1.5 text-center">
-            <div className="flex items-center justify-between text-slate-800 font-semibold px-1">
+          <div className="bg-forest-50 border border-forest-100 rounded-2xl p-3.5 text-xs text-forest space-y-1.5 text-center">
+            <div className="flex items-center justify-between text-charcoal font-semibold px-1">
               <span>Demo Guest Credentials:</span>
               <button
                 type="button"
@@ -282,19 +282,19 @@ export default function Login() {
                   setValue('email', 'guest1@test.com', { shouldValidate: true });
                   setValue('password', 'Guest@12345', { shouldValidate: true });
                 }}
-                className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
+                className="text-[11px] text-forest hover:text-forest-700 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
               >
                 Auto-fill
               </button>
             </div>
-            <p className="font-mono text-[11px] text-indigo-700 bg-white/80 py-1.5 px-3 rounded-xl border border-indigo-100/70 block select-all">
+            <p className="font-mono text-[11px] text-forest bg-white py-1.5 px-3 rounded-xl border border-taupe block select-all">
               guest1@test.com / Guest@12345
             </p>
           </div>
 
           {/* Specifications block below form on Mobile */}
-          <div className="lg:hidden pt-6 border-t border-slate-200">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+          <div className="lg:hidden pt-6 border-t border-taupe">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-charcoal/60 mb-3">
               Hotel Amenities & Specifications
             </h3>
             <HotelSpecs

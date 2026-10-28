@@ -107,7 +107,6 @@ export default function AdminRooms() {
       queryClient.invalidateQueries({ queryKey: ['admin', 'rooms'] });
     },
     onError: (error) => {
-      // Guarded delete notification
       toast.error(error.response?.data?.error?.message || 'Cannot delete room with active or future bookings');
     },
   });
@@ -152,10 +151,10 @@ export default function AdminRooms() {
 
   const typeLabels = { single: 'Single', double: 'Double', deluxe: 'Deluxe', suite: 'Suite' };
   const typeBadgeClasses = {
-    single: 'badge-indigo',
-    double: 'badge-info',
-    deluxe: 'badge-purple',
-    suite: 'badge-warning',
+    single: 'badge-forest',
+    double: 'badge-taupe',
+    deluxe: 'badge-brass',
+    suite: 'badge-forest',
   };
 
   return (
@@ -163,8 +162,8 @@ export default function AdminRooms() {
       {/* Header and Add Action */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Room Catalog</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage all hotel rooms, active statuses, and specifications</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-charcoal tracking-tight">Room Catalog</h1>
+          <p className="text-sm text-charcoal/60 mt-1">Manage all hotel rooms, active statuses, and specifications</p>
         </div>
         <button
           onClick={() => {
@@ -192,7 +191,7 @@ export default function AdminRooms() {
       {/* Filter and Search Bar */}
       <div className="card p-4 flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-charcoal/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchTerm}
@@ -218,15 +217,15 @@ export default function AdminRooms() {
 
       {/* Modal / Form Drawer */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between p-5 sm:p-6 border-b border-slate-100">
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/50 backdrop-blur-sm overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-taupe w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-5 sm:p-6 border-b border-taupe">
+              <h2 className="text-lg sm:text-xl font-bold text-charcoal">
                 {editingRoom ? `Edit Room: ${editingRoom.name}` : 'Create New Room'}
               </h2>
               <button
                 onClick={handleCancel}
-                className="w-9 h-9 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center"
+                className="w-9 h-9 rounded-lg text-charcoal/40 hover:text-charcoal hover:bg-taupe/30 flex items-center justify-center cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -242,7 +241,7 @@ export default function AdminRooms() {
                     className="input"
                     placeholder="e.g. Deluxe Ocean View 302"
                   />
-                  {errors.name && <p className="mt-1 text-xs text-rose-600">{errors.name.message}</p>}
+                  {errors.name && <p className="mt-1 text-xs text-brick">{errors.name.message}</p>}
                 </div>
 
                 <div>
@@ -253,7 +252,7 @@ export default function AdminRooms() {
                     <option value="deluxe">Deluxe</option>
                     <option value="suite">Suite</option>
                   </select>
-                  {errors.type && <p className="mt-1 text-xs text-rose-600">{errors.type.message}</p>}
+                  {errors.type && <p className="mt-1 text-xs text-brick">{errors.type.message}</p>}
                 </div>
 
                 <div>
@@ -266,7 +265,7 @@ export default function AdminRooms() {
                     className="input"
                     placeholder="2"
                   />
-                  {errors.maxGuests && <p className="mt-1 text-xs text-rose-600">{errors.maxGuests.message}</p>}
+                  {errors.maxGuests && <p className="mt-1 text-xs text-brick">{errors.maxGuests.message}</p>}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -279,7 +278,7 @@ export default function AdminRooms() {
                     className="input"
                     placeholder="3500"
                   />
-                  {errors.basePrice && <p className="mt-1 text-xs text-rose-600">{errors.basePrice.message}</p>}
+                  {errors.basePrice && <p className="mt-1 text-xs text-brick">{errors.basePrice.message}</p>}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -291,7 +290,7 @@ export default function AdminRooms() {
                     className="input min-h-[80px]"
                     placeholder="Describe room features, view, and furnishings..."
                   />
-                  {errors.description && <p className="mt-1 text-xs text-rose-600">{errors.description.message}</p>}
+                  {errors.description && <p className="mt-1 text-xs text-brick">{errors.description.message}</p>}
                 </div>
 
                 <div className="sm:col-span-2">
@@ -320,11 +319,11 @@ export default function AdminRooms() {
                     className="input"
                     placeholder="https://images.unsplash.com/..., https://..."
                   />
-                  {errors.photos && <p className="mt-1 text-xs text-rose-600">{errors.photos.message}</p>}
+                  {errors.photos && <p className="mt-1 text-xs text-brick">{errors.photos.message}</p>}
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-taupe">
                 <button
                   type="button"
                   onClick={handleCancel}
@@ -351,10 +350,10 @@ export default function AdminRooms() {
           {[...Array(5)].map((_, i) => (
             <div key={i} className="card p-5 animate-pulse flex items-center justify-between">
               <div className="space-y-2 w-1/3">
-                <div className="h-4 bg-slate-200 rounded w-full"></div>
-                <div className="h-3 bg-slate-100 rounded w-2/3"></div>
+                <div className="h-4 bg-taupe/40 rounded w-full"></div>
+                <div className="h-3 bg-taupe/20 rounded w-2/3"></div>
               </div>
-              <div className="h-8 bg-slate-200 rounded w-20"></div>
+              <div className="h-8 bg-taupe/40 rounded w-20"></div>
             </div>
           ))}
         </div>
@@ -363,8 +362,8 @@ export default function AdminRooms() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
-                  <th className="p-4 sm:p-5 sticky left-0 bg-slate-50 z-10 min-w-[220px]">Room</th>
+                <tr className="bg-taupe-50 text-charcoal/70 font-semibold border-b border-taupe">
+                  <th className="p-4 sm:p-5 sticky left-0 bg-taupe-50 z-10 min-w-[220px]">Room</th>
                   <th className="p-4 sm:p-5">Type</th>
                   <th className="p-4 sm:p-5">Price/Night</th>
                   <th className="p-4 sm:p-5">Max Guests</th>
@@ -372,39 +371,39 @@ export default function AdminRooms() {
                   <th className="p-4 sm:p-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-taupe">
                 {rooms.map((room) => (
-                  <tr key={room.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="p-4 sm:p-5 sticky left-0 bg-white z-10 font-medium text-slate-900 border-r sm:border-r-0 border-slate-100">
+                  <tr key={room.id} className="hover:bg-taupe-50/70 transition-colors">
+                    <td className="p-4 sm:p-5 sticky left-0 bg-white z-10 font-medium text-charcoal border-r sm:border-r-0 border-taupe">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 border border-slate-200">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-taupe-100 flex-shrink-0 border border-taupe">
                           {room.photos && room.photos.length > 0 ? (
                             <img src={room.photos[0]} alt={room.name} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-400">
+                            <div className="w-full h-full flex items-center justify-center text-charcoal/40">
                               <ImageIcon className="w-5 h-5" />
                             </div>
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-slate-900 truncate">{room.name}</p>
-                          <p className="text-xs text-slate-400 truncate max-w-[180px] sm:max-w-xs">{room.description}</p>
+                          <p className="font-semibold text-charcoal truncate">{room.name}</p>
+                          <p className="text-xs text-charcoal/50 truncate max-w-[180px] sm:max-w-xs">{room.description}</p>
                         </div>
                       </div>
                     </td>
                     <td className="p-4 sm:p-5 whitespace-nowrap">
-                      <span className={typeBadgeClasses[room.type] || 'badge-gray'}>
+                      <span className={typeBadgeClasses[room.type] || 'badge-taupe'}>
                         {typeLabels[room.type] || room.type}
                       </span>
                     </td>
-                    <td className="p-4 sm:p-5 font-semibold text-slate-900 whitespace-nowrap">
+                    <td className="p-4 sm:p-5 font-semibold text-charcoal whitespace-nowrap">
                       {formatINR(room.basePrice)}
                     </td>
-                    <td className="p-4 sm:p-5 text-slate-600 whitespace-nowrap">
+                    <td className="p-4 sm:p-5 text-charcoal/70 whitespace-nowrap">
                       {room.maxGuests} {room.maxGuests === 1 ? 'guest' : 'guests'}
                     </td>
                     <td className="p-4 sm:p-5 whitespace-nowrap">
-                      <span className={room.active ? 'badge-success' : 'badge-gray'}>
+                      <span className={room.active ? 'badge-success' : 'badge-brick'}>
                         {room.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
@@ -413,10 +412,10 @@ export default function AdminRooms() {
                         <button
                           onClick={() => toggleRoomMutation.mutate(room.id)}
                           disabled={toggleRoomMutation.isPending}
-                          className={`btn text-xs px-2.5 py-1.5 min-h-[36px] ${
+                          className={`btn text-xs px-2.5 py-1.5 min-h-[36px] cursor-pointer ${
                             room.active
-                              ? 'border border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100'
-                              : 'border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
+                              ? 'border border-brass text-brass-700 bg-brass-50 hover:bg-brass-100'
+                              : 'border border-forest text-forest bg-forest-50 hover:bg-forest-100'
                           }`}
                           title={room.active ? 'Deactivate room' : 'Activate room'}
                         >
@@ -449,9 +448,9 @@ export default function AdminRooms() {
 
             {rooms.length === 0 && (
               <div className="text-center py-12 px-4">
-                <CheckCircle2 className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-700 font-semibold">No rooms found</p>
-                <p className="text-xs text-slate-400 mt-1">Try modifying your search or click &quot;Add Room&quot;</p>
+                <CheckCircle2 className="w-10 h-10 text-charcoal/30 mx-auto mb-3" />
+                <p className="text-charcoal font-semibold">No rooms found</p>
+                <p className="text-xs text-charcoal/50 mt-1">Try modifying your search or click &quot;Add Room&quot;</p>
               </div>
             )}
           </div>

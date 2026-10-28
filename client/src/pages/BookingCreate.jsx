@@ -123,16 +123,16 @@ export default function BookingCreate() {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-6 animate-pulse">
-        <div className="h-8 bg-slate-200 rounded w-1/3"></div>
-        <div className="h-64 bg-slate-200 rounded-3xl"></div>
+        <div className="h-8 bg-taupe/40 rounded w-1/3"></div>
+        <div className="h-64 bg-taupe/40 rounded-3xl"></div>
       </div>
     );
   }
 
   if (!room) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16 bg-white rounded-3xl border border-slate-200/80 p-8">
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Room not found</h2>
+      <div className="max-w-2xl mx-auto text-center py-16 bg-white rounded-3xl border border-taupe p-8">
+        <h2 className="text-xl font-bold text-charcoal mb-2">Room not found</h2>
         <Link to="/" className="btn-primary mt-4 inline-flex items-center gap-2">
           <ChevronLeft className="w-4 h-4" />
           Back to rooms
@@ -151,29 +151,29 @@ export default function BookingCreate() {
   // Booking Confirmation View
   if (confirmedBooking) {
     return (
-      <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/80 shadow-lg text-center space-y-6 animate-fadeIn">
-        <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+      <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-10 border border-taupe shadow-lg text-center space-y-6 animate-fadeIn">
+        <div className="w-16 h-16 rounded-full bg-forest-100 text-forest flex items-center justify-center mx-auto shadow-inner">
           <CheckCircle2 className="w-10 h-10" />
         </div>
 
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-1">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-forest-50 text-forest border border-forest-200 mb-1">
+            <Sparkles className="w-3.5 h-3.5 text-forest" />
             Instant Reservation Confirmed
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal">
             Booking Confirmed!
           </h1>
-          <p className="text-slate-600 text-sm">
+          <p className="text-charcoal/70 text-sm">
             Your reservation has been securely confirmed in our database.
           </p>
         </div>
 
-        <div className="bg-slate-50 rounded-2xl p-4 sm:p-6 border border-slate-200/80 text-left space-y-4">
-          <div className="flex justify-between items-center border-b border-slate-200/60 pb-3">
+        <div className="bg-taupe-50 rounded-2xl p-4 sm:p-6 border border-taupe text-left space-y-4">
+          <div className="flex justify-between items-center border-b border-taupe/60 pb-3">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">Booking Reference</span>
-              <span className="font-mono text-base font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-lg inline-block mt-0.5">
+              <span className="text-xs font-semibold uppercase tracking-wider text-charcoal/60 block">Booking Reference</span>
+              <span className="font-mono text-base font-bold text-forest bg-forest-50 px-2.5 py-0.5 rounded-lg inline-block mt-0.5 border border-forest-200">
                 {confirmedBooking.reference}
               </span>
             </div>
@@ -182,37 +182,37 @@ export default function BookingCreate() {
 
           <div className="grid grid-cols-2 gap-4 text-xs">
             <div>
-              <p className="text-slate-500 font-medium">Room</p>
-              <p className="font-bold text-slate-900 text-sm">{room.name}</p>
+              <p className="text-charcoal/60 font-medium">Room</p>
+              <p className="font-bold text-charcoal text-sm">{room.name}</p>
             </div>
             <div>
-              <p className="text-slate-500 font-medium">Total Amount</p>
-              <p className="font-bold text-indigo-600 text-sm">{formatCurrency(confirmedBooking.totalPrice || totalPrice, currency)}</p>
+              <p className="text-charcoal/60 font-medium">Total Amount</p>
+              <p className="font-bold text-forest text-sm">{formatCurrency(confirmedBooking.totalPrice || totalPrice, currency)}</p>
             </div>
             <div>
-              <p className="text-slate-500 font-medium">Check-in</p>
-              <p className="font-semibold text-slate-800">{format(new Date(checkIn), 'EEE, MMM d, yyyy')}</p>
+              <p className="text-charcoal/60 font-medium">Check-in</p>
+              <p className="font-semibold text-charcoal">{format(new Date(checkIn), 'EEE, MMM d, yyyy')}</p>
             </div>
             <div>
-              <p className="text-slate-500 font-medium">Check-out</p>
-              <p className="font-semibold text-slate-800">{format(new Date(checkOut), 'EEE, MMM d, yyyy')}</p>
+              <p className="text-charcoal/60 font-medium">Check-out</p>
+              <p className="font-semibold text-charcoal">{format(new Date(checkOut), 'EEE, MMM d, yyyy')}</p>
             </div>
             <div>
-              <p className="text-slate-500 font-medium">Payment Method</p>
-              <p className="font-semibold text-slate-800 capitalize">
+              <p className="text-charcoal/60 font-medium">Payment Method</p>
+              <p className="font-semibold text-charcoal capitalize">
                 {confirmedBooking.paymentMethod === 'online' ? 'Paid Online' : 'Pay at Hotel (Front Desk)'}
               </p>
             </div>
             <div>
-              <p className="text-slate-500 font-medium">Cancellation Window</p>
-              <p className="font-semibold text-slate-800">Up to {cancellationWindow}h prior to check-in</p>
+              <p className="text-charcoal/60 font-medium">Cancellation Window</p>
+              <p className="font-semibold text-charcoal">Up to {cancellationWindow}h prior to check-in</p>
             </div>
           </div>
         </div>
 
         {/* Confirmation Email Alert */}
-        <div className="flex items-center gap-3 p-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-left text-xs text-indigo-900">
-          <Mail className="w-5 h-5 text-indigo-600 flex-shrink-0" />
+        <div className="flex items-center gap-3 p-4 rounded-2xl bg-forest-50 border border-forest-200 text-left text-xs text-forest">
+          <Mail className="w-5 h-5 text-forest flex-shrink-0" />
           <p className="leading-relaxed">
             A confirmation email with your booking details and calendar invite (.ics) has been dispatched to your email address!
           </p>
@@ -243,35 +243,35 @@ export default function BookingCreate() {
       <div>
         <Link
           to={`/rooms/${id}?checkIn=${checkIn}&checkOut=${checkOut}`}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-white border border-slate-200/80 hover:bg-slate-50 transition-colors min-h-[44px]"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-charcoal bg-white border border-taupe hover:bg-taupe/30 transition-colors min-h-[44px]"
         >
-          <ChevronLeft className="w-4 h-4 text-indigo-600" />
+          <ChevronLeft className="w-4 h-4 text-forest" />
           Back to Room Details
         </Link>
       </div>
 
       <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Confirm Your Reservation</h1>
-        <p className="text-xs sm:text-sm text-slate-500">Review your stay details, select payment method, and complete your reservation</p>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal">Confirm Your Reservation</h1>
+        <p className="text-xs sm:text-sm text-charcoal/60">Review your stay details, select payment method, and complete your reservation</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Guest Details & Payment Form */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
-          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-3">
-            <Users className="w-4 h-4 text-indigo-600" />
+        <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-taupe shadow-xs space-y-6">
+          <h2 className="text-base font-bold text-charcoal uppercase tracking-wider flex items-center gap-2 border-b border-taupe pb-3">
+            <Users className="w-4 h-4 text-forest" />
             Guest Information
           </h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="guests" className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <label htmlFor="guests" className="text-xs font-bold uppercase tracking-wider text-charcoal/80">
                 Number of Guests
               </label>
               <select
                 id="guests"
                 {...register('guests', { valueAsNumber: true })}
-                className="w-full text-base rounded-2xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 py-3 px-4 min-h-[48px]"
+                className="input py-3 px-4 min-h-[48px]"
               >
                 {[...Array(maxGuests)].map((_, i) => (
                   <option key={i + 1} value={i + 1}>
@@ -279,42 +279,42 @@ export default function BookingCreate() {
                   </option>
                 ))}
               </select>
-              <p className="text-xs text-slate-500">Maximum {maxGuests} guests allowed for this room.</p>
+              <p className="text-xs text-charcoal/60">Maximum {maxGuests} guests allowed for this room.</p>
               {errors.guests && (
-                <p className="text-xs text-rose-600 font-medium" role="alert">
+                <p className="text-xs text-brick font-medium" role="alert">
                   {errors.guests.message}
                 </p>
               )}
             </div>
 
             {/* Stay Details summary */}
-            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/80 space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-indigo-600" />
+            <div className="bg-taupe-50 rounded-2xl p-5 border border-taupe space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-charcoal flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-forest" />
                 Stay Dates
               </h3>
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="text-slate-500 block">Check-in</span>
-                  <span className="font-bold text-slate-800 text-sm">
+                  <span className="text-charcoal/60 block">Check-in</span>
+                  <span className="font-bold text-charcoal text-sm">
                     {format(new Date(checkIn), 'EEE, MMM d, yyyy')}
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Check-out</span>
-                  <span className="font-bold text-slate-800 text-sm">
+                  <span className="text-charcoal/60 block">Check-out</span>
+                  <span className="font-bold text-charcoal text-sm">
                     {format(new Date(checkOut), 'EEE, MMM d, yyyy')}
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-indigo-700 font-semibold pt-1">
+              <p className="text-xs text-forest font-semibold pt-1">
                 Total duration: {nights} night{nights !== 1 ? 's' : ''}
               </p>
             </div>
 
             {/* Payment Method Selector (Radio Cards) */}
             <div className="space-y-3 pt-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
+              <label className="text-xs font-bold uppercase tracking-wider text-charcoal/80 block">
                 Select Payment Method
               </label>
 
@@ -323,14 +323,14 @@ export default function BookingCreate() {
                 <label
                   className={`flex flex-col p-4 rounded-2xl border cursor-pointer transition-all ${
                     paymentMethod === 'online'
-                      ? 'border-indigo-600 bg-indigo-50/60 ring-2 ring-indigo-600/20 shadow-sm'
-                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                      ? 'border-forest bg-forest-50/60 ring-2 ring-forest/20 shadow-xs'
+                      : 'border-taupe bg-white hover:bg-taupe-50'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-indigo-600" />
-                      <span className="font-bold text-slate-900 text-sm">Pay Online</span>
+                      <CreditCard className="w-5 h-5 text-forest" />
+                      <span className="font-bold text-charcoal text-sm">Pay Online</span>
                     </div>
                     <input
                       type="radio"
@@ -338,13 +338,13 @@ export default function BookingCreate() {
                       value="online"
                       checked={paymentMethod === 'online'}
                       onChange={() => setPaymentMethod('online')}
-                      className="text-indigo-600 focus:ring-indigo-500"
+                      className="text-forest focus:ring-forest"
                     />
                   </div>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-charcoal/70">
                     Instant confirmation via Cards, UPI, Netbanking. 15-minute price hold.
                   </p>
-                  <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+                  <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-forest">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>Secure encrypted checkout</span>
                   </div>
@@ -354,14 +354,14 @@ export default function BookingCreate() {
                 <label
                   className={`flex flex-col p-4 rounded-2xl border cursor-pointer transition-all ${
                     paymentMethod === 'pay_at_hotel'
-                      ? 'border-indigo-600 bg-indigo-50/60 ring-2 ring-indigo-600/20 shadow-sm'
-                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                      ? 'border-forest bg-forest-50/60 ring-2 ring-forest/20 shadow-xs'
+                      : 'border-taupe bg-white hover:bg-taupe-50'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <Hotel className="w-5 h-5 text-indigo-600" />
-                      <span className="font-bold text-slate-900 text-sm">Pay at Hotel</span>
+                      <Hotel className="w-5 h-5 text-forest" />
+                      <span className="font-bold text-charcoal text-sm">Pay at Hotel</span>
                     </div>
                     <input
                       type="radio"
@@ -369,29 +369,29 @@ export default function BookingCreate() {
                       value="pay_at_hotel"
                       checked={paymentMethod === 'pay_at_hotel'}
                       onChange={() => setPaymentMethod('pay_at_hotel')}
-                      className="text-indigo-600 focus:ring-indigo-500"
+                      className="text-forest focus:ring-forest"
                     />
                   </div>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-charcoal/70">
                     Reserve room now, pay at front desk with Cash or Card upon arrival.
                   </p>
-                  <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                  <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-charcoal/60">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-forest" />
                     <span>Instant confirmation</span>
                   </div>
                 </label>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-500">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-charcoal/60">
+              <ShieldCheck className="w-4 h-4 text-forest flex-shrink-0" />
               <span>Free cancellation up to {cancellationWindow} hours prior to check-in. Instant confirmation.</span>
             </div>
 
             <button
               type="submit"
               disabled={createBookingMutation.isPending}
-              className="btn-primary w-full justify-center py-4 text-base font-bold shadow-md min-h-[52px]"
+              className="btn-primary w-full justify-center py-4 text-base font-bold shadow-xs hover:shadow-sm min-h-[52px]"
             >
               {createBookingMutation.isPending
                 ? 'Processing Reservation...'
@@ -403,46 +403,46 @@ export default function BookingCreate() {
         </div>
 
         {/* Right Summary Sidebar */}
-        <aside className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-4 sticky top-28">
-          <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100">
+        <aside className="bg-white rounded-3xl p-6 border border-taupe shadow-xs space-y-4 sticky top-28">
+          <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-taupe-100">
             {room.photos?.[0] ? (
               <img src={room.photos[0]} alt={room.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+              <div className="w-full h-full flex items-center justify-center text-charcoal/40 text-xs">
                 No photo
               </div>
             )}
           </div>
 
           <div>
-            <span className="badge-indigo px-2.5 py-0.5 text-[11px] font-semibold uppercase">
+            <span className="badge-forest px-2.5 py-0.5 text-[11px] font-semibold uppercase">
               {room.type}
             </span>
-            <h3 className="text-base font-bold text-slate-900 mt-1">{room.name}</h3>
+            <h3 className="text-base font-bold text-charcoal mt-1">{room.name}</h3>
           </div>
 
-          <div className="border-t border-slate-100 pt-3 space-y-2 text-xs">
-            <div className="flex justify-between text-slate-600">
+          <div className="border-t border-taupe pt-3 space-y-2 text-xs">
+            <div className="flex justify-between text-charcoal/80">
               <span>Rate per night</span>
-              <span className="font-semibold text-slate-800">{formatCurrency(room.basePrice, currency)}</span>
+              <span className="font-semibold text-charcoal">{formatCurrency(room.basePrice, currency)}</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className="flex justify-between text-charcoal/80">
               <span>Nights</span>
-              <span className="font-semibold text-slate-800">{nights}</span>
+              <span className="font-semibold text-charcoal">{nights}</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className="flex justify-between text-charcoal/80">
               <span>Taxes & fees</span>
-              <span className="font-semibold text-emerald-600">Included</span>
+              <span className="font-semibold text-forest">Included</span>
             </div>
-            <div className="flex justify-between text-slate-600">
+            <div className="flex justify-between text-charcoal/80">
               <span>Payment mode</span>
-              <span className="font-semibold text-indigo-700 capitalize">
+              <span className="font-semibold text-forest capitalize">
                 {paymentMethod === 'online' ? 'Online Gateway' : 'Pay at Hotel'}
               </span>
             </div>
-            <div className="border-t border-slate-100 pt-2 flex justify-between items-baseline">
-              <span className="text-sm font-bold text-slate-900">Total Price</span>
-              <span className="text-xl font-extrabold text-indigo-600">{formatCurrency(totalPrice, currency)}</span>
+            <div className="border-t border-taupe pt-2 flex justify-between items-baseline">
+              <span className="text-sm font-bold text-charcoal">Total Price</span>
+              <span className="text-xl font-extrabold text-forest">{formatCurrency(totalPrice, currency)}</span>
             </div>
           </div>
         </aside>

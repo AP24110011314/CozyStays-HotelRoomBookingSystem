@@ -79,15 +79,15 @@ export default function AdminPayments() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Payment Transactions</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-charcoal">Payment Transactions</h1>
+        <p className="text-sm text-charcoal/60">
           Track transaction histories, audit payment provider records, and manage refunds
         </p>
       </div>
 
       {/* Filter Tabs & Date Range */}
       <div className="card p-4 sm:p-5 space-y-4">
-        <div className="flex flex-wrap gap-2 text-xs border-b border-slate-100 pb-3">
+        <div className="flex flex-wrap gap-2 text-xs border-b border-taupe pb-3">
           {[
             { label: 'All Transactions', value: '' },
             { label: 'Paid', value: 'paid' },
@@ -102,10 +102,10 @@ export default function AdminPayments() {
                 setStatus(tab.value);
                 setPage(1);
               }}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
                 status === tab.value
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-forest text-ivory shadow-xs'
+                  : 'bg-taupe-100 text-charcoal hover:bg-taupe-200'
               }`}
             >
               {tab.label}
@@ -162,7 +162,7 @@ export default function AdminPayments() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
+                <tr className="bg-taupe-50 text-charcoal/70 font-semibold border-b border-taupe">
                   <th className="p-4 sm:p-5">Booking Ref</th>
                   <th className="p-4 sm:p-5">Customer</th>
                   <th className="p-4 sm:p-5">Method / Provider</th>
@@ -172,36 +172,36 @@ export default function AdminPayments() {
                   <th className="p-4 sm:p-5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-taupe">
                 {(data?.data || []).map((payment) => (
-                  <tr key={payment.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="p-4 sm:p-5 font-mono font-semibold text-slate-900">
+                  <tr key={payment.id} className="hover:bg-taupe-50/70 transition-colors">
+                    <td className="p-4 sm:p-5 font-mono font-semibold text-charcoal">
                       {payment.bookingReference || payment.bookingId}
                     </td>
                     <td className="p-4 sm:p-5">
-                      <p className="font-semibold text-slate-900">{payment.user?.name || 'Guest'}</p>
-                      <p className="text-xs text-slate-400">{payment.user?.email}</p>
+                      <p className="font-semibold text-charcoal">{payment.user?.name || 'Guest'}</p>
+                      <p className="text-xs text-charcoal/50">{payment.user?.email}</p>
                     </td>
                     <td className="p-4 sm:p-5 text-xs">
-                      <p className="font-semibold text-slate-800 capitalize">
+                      <p className="font-semibold text-charcoal capitalize">
                         {payment.method === 'online' ? 'Online' : 'Pay at Hotel'}
                       </p>
-                      <p className="text-slate-400 font-mono text-[11px]">
+                      <p className="text-charcoal/50 font-mono text-[11px]">
                         {payment.provider ? `(${payment.provider})` : '—'}
                       </p>
                     </td>
                     <td className="p-4 sm:p-5">
                       <PaymentBadge status={payment.status} />
                     </td>
-                    <td className="p-4 sm:p-5 font-bold text-slate-900">
+                    <td className="p-4 sm:p-5 font-bold text-charcoal">
                       {formatCurrency(payment.amount / 100, payment.currency)}
                       {payment.refundedAmount > 0 && (
-                        <p className="text-[11px] text-purple-600 font-normal">
+                        <p className="text-[11px] text-forest font-semibold">
                           Refunded: {formatCurrency(payment.refundedAmount / 100, payment.currency)}
                         </p>
                       )}
                     </td>
-                    <td className="p-4 sm:p-5 text-xs text-slate-600 whitespace-nowrap">
+                    <td className="p-4 sm:p-5 text-xs text-charcoal/70 whitespace-nowrap">
                       {format(new Date(payment.createdAt), 'MMM d, yyyy HH:mm')}
                     </td>
                     <td className="p-4 sm:p-5 text-right whitespace-nowrap">
@@ -223,19 +223,19 @@ export default function AdminPayments() {
 
             {(!data?.data || data.data.length === 0) && (
               <div className="text-center py-12 px-4">
-                <CreditCard className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-700 font-semibold">No transactions found</p>
-                <p className="text-xs text-slate-400 mt-1">Adjust filters above</p>
+                <CreditCard className="w-10 h-10 text-charcoal/30 mx-auto mb-3" />
+                <p className="text-charcoal font-semibold">No transactions found</p>
+                <p className="text-xs text-charcoal/50 mt-1">Adjust filters above</p>
               </div>
             )}
           </div>
 
           {/* Pagination */}
           {data?.meta && data.meta.totalPages > 1 && (
-            <div className="p-4 sm:p-5 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-500">
+            <div className="p-4 sm:p-5 border-t border-taupe flex items-center justify-between text-xs sm:text-sm text-charcoal/60">
               <div>
-                Showing page <span className="font-semibold text-slate-800">{data.meta.page}</span> of{' '}
-                <span className="font-semibold text-slate-800">{data.meta.totalPages}</span>
+                Showing page <span className="font-semibold text-charcoal">{data.meta.page}</span> of{' '}
+                <span className="font-semibold text-charcoal">{data.meta.totalPages}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <button
@@ -262,16 +262,16 @@ export default function AdminPayments() {
 
       {/* Refund Modal */}
       {refundPayment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-xl border border-taupe w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-taupe">
               <div>
-                <h3 className="font-bold text-slate-900">Process Refund</h3>
-                <p className="text-xs font-mono text-indigo-600">{refundPayment.bookingReference}</p>
+                <h3 className="font-bold text-charcoal">Process Refund</h3>
+                <p className="text-xs font-mono text-forest">{refundPayment.bookingReference}</p>
               </div>
               <button
                 onClick={() => setRefundPayment(null)}
-                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-lg text-charcoal/40 hover:text-charcoal flex items-center justify-center cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -289,7 +289,7 @@ export default function AdminPayments() {
                   className="input"
                   required
                 />
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-charcoal/50 mt-1">
                   Maximum refundable: {formatCurrency((refundPayment.amount - (refundPayment.refundedAmount || 0)) / 100, refundPayment.currency)}
                 </p>
               </div>
@@ -305,14 +305,14 @@ export default function AdminPayments() {
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div className="p-3 rounded-xl bg-brass-50 border border-brass-200 text-xs text-charcoal flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-brass-700 flex-shrink-0 mt-0.5" />
                 <span>
                   This action will immediately communicate with the payment provider to credit the guest.
                 </span>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-taupe flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setRefundPayment(null)}
@@ -335,4 +335,3 @@ export default function AdminPayments() {
     </div>
   );
 }
-

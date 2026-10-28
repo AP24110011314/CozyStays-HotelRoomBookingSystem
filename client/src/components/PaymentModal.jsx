@@ -68,7 +68,7 @@ export default function PaymentModal({
           name: hotelConfig.name,
           description: `Booking #${booking.reference} - ${booking.room?.name || 'Room'}`,
           order_id: paymentData.orderId,
-          theme: { color: '#4f46e5' },
+          theme: { color: '#1B4D3E' },
           handler: async (response) => {
             await handleVerification({
               bookingId: booking.id,
@@ -150,27 +150,27 @@ export default function PaymentModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-charcoal/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div
-        className="bg-white rounded-3xl max-w-lg w-full border border-slate-200/80 shadow-2xl overflow-hidden animate-fadeIn"
+        className="bg-white rounded-3xl max-w-lg w-full border border-taupe shadow-2xl overflow-hidden animate-fadeIn"
         role="dialog"
         aria-modal="true"
         aria-labelledby="payment-modal-title"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 p-6 text-white relative">
+        <div className="bg-forest p-6 text-ivory relative">
           <button
             type="button"
             onClick={onClose}
             disabled={isVerifying}
-            className="absolute top-5 right-5 text-indigo-200 hover:text-white transition-colors p-1 rounded-lg"
+            className="absolute top-5 right-5 text-taupe hover:text-ivory transition-colors p-1 rounded-lg"
             aria-label="Close payment dialog"
           >
             <X className="w-5 h-5" />
           </button>
 
           <div className="flex items-center gap-2 mb-2">
-            <span className="bg-amber-400 text-indigo-950 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider">
+            <span className="bg-brass text-charcoal text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider">
               Simulated Gateway (Mock Mode)
             </span>
           </div>
@@ -178,14 +178,14 @@ export default function PaymentModal({
           <h2 id="payment-modal-title" className="text-xl font-bold">
             Complete Online Payment
           </h2>
-          <p className="text-xs text-indigo-200 mt-1">
+          <p className="text-xs text-taupe-200 mt-1">
             Test mode enabled &mdash; no real charges will be made.
           </p>
 
-          <div className="mt-4 flex items-center justify-between pt-3 border-t border-indigo-700/50">
+          <div className="mt-4 flex items-center justify-between pt-3 border-t border-forest-600/50">
             <div>
-              <span className="text-[11px] text-indigo-300 block">Total Amount Due</span>
-              <span className="text-2xl font-extrabold text-white">
+              <span className="text-[11px] text-taupe-300 block">Total Amount Due</span>
+              <span className="text-2xl font-extrabold text-ivory">
                 {formatCurrency(booking.totalPrice, paymentData.currency)}
               </span>
             </div>
@@ -202,10 +202,10 @@ export default function PaymentModal({
         <div className="p-6 space-y-5">
           {errorMessage && (
             <div
-              className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-2.5"
+              className="p-3.5 rounded-2xl bg-brick-50 border border-brick-200 text-xs text-brick flex items-start gap-2.5"
               role="alert"
             >
-              <AlertTriangle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-4 h-4 text-brick flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold">Payment Error</p>
                 <p>{errorMessage}</p>
@@ -215,9 +215,9 @@ export default function PaymentModal({
 
           {isExpired ? (
             <div className="text-center py-6 space-y-3">
-              <XCircle className="w-12 h-12 text-rose-500 mx-auto" />
-              <h3 className="text-base font-bold text-slate-900">Hold Window Expired</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              <XCircle className="w-12 h-12 text-brick mx-auto" />
+              <h3 className="text-base font-bold text-charcoal">Hold Window Expired</h3>
+              <p className="text-xs text-charcoal/70 max-w-sm mx-auto">
                 The 15-minute hold time for this reservation has ended and the room has been returned to general inventory.
               </p>
               <button
@@ -231,24 +231,24 @@ export default function PaymentModal({
           ) : (
             <>
               {/* Order Details Brief */}
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 text-xs space-y-2">
-                <div className="flex justify-between text-slate-600">
+              <div className="bg-taupe-50 rounded-2xl p-4 border border-taupe text-xs space-y-2">
+                <div className="flex justify-between text-charcoal/70">
                   <span>Room</span>
-                  <span className="font-semibold text-slate-900">{booking.room?.name || 'Selected Room'}</span>
+                  <span className="font-semibold text-charcoal">{booking.room?.name || 'Selected Room'}</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-charcoal/70">
                   <span>Booking Reference</span>
-                  <span className="font-mono font-bold text-indigo-700">{booking.reference}</span>
+                  <span className="font-mono font-bold text-forest">{booking.reference}</span>
                 </div>
-                <div className="flex justify-between text-slate-600">
+                <div className="flex justify-between text-charcoal/70">
                   <span>Order ID</span>
-                  <span className="font-mono text-slate-700">{paymentData.orderId}</span>
+                  <span className="font-mono text-charcoal">{paymentData.orderId}</span>
                 </div>
               </div>
 
               {/* Simulated Method Tabs */}
               <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-600 block">
+                <label className="text-xs font-bold uppercase tracking-wider text-charcoal/70 block">
                   Select Mock Payment Method
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -257,8 +257,8 @@ export default function PaymentModal({
                     onClick={() => setSelectedMockTab('card')}
                     className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all min-h-[48px] ${
                       selectedMockTab === 'card'
-                        ? 'bg-indigo-50 border-indigo-600 text-indigo-700 ring-2 ring-indigo-600/20'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'bg-forest-50 border-forest text-forest ring-2 ring-forest/20'
+                        : 'border-taupe text-charcoal/80 hover:bg-taupe-50'
                     }`}
                   >
                     <CreditCard className="w-4 h-4" />
@@ -269,8 +269,8 @@ export default function PaymentModal({
                     onClick={() => setSelectedMockTab('upi')}
                     className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all min-h-[48px] ${
                       selectedMockTab === 'upi'
-                        ? 'bg-indigo-50 border-indigo-600 text-indigo-700 ring-2 ring-indigo-600/20'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'bg-forest-50 border-forest text-forest ring-2 ring-forest/20'
+                        : 'border-taupe text-charcoal/80 hover:bg-taupe-50'
                     }`}
                   >
                     <QrCode className="w-4 h-4" />
@@ -281,8 +281,8 @@ export default function PaymentModal({
                     onClick={() => setSelectedMockTab('netbanking')}
                     className={`p-3 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1.5 transition-all min-h-[48px] ${
                       selectedMockTab === 'netbanking'
-                        ? 'bg-indigo-50 border-indigo-600 text-indigo-700 ring-2 ring-indigo-600/20'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'bg-forest-50 border-forest text-forest ring-2 ring-forest/20'
+                        : 'border-taupe text-charcoal/80 hover:bg-taupe-50'
                     }`}
                   >
                     <Building className="w-4 h-4" />
@@ -291,7 +291,7 @@ export default function PaymentModal({
                 </div>
 
                 {/* Tab preview info */}
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/60 text-xs text-slate-500">
+                <div className="p-3 bg-taupe-50 rounded-xl border border-taupe text-xs text-charcoal/70">
                   {selectedMockTab === 'card' && (
                     <p>Simulating card payment ending in &bull;&bull;&bull;&bull; 4242 (Visa / Mastercard)</p>
                   )}
@@ -310,7 +310,7 @@ export default function PaymentModal({
                   type="button"
                   onClick={handleMockSuccess}
                   disabled={isVerifying}
-                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 rounded-2xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all min-h-[50px] disabled:opacity-50"
+                  className="w-full btn-primary py-3.5 px-4 rounded-2xl text-sm font-bold shadow-md hover:shadow-lg transition-all min-h-[50px] disabled:opacity-50 inline-flex items-center justify-center gap-2"
                 >
                   {isVerifying ? (
                     <>
@@ -329,15 +329,15 @@ export default function PaymentModal({
                   type="button"
                   onClick={handleMockFailure}
                   disabled={isVerifying}
-                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 transition-all min-h-[44px] disabled:opacity-50"
+                  className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-xs font-semibold bg-brick-50 text-brick border border-brick-200 hover:bg-brick-100 transition-all min-h-[44px] disabled:opacity-50"
                 >
-                  <XCircle className="w-4 h-4 text-rose-500" />
+                  <XCircle className="w-4 h-4 text-brick" />
                   <span>Simulate Payment Failure</span>
                 </button>
               </div>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="flex items-center justify-center gap-2 text-[11px] text-charcoal/50 pt-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-forest" />
                 <span>HMAC-SHA256 signature verification enabled</span>
               </div>
             </>

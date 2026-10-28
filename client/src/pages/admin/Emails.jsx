@@ -13,10 +13,10 @@ const statusLabels = {
 };
 
 const statusColors = {
-  pending: 'badge-info',
-  sending: 'badge-warning',
-  sent: 'badge-success',
-  failed: 'badge-danger',
+  pending: 'badge-brass',
+  sending: 'badge-brass',
+  sent: 'badge-forest',
+  failed: 'badge-brick',
 };
 
 export default function AdminEmails() {
@@ -51,8 +51,8 @@ export default function AdminEmails() {
     return (
       <div className="animate-pulse space-y-4">
         {[...Array(10)].map((_, i) => (
-          <div key={i} className="card-hover p-6">
-            <div className="h-4 bg-gray-200 rounded-xl w-1/4"></div>
+          <div key={i} className="card p-6">
+            <div className="h-4 bg-taupe/40 rounded-xl w-1/4"></div>
           </div>
         ))}
       </div>
@@ -60,59 +60,59 @@ export default function AdminEmails() {
   }
 
   return (
-    <div>
-      <div className="mb-8 sm:mb-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Email Queue</h1>
-        <p className="text-gray-600">View and retry failed or pending emails</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-charcoal tracking-tight">Email Queue</h1>
+        <p className="text-sm text-charcoal/60 mt-1">View and retry failed or pending emails</p>
       </div>
 
       {data?.data && data.data.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-          <span className="text-6xl mb-4 block">📧</span>
-          <p className="text-gray-600 text-lg">No failed or pending emails</p>
-          <p className="text-gray-500 mt-2">All emails are being processed successfully</p>
+        <div className="text-center py-16 bg-white rounded-2xl border border-taupe">
+          <span className="text-5xl mb-4 block">📧</span>
+          <p className="text-charcoal font-semibold text-base">No failed or pending emails</p>
+          <p className="text-charcoal/60 text-xs mt-1">All emails are being processed successfully</p>
         </div>
       ) : (
         <>
           <div className="card overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="bg-gray-50 text-left text-sm font-medium text-gray-600 border-b border-gray-100">
-                    <th className="p-4 sm:p-6 font-medium">To</th>
-                    <th className="p-4 sm:p-6 font-medium max-w-xs">Subject</th>
-                    <th className="p-4 sm:p-6 font-medium">Status</th>
-                    <th className="p-4 sm:p-6 font-medium">Attempts</th>
-                    <th className="p-4 sm:p-6 font-medium hidden lg:table-cell">Last Error</th>
-                    <th className="p-4 sm:p-6 font-medium hidden lg:table-cell">Next Retry</th>
-                    <th className="p-4 sm:p-6 font-medium">Created</th>
-                    <th className="p-4 sm:p-6 font-medium text-right">Actions</th>
+                  <tr className="bg-taupe-50 font-semibold text-charcoal/70 border-b border-taupe">
+                    <th className="p-4 sm:p-5">To</th>
+                    <th className="p-4 sm:p-5 max-w-xs">Subject</th>
+                    <th className="p-4 sm:p-5">Status</th>
+                    <th className="p-4 sm:p-5">Attempts</th>
+                    <th className="p-4 sm:p-5 hidden lg:table-cell">Last Error</th>
+                    <th className="p-4 sm:p-5 hidden lg:table-cell">Next Retry</th>
+                    <th className="p-4 sm:p-5">Created</th>
+                    <th className="p-4 sm:p-5 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-taupe">
                   {data?.data?.map((email) => (
-                    <tr key={email.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="p-4 sm:p-6 font-medium text-gray-900">{email.to}</td>
-                      <td className="p-4 sm:p-6 max-w-xs truncate text-gray-600">{email.subject}</td>
-                      <td className="p-4 sm:p-6">
-                        <span className={`${statusColors[email.status]} px-3 py-1.5 text-sm`}>
+                    <tr key={email.id} className="hover:bg-taupe-50/70 transition-colors">
+                      <td className="p-4 sm:p-5 font-medium text-charcoal">{email.to}</td>
+                      <td className="p-4 sm:p-5 max-w-xs truncate text-charcoal/80">{email.subject}</td>
+                      <td className="p-4 sm:p-5">
+                        <span className={`${statusColors[email.status]} px-2.5 py-1 text-xs font-semibold uppercase`}>
                           {statusLabels[email.status]}
                         </span>
                       </td>
-                      <td className="p-4 sm:p-6 text-gray-600 font-mono text-sm">{email.attempts}/{email.maxAttempts}</td>
-                      <td className="p-4 sm:p-6 hidden lg:table-cell text-sm text-gray-500 max-w-md truncate" title={email.lastError}>
+                      <td className="p-4 sm:p-5 text-charcoal/70 font-mono text-xs">{email.attempts}/{email.maxAttempts}</td>
+                      <td className="p-4 sm:p-5 hidden lg:table-cell text-xs text-charcoal/60 max-w-md truncate" title={email.lastError}>
                         {email.lastError || '-'}
                       </td>
-                      <td className="p-4 sm:p-6 hidden lg:table-cell text-sm text-gray-500">
+                      <td className="p-4 sm:p-5 hidden lg:table-cell text-xs text-charcoal/60">
                         {email.nextRetryAt ? format(new Date(email.nextRetryAt), 'MMM d, HH:mm') : '-'}
                       </td>
-                      <td className="p-4 sm:p-6 text-sm text-gray-500">{format(new Date(email.createdAt), 'MMM d, HH:mm')}</td>
-                      <td className="p-4 sm:p-6 text-right">
+                      <td className="p-4 sm:p-5 text-xs text-charcoal/60">{format(new Date(email.createdAt), 'MMM d, HH:mm')}</td>
+                      <td className="p-4 sm:p-5 text-right whitespace-nowrap">
                         {(email.status === 'failed' || email.status === 'pending') && (
                           <button
                             onClick={() => handleRetry(email.id)}
                             disabled={retryEmailMutation.isPending}
-                            className="btn-outline text-sm px-3 py-1.5"
+                            className="btn-outline text-xs px-2.5 py-1.5 min-h-[36px]"
                           >
                             Retry
                           </button>
@@ -126,19 +126,19 @@ export default function AdminEmails() {
           </div>
 
           {data?.meta && data.meta.totalPages > 1 && (
-            <div className="mt-8 sm:mt-12 flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 pt-4 border-t border-taupe">
               <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="btn-secondary"
+                className="btn-secondary text-xs px-3 py-1.5 min-h-[36px] disabled:opacity-40"
               >
                 Previous
               </button>
-              <span className="px-4 text-gray-600 font-medium">Page {page} of {data.meta.totalPages}</span>
+              <span className="px-4 text-xs font-medium text-charcoal/60">Page {page} of {data.meta.totalPages}</span>
               <button
-                onClick={() => setPage(p => Math.min(data.meta.totalPages, p + 1))}
+                onClick={() => setPage((p) => Math.min(data.meta.totalPages, p + 1))}
                 disabled={page === data.meta.totalPages}
-                className="btn-secondary"
+                className="btn-secondary text-xs px-3 py-1.5 min-h-[36px] disabled:opacity-40"
               >
                 Next
               </button>

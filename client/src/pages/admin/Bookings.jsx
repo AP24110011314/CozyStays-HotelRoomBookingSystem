@@ -18,12 +18,12 @@ const statusLabels = {
 };
 
 const statusColors = {
-  upcoming: 'badge-upcoming',
-  active: 'badge-active',
-  completed: 'badge-completed',
-  cancelled: 'badge-cancelled',
-  pending_payment: 'badge-warning',
-  expired: 'badge-gray',
+  upcoming: 'badge-forest',
+  active: 'badge-brass',
+  completed: 'badge-taupe',
+  cancelled: 'badge-brick',
+  pending_payment: 'badge-brass',
+  expired: 'badge-brick',
 };
 
 export default function AdminBookings() {
@@ -146,8 +146,8 @@ export default function AdminBookings() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Reservations & Bookings</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-charcoal">Reservations & Bookings</h1>
+        <p className="text-sm text-charcoal/60">
           Manage guest bookings, modify reservation dates, and review payment status
         </p>
       </div>
@@ -155,7 +155,7 @@ export default function AdminBookings() {
       {/* Filter / Search Bar */}
       <div className="card p-4 sm:p-5 space-y-4">
         {/* Status Tabs */}
-        <div className="flex flex-wrap gap-2 text-xs border-b border-slate-100 pb-3">
+        <div className="flex flex-wrap gap-2 text-xs border-b border-taupe pb-3">
           {[
             { label: 'All Statuses', value: '' },
             { label: 'Upcoming', value: 'upcoming' },
@@ -170,10 +170,10 @@ export default function AdminBookings() {
                 setStatus(tab.value);
                 setPage(1);
               }}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
                 status === tab.value
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-forest text-ivory shadow-xs'
+                  : 'bg-taupe-100 text-charcoal hover:bg-taupe-200'
               }`}
             >
               {tab.label}
@@ -185,7 +185,7 @@ export default function AdminBookings() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Search box */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/40" />
             <input
               type="text"
               placeholder="Search reference or guest..."
@@ -266,7 +266,7 @@ export default function AdminBookings() {
         </div>
 
         {(search || paymentStatus || selectedRoom || fromDate || toDate) && (
-          <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
+          <div className="flex items-center justify-between text-xs text-charcoal/60 pt-2">
             <span>Filtered results active</span>
             <button
               onClick={() => {
@@ -278,7 +278,7 @@ export default function AdminBookings() {
                 setStatus('');
                 setPage(1);
               }}
-              className="text-indigo-600 hover:underline font-semibold"
+              className="text-forest hover:underline font-semibold cursor-pointer"
             >
               Clear all filters
             </button>
@@ -292,10 +292,10 @@ export default function AdminBookings() {
           {[...Array(6)].map((_, i) => (
             <div key={i} className="card p-5 animate-pulse flex items-center justify-between">
               <div className="space-y-2 w-1/3">
-                <div className="h-4 bg-slate-200 rounded w-full"></div>
-                <div className="h-3 bg-slate-100 rounded w-1/2"></div>
+                <div className="h-4 bg-taupe/40 rounded w-full"></div>
+                <div className="h-3 bg-taupe/20 rounded w-1/2"></div>
               </div>
-              <div className="h-8 bg-slate-200 rounded w-24"></div>
+              <div className="h-8 bg-taupe/40 rounded w-24"></div>
             </div>
           ))}
         </div>
@@ -304,8 +304,8 @@ export default function AdminBookings() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200/80">
-                  <th className="p-4 sm:p-5 sticky left-0 bg-slate-50 z-10 min-w-[140px]">Reference</th>
+                <tr className="bg-taupe-50 text-charcoal/70 font-semibold border-b border-taupe">
+                  <th className="p-4 sm:p-5 sticky left-0 bg-taupe-50 z-10 min-w-[140px]">Reference</th>
                   <th className="p-4 sm:p-5 min-w-[180px]">Guest</th>
                   <th className="p-4 sm:p-5 min-w-[160px]">Room</th>
                   <th className="p-4 sm:p-5 whitespace-nowrap">Dates</th>
@@ -315,36 +315,36 @@ export default function AdminBookings() {
                   <th className="p-4 sm:p-5 text-right min-w-[200px]">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-taupe">
                 {(data?.data || []).map((booking) => (
-                  <tr key={booking.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="p-4 sm:p-5 sticky left-0 bg-white z-10 font-mono font-semibold text-slate-900 border-r sm:border-r-0 border-slate-100">
+                  <tr key={booking.id} className="hover:bg-taupe-50/70 transition-colors">
+                    <td className="p-4 sm:p-5 sticky left-0 bg-white z-10 font-mono font-semibold text-charcoal border-r sm:border-r-0 border-taupe">
                       {booking.reference}
                     </td>
                     <td className="p-4 sm:p-5">
-                      <p className="font-semibold text-slate-900">{booking.guest?.name || 'Guest'}</p>
-                      <p className="text-xs text-slate-400 truncate">{booking.guest?.email}</p>
+                      <p className="font-semibold text-charcoal">{booking.guest?.name || 'Guest'}</p>
+                      <p className="text-xs text-charcoal/50 truncate">{booking.guest?.email}</p>
                     </td>
-                    <td className="p-4 sm:p-5 font-medium text-slate-800">
+                    <td className="p-4 sm:p-5 font-medium text-charcoal">
                       {booking.room?.name || 'Room'}
                     </td>
-                    <td className="p-4 sm:p-5 text-xs text-slate-600 whitespace-nowrap">
+                    <td className="p-4 sm:p-5 text-xs text-charcoal/70 whitespace-nowrap">
                       {format(new Date(booking.checkIn), 'MMM d, yyyy')} &rarr; {format(new Date(booking.checkOut), 'MMM d, yyyy')}
                     </td>
                     <td className="p-4 sm:p-5 whitespace-nowrap">
-                      <span className={statusColors[booking.status] || 'badge-gray'}>
+                      <span className={statusColors[booking.status] || 'badge-taupe'}>
                         {statusLabels[booking.status] || booking.status}
                       </span>
                     </td>
                     <td className="p-4 sm:p-5 whitespace-nowrap">
                       <div className="flex flex-col gap-1">
                         <PaymentBadge status={booking.paymentStatus} />
-                        <span className="text-[10px] text-slate-400 capitalize font-medium">
+                        <span className="text-[10px] text-charcoal/50 capitalize font-medium">
                           {booking.paymentMethod === 'online' ? 'Online' : 'Pay at Hotel'}
                         </span>
                       </div>
                     </td>
-                    <td className="p-4 sm:p-5 font-bold text-slate-900 whitespace-nowrap">
+                    <td className="p-4 sm:p-5 font-bold text-charcoal whitespace-nowrap">
                       {formatCurrency(booking.totalPrice)}
                     </td>
                     <td className="p-4 sm:p-5 text-right whitespace-nowrap">
@@ -353,7 +353,7 @@ export default function AdminBookings() {
                           <button
                             onClick={() => markPaidMutation.mutate(booking.id)}
                             disabled={markPaidMutation.isPending}
-                            className="btn-success text-xs px-2.5 py-1.5 min-h-[36px]"
+                            className="btn-forest text-xs px-2.5 py-1.5 min-h-[36px]"
                             title="Mark pay-at-hotel booking as paid at front desk"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
@@ -397,19 +397,19 @@ export default function AdminBookings() {
 
             {(!data?.data || data.data.length === 0) && (
               <div className="text-center py-12 px-4">
-                <Calendar className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-700 font-semibold">No bookings found</p>
-                <p className="text-xs text-slate-400 mt-1">Adjust filters or search criteria above</p>
+                <Calendar className="w-10 h-10 text-charcoal/30 mx-auto mb-3" />
+                <p className="text-charcoal font-semibold">No bookings found</p>
+                <p className="text-xs text-charcoal/50 mt-1">Adjust filters or search criteria above</p>
               </div>
             )}
           </div>
 
           {/* Pagination */}
           {data?.meta && data.meta.totalPages > 1 && (
-            <div className="p-4 sm:p-5 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-500">
+            <div className="p-4 sm:p-5 border-t border-taupe flex items-center justify-between text-xs sm:text-sm text-charcoal/60">
               <div>
-                Showing page <span className="font-semibold text-slate-800">{data.meta.page}</span> of{' '}
-                <span className="font-semibold text-slate-800">{data.meta.totalPages}</span> ({data.meta.total} total)
+                Showing page <span className="font-semibold text-charcoal">{data.meta.page}</span> of{' '}
+                <span className="font-semibold text-charcoal">{data.meta.totalPages}</span> ({data.meta.total} total)
               </div>
               <div className="flex items-center gap-1.5">
                 <button
@@ -434,16 +434,16 @@ export default function AdminBookings() {
 
       {/* Booking Details Modal */}
       {detailBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl border border-taupe w-full max-w-lg overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-taupe">
               <div>
-                <h3 className="font-bold text-slate-900 text-lg">Booking Details</h3>
-                <p className="text-xs font-mono text-indigo-600 font-semibold">{detailBooking.reference}</p>
+                <h3 className="font-bold text-charcoal text-lg">Booking Details</h3>
+                <p className="text-xs font-mono text-forest font-semibold">{detailBooking.reference}</p>
               </div>
               <button
                 onClick={() => setDetailBooking(null)}
-                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-lg text-charcoal/40 hover:text-charcoal flex items-center justify-center cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -451,59 +451,59 @@ export default function AdminBookings() {
             <div className="p-5 space-y-4 text-sm">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-slate-400">Guest Name</p>
-                  <p className="font-semibold text-slate-800">{detailBooking.guest?.name || 'Guest'}</p>
+                  <p className="text-xs text-charcoal/50">Guest Name</p>
+                  <p className="font-semibold text-charcoal">{detailBooking.guest?.name || 'Guest'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Email Address</p>
-                  <p className="font-semibold text-slate-800 truncate">{detailBooking.guest?.email}</p>
+                  <p className="text-xs text-charcoal/50">Email Address</p>
+                  <p className="font-semibold text-charcoal truncate">{detailBooking.guest?.email}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Room</p>
-                  <p className="font-semibold text-slate-800">{detailBooking.room?.name || 'Room'}</p>
+                  <p className="text-xs text-charcoal/50">Room</p>
+                  <p className="font-semibold text-charcoal">{detailBooking.room?.name || 'Room'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Party Size</p>
-                  <p className="font-semibold text-slate-800">{detailBooking.guests} guests</p>
+                  <p className="text-xs text-charcoal/50">Party Size</p>
+                  <p className="font-semibold text-charcoal">{detailBooking.guests} guests</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Check-In</p>
-                  <p className="font-semibold text-slate-800">{format(new Date(detailBooking.checkIn), 'MMM d, yyyy')}</p>
+                  <p className="text-xs text-charcoal/50">Check-In</p>
+                  <p className="font-semibold text-charcoal">{format(new Date(detailBooking.checkIn), 'MMM d, yyyy')}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Check-Out</p>
-                  <p className="font-semibold text-slate-800">{format(new Date(detailBooking.checkOut), 'MMM d, yyyy')}</p>
+                  <p className="text-xs text-charcoal/50">Check-Out</p>
+                  <p className="font-semibold text-charcoal">{format(new Date(detailBooking.checkOut), 'MMM d, yyyy')}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Booking Status</p>
-                  <span className={statusColors[detailBooking.status] || 'badge-gray'}>
+                  <p className="text-xs text-charcoal/50">Booking Status</p>
+                  <span className={statusColors[detailBooking.status] || 'badge-taupe'}>
                     {statusLabels[detailBooking.status] || detailBooking.status}
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Payment Status</p>
+                  <p className="text-xs text-charcoal/50">Payment Status</p>
                   <PaymentBadge status={detailBooking.paymentStatus} />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Payment Method</p>
-                  <p className="font-semibold text-slate-800 capitalize">
+                  <p className="text-xs text-charcoal/50">Payment Method</p>
+                  <p className="font-semibold text-charcoal capitalize">
                     {detailBooking.paymentMethod === 'online' ? 'Online Gateway' : 'Pay at Hotel'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Total Price</p>
-                  <p className="font-bold text-indigo-600">{formatCurrency(detailBooking.totalPrice)}</p>
+                  <p className="text-xs text-charcoal/50">Total Price</p>
+                  <p className="font-bold text-forest">{formatCurrency(detailBooking.totalPrice)}</p>
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <div className="p-4 bg-taupe-50 border-t border-taupe flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {detailBooking.paymentStatus === 'pay_at_hotel' && detailBooking.status !== 'cancelled' && (
                   <button
                     type="button"
                     onClick={() => markPaidMutation.mutate(detailBooking.id)}
                     disabled={markPaidMutation.isPending}
-                    className="btn-success text-xs px-3 py-2 min-h-[36px]"
+                    className="btn-forest text-xs px-3 py-2 min-h-[36px]"
                   >
                     Mark Paid
                   </button>
@@ -532,16 +532,16 @@ export default function AdminBookings() {
 
       {/* Modify Booking Modal */}
       {modifyBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl border border-taupe w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-5 border-b border-taupe">
               <div>
-                <h3 className="font-bold text-slate-900">Modify Reservation</h3>
-                <p className="text-xs font-mono text-indigo-600">{modifyBooking.reference}</p>
+                <h3 className="font-bold text-charcoal">Modify Reservation</h3>
+                <p className="text-xs font-mono text-forest">{modifyBooking.reference}</p>
               </div>
               <button
                 onClick={() => setModifyBooking(null)}
-                className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 flex items-center justify-center"
+                className="w-8 h-8 rounded-lg text-charcoal/40 hover:text-charcoal flex items-center justify-center cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -579,7 +579,7 @@ export default function AdminBookings() {
                   required
                 />
               </div>
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-taupe flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setModifyBooking(null)}

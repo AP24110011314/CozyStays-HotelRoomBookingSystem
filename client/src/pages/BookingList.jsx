@@ -20,12 +20,12 @@ const statusLabels = {
 };
 
 const statusColors = {
-  upcoming: 'badge-info',
-  active: 'badge-success',
-  completed: 'badge-gray',
-  cancelled: 'badge-danger',
-  pending_payment: 'badge-warning',
-  expired: 'badge-gray',
+  upcoming: 'badge-forest',
+  active: 'badge-brass',
+  completed: 'badge-taupe',
+  cancelled: 'badge-brick',
+  pending_payment: 'badge-brass',
+  expired: 'badge-brick',
 };
 
 export default function BookingList() {
@@ -82,10 +82,10 @@ export default function BookingList() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-taupe pb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">My Bookings</h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-charcoal">My Bookings</h1>
+          <p className="text-xs sm:text-sm text-charcoal/60 mt-1">
             Review your upcoming, active, and past reservations
           </p>
         </div>
@@ -114,10 +114,10 @@ export default function BookingList() {
               setStatus(tab.value);
               setPage(1);
             }}
-            className={`px-3.5 py-2 rounded-xl font-semibold transition-colors min-h-[40px] ${
+            className={`px-3.5 py-2 rounded-xl font-semibold transition-colors min-h-[40px] cursor-pointer ${
               status === tab.value
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50'
+                ? 'bg-forest text-ivory shadow-xs'
+                : 'bg-white text-charcoal/70 border border-taupe hover:bg-taupe-50'
             }`}
           >
             {tab.label}
@@ -129,16 +129,16 @@ export default function BookingList() {
       {isLoading ? (
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-2xl animate-pulse"></div>
+            <div key={i} className="h-28 bg-taupe/40 rounded-2xl animate-pulse"></div>
           ))}
         </div>
       ) : bookingsList.length === 0 ? (
-        <div className="max-w-md mx-auto text-center py-16 px-4 bg-white rounded-3xl border border-slate-200/80 p-8 space-y-4">
-          <div className="w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+        <div className="max-w-md mx-auto text-center py-16 px-4 bg-white rounded-3xl border border-taupe p-8 space-y-4">
+          <div className="w-16 h-16 rounded-full bg-forest-50 text-forest flex items-center justify-center mx-auto">
             <BedDouble className="w-8 h-8" />
           </div>
-          <h2 className="text-lg font-bold text-slate-900">No reservations found</h2>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <h2 className="text-lg font-bold text-charcoal">No reservations found</h2>
+          <p className="text-xs text-charcoal/60 max-w-sm mx-auto">
             {status ? `You do not have any ${status.replace('_', ' ')} reservations.` : 'You have not booked any stays with us yet.'}
           </p>
           <Link to="/" className="btn-primary inline-flex items-center gap-2 text-xs py-2 px-4 mt-2">
@@ -152,14 +152,14 @@ export default function BookingList() {
             return (
               <div
                 key={booking.id}
-                className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group"
+                className="bg-white rounded-2xl p-4 sm:p-5 border border-taupe shadow-xs hover:shadow-md hover:border-taupe-400 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group"
               >
                 {/* Left room info */}
                 <Link
                   to={`/bookings/${booking.id}`}
                   className="flex items-center gap-4 min-w-0 flex-1 hover:opacity-90 transition-opacity"
                 >
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-taupe-100 flex-shrink-0">
                     {booking.room?.photos?.[0] ? (
                       <img
                         src={booking.room.photos[0]}
@@ -167,7 +167,7 @@ export default function BookingList() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-charcoal/40 text-xs">
                         No Photo
                       </div>
                     )}
@@ -175,41 +175,41 @@ export default function BookingList() {
 
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">
+                      <span className="font-mono text-xs font-bold text-forest bg-forest-50 px-2 py-0.5 rounded border border-forest-200">
                         {booking.reference}
                       </span>
-                      <span className={`${statusColors[booking.status] || 'badge-gray'} px-2 py-0.5 text-[11px] font-semibold uppercase`}>
+                      <span className={`${statusColors[booking.status] || 'badge-taupe'} px-2 py-0.5 text-[11px] font-semibold uppercase`}>
                         {statusLabels[booking.status] || booking.status}
                       </span>
                       <PaymentBadge status={booking.paymentStatus} />
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-base font-bold text-charcoal truncate group-hover:text-forest transition-colors">
                       {booking.room?.name}
                     </h3>
-                    <p className="text-xs text-slate-500 capitalize">
+                    <p className="text-xs text-charcoal/60 capitalize">
                       {booking.room?.type} &bull; {booking.guests} Guest{booking.guests !== 1 ? 's' : ''}
                     </p>
                   </div>
                 </Link>
 
                 {/* Middle dates & pricing */}
-                <div className="flex flex-row md:flex-col justify-between md:items-end text-xs text-slate-600 border-t md:border-t-0 pt-3 md:pt-0">
+                <div className="flex flex-row md:flex-col justify-between md:items-end text-xs text-charcoal/70 border-t md:border-t-0 border-taupe pt-3 md:pt-0">
                   <div className="text-left md:text-right">
-                    <span className="text-slate-400 block text-[11px]">Stay Dates</span>
-                    <span className="font-semibold text-slate-800">
+                    <span className="text-charcoal/50 block text-[11px]">Stay Dates</span>
+                    <span className="font-semibold text-charcoal">
                       {format(new Date(booking.checkIn), 'MMM d')} - {format(new Date(booking.checkOut), 'MMM d, yyyy')}
                     </span>
                   </div>
                   <div className="text-right mt-1">
-                    <span className="text-slate-400 block text-[11px]">Total Price</span>
-                    <span className="text-base font-extrabold text-indigo-600">
+                    <span className="text-charcoal/50 block text-[11px]">Total Price</span>
+                    <span className="text-base font-extrabold text-forest">
                       {formatCurrency(booking.totalPrice, currency)}
                     </span>
                   </div>
                 </div>
 
                 {/* Right Action buttons */}
-                <div className="flex items-center justify-end gap-2 border-t md:border-t-0 pt-3 md:pt-0">
+                <div className="flex items-center justify-end gap-2 border-t md:border-t-0 border-taupe pt-3 md:pt-0">
                   {isPending && booking.holdExpiresAt && (
                     <HoldCountdown expiresAt={booking.holdExpiresAt} />
                   )}
@@ -250,8 +250,8 @@ export default function BookingList() {
 
           {/* Pagination */}
           {meta.totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200 text-xs">
-              <span className="text-slate-500">
+            <div className="flex items-center justify-between pt-4 border-t border-taupe text-xs">
+              <span className="text-charcoal/60">
                 Page {meta.page} of {meta.totalPages} ({meta.total} bookings)
               </span>
               <div className="flex gap-2">

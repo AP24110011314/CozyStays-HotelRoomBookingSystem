@@ -22,8 +22,8 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
+      <div className="min-h-screen flex items-center justify-center bg-ivory">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-forest border-t-transparent"></div>
       </div>
     );
   }
@@ -44,8 +44,8 @@ function PublicRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
+      <div className="min-h-screen flex items-center justify-center bg-ivory">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-forest border-t-transparent"></div>
       </div>
     );
   }

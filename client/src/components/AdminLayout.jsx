@@ -1,7 +1,18 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LayoutDashboard, BedDouble, CalendarDays, Mail, BarChart3, ArrowLeft, LogOut, Menu, X, CreditCard } from 'lucide-react';
+import {
+  LayoutDashboard,
+  BedDouble,
+  CalendarDays,
+  Mail,
+  BarChart3,
+  ArrowLeft,
+  LogOut,
+  Menu,
+  X,
+  CreditCard,
+} from 'lucide-react';
 import { HOTEL_CONFIG } from '../config/hotel';
 
 export default function AdminLayout() {
@@ -19,28 +30,31 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 sticky top-0 z-40">
+    <div className="min-h-screen flex flex-col bg-ivory text-charcoal">
+      {/* Top Navbar: Forest Green with Ivory Text */}
+      <header className="bg-forest text-ivory shadow-sm border-b border-forest-600 sticky top-0 z-40">
         <div className="container-main">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
             <div className="flex items-center gap-8">
               <Link
                 to="/admin"
-                className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2.5 min-h-[44px]"
+                className="text-xl sm:text-2xl font-bold text-ivory flex items-center gap-2.5 min-h-[44px]"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
-                  <LayoutDashboard className="w-5 h-5" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-forest-800 text-brass border border-forest-600 flex items-center justify-center shadow-xs">
+                  <LayoutDashboard className="w-5 h-5 text-brass" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="leading-tight font-bold tracking-tight">Admin Portal</span>
-                  <span className="text-[10px] text-indigo-600 font-semibold uppercase tracking-wider">{HOTEL_CONFIG.name} Management</span>
+                  <span className="leading-tight font-bold tracking-tight text-ivory">Admin Portal</span>
+                  <span className="text-[10px] text-brass font-bold uppercase tracking-wider">
+                    {HOTEL_CONFIG.name} Management
+                  </span>
                 </div>
               </Link>
 
               {/* Desktop Nav */}
-              <nav className="hidden lg:flex items-center gap-1">
+              <nav className="hidden lg:flex items-center gap-1.5">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   const isActive = location.pathname === item.path;
@@ -48,13 +62,13 @@ export default function AdminLayout() {
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition-colors min-h-[44px] ${
+                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors min-h-[44px] ${
                         isActive
-                          ? 'bg-indigo-50 text-indigo-700'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-forest-700 text-brass font-bold shadow-2xs'
+                          : 'text-ivory/80 hover:text-ivory hover:bg-forest-600'
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-4 h-4 text-brass" />
                       {item.label}
                     </Link>
                   );
@@ -66,13 +80,13 @@ export default function AdminLayout() {
             <div className="hidden lg:flex items-center gap-3">
               <Link
                 to="/"
-                className="btn-secondary text-xs px-3 py-2 min-h-[36px]"
+                className="inline-flex items-center justify-center px-3 py-2 min-h-[36px] rounded-xl text-xs font-semibold bg-forest-700 hover:bg-forest-600 text-ivory border border-forest-500 transition-colors"
               >
-                <ArrowLeft className="w-4 h-4 mr-1.5" />
+                <ArrowLeft className="w-4 h-4 mr-1.5 text-brass" />
                 Guest View
               </Link>
               <button
-                onClick={logout}
+                onClick={() => logout()}
                 className="btn-danger text-xs px-3 py-2 min-h-[36px]"
               >
                 <LogOut className="w-4 h-4 mr-1.5" />
@@ -85,7 +99,7 @@ export default function AdminLayout() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="inline-flex items-center justify-center w-11 h-11 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-xl text-ivory hover:bg-forest-600 focus:outline-none focus:ring-2 focus:ring-brass"
                 aria-label="Toggle Admin Menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -96,7 +110,7 @@ export default function AdminLayout() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-lg">
+          <div className="lg:hidden border-t border-forest-600 bg-forest text-ivory px-4 pt-3 pb-6 space-y-3 shadow-xl">
             <nav className="flex flex-col gap-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -108,24 +122,24 @@ export default function AdminLayout() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold min-h-[48px] ${
                       isActive
-                        ? 'bg-indigo-50 text-indigo-700'
-                        : 'text-slate-700 hover:bg-slate-50'
+                        ? 'bg-forest-700 text-brass font-bold'
+                        : 'text-ivory/80 hover:bg-forest-600'
                     }`}
                   >
-                    <Icon className="w-5 h-5 text-indigo-600" />
+                    <Icon className="w-5 h-5 text-brass" />
                     {item.label}
                   </Link>
                 );
               })}
             </nav>
 
-            <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
+            <div className="pt-4 border-t border-forest-600 flex flex-col gap-2">
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn-secondary w-full justify-center min-h-[44px]"
+                className="inline-flex items-center justify-center w-full py-2.5 text-sm min-h-[44px] rounded-xl font-semibold border border-ivory/40 text-ivory hover:bg-forest-600"
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-4 h-4 mr-2 text-brass" />
                 Switch to Guest View
               </Link>
               <button
@@ -149,11 +163,11 @@ export default function AdminLayout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-auto py-6">
-        <div className="container-main flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500 text-center sm:text-left">
+      <footer className="bg-forest text-ivory border-t border-forest-600 mt-auto py-6">
+        <div className="container-main flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-ivory/80 text-center sm:text-left">
           <p>{HOTEL_CONFIG.name} — Administrator Panel</p>
-          <p className="flex items-center gap-2 justify-center">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <p className="flex items-center gap-2 justify-center text-ivory/90">
+            <span className="w-2 h-2 rounded-full bg-brass"></span>
             Admin API Authenticated
           </p>
         </div>
