@@ -115,3 +115,4 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
     </div>
   );
 }
+

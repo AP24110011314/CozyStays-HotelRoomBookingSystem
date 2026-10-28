@@ -51,3 +51,4 @@ export default function PaymentBadge({ status = 'pending', className = '', showI
     </span>
   );
 }
+

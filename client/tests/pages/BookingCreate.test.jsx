@@ -96,3 +96,4 @@ describe('BookingCreate Page', () => {
     expect(screen.getByRole('button', { name: /confirm & pay at hotel/i })).toBeInTheDocument();
   });
 });
+

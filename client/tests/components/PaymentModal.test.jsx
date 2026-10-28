@@ -139,3 +139,4 @@ describe('PaymentModal (Mock Provider)', () => {
     });
   });
 });
+
