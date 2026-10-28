@@ -82,18 +82,18 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal-900/80 via-charcoal-900/40 to-transparent flex flex-col justify-end p-5">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-taupe shadow-sm w-fit mb-2"
+            className="inline-flex items-center gap-2 bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 shadow-sm w-fit mb-2"
           >
-            <div className="w-7 h-7 rounded-lg bg-forest text-brass flex items-center justify-center shadow-xs">
-              <Hotel className="w-4 h-4 text-brass" />
+            <div className="w-7 h-7 rounded-lg bg-brass text-charcoal flex items-center justify-center shadow-xs">
+              <Hotel className="w-4 h-4 text-charcoal stroke-[2.2]" />
             </div>
-            <span className="text-base font-black tracking-tight text-charcoal">{HOTEL_CONFIG.name}</span>
+            <span className="text-base font-black tracking-tight text-white drop-shadow-sm">{HOTEL_CONFIG.name}</span>
           </Link>
           <div className="flex flex-wrap gap-1.5">
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[11px] font-bold bg-white/95 border border-taupe text-charcoal px-2.5 py-1 rounded-md shadow-xs"
+                className="text-[11px] font-bold bg-black/30 backdrop-blur-md border border-white/20 text-white px-2.5 py-1 rounded-md shadow-xs drop-shadow-sm"
               >
                 {chip}
               </span>
@@ -124,16 +124,16 @@ export default function Login() {
         <div className="relative z-10">
           <Link
             to="/"
-            className="inline-flex items-center gap-3 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-taupe shadow-md group hover:bg-white transition-all"
+            className="inline-flex items-center gap-3 bg-black/30 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/20 shadow-md group hover:bg-black/40 hover:border-white/40 transition-all"
           >
-            <div className="w-10 h-10 rounded-xl bg-forest text-brass flex items-center justify-center shadow-xs">
-              <Hotel className="w-5 h-5 text-brass" />
+            <div className="w-10 h-10 rounded-xl bg-brass text-charcoal flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <Hotel className="w-5 h-5 text-charcoal stroke-[2.2]" />
             </div>
             <div>
-              <span className="text-lg font-black tracking-tight text-charcoal block leading-none">
+              <span className="text-lg font-black tracking-tight text-white block leading-none drop-shadow-sm">
                 {HOTEL_CONFIG.name}
               </span>
-              <span className="text-[10px] text-brass-700 tracking-wider uppercase font-extrabold block mt-0.5">
+              <span className="text-[10px] text-brass-300 tracking-wider uppercase font-extrabold block mt-0.5 drop-shadow-sm">
                 Luxury Stays & Suites
               </span>
             </div>
@@ -142,11 +142,11 @@ export default function Login() {
 
         {/* Bottom Content: Tagline + Specifications Grid */}
         <div className="relative z-10 space-y-3.5 xl:space-y-4 pt-6 xl:pt-8">
-          <div className="space-y-1.5 max-w-xl bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-taupe shadow-md">
-            <h2 className="text-xl xl:text-2xl font-black tracking-tight text-charcoal leading-snug">
+          <div className="space-y-1.5 max-w-xl bg-black/30 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-md">
+            <h2 className="text-xl xl:text-2xl font-black tracking-tight text-white leading-snug drop-shadow-sm">
               {HOTEL_CONFIG.tagline}
             </h2>
-            <p className="text-xs text-charcoal-700 font-medium leading-relaxed">
+            <p className="text-xs text-white/90 font-medium leading-relaxed drop-shadow-sm">
               Sign in to manage your bookings, make quick modifications, and access exclusive guest rates.
             </p>
           </div>
