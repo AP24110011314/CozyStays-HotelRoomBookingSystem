@@ -41,6 +41,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
@@ -272,9 +273,23 @@ export default function Login() {
           </div>
 
           {/* Demo Credentials Box */}
-          <div className="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-3.5 text-xs text-indigo-900 space-y-1 text-center">
-            <p className="font-semibold text-slate-800">Demo Admin Credentials:</p>
-            <p className="font-mono text-[11px] text-indigo-700">admin@hotel.test / Admin@12345</p>
+          <div className="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-3.5 text-xs text-indigo-900 space-y-1.5 text-center">
+            <div className="flex items-center justify-between text-slate-800 font-semibold px-1">
+              <span>Demo Guest Credentials:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue('email', 'guest1@test.com', { shouldValidate: true });
+                  setValue('password', 'Guest@12345', { shouldValidate: true });
+                }}
+                className="text-[11px] text-indigo-600 hover:text-indigo-800 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
+              >
+                Auto-fill
+              </button>
+            </div>
+            <p className="font-mono text-[11px] text-indigo-700 bg-white/80 py-1.5 px-3 rounded-xl border border-indigo-100/70 block select-all">
+              guest1@test.com / Guest@12345
+            </p>
           </div>
 
           {/* Specifications block below form on Mobile */}

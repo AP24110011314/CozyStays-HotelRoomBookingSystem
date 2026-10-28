@@ -144,4 +144,17 @@ describe('Login Page', () => {
       '/register?next=%2Fbookings%2F123'
     );
   });
+
+  it('renders Guest 1 demo credentials and auto-fills on click', () => {
+    renderLogin();
+    expect(screen.getByText('Demo Guest Credentials:')).toBeInTheDocument();
+    expect(screen.getByText(/guest1@test\.com \/ Guest@12345/i)).toBeInTheDocument();
+
+    const autoFillBtn = screen.getByRole('button', { name: /auto-fill/i });
+    expect(autoFillBtn).toBeInTheDocument();
+    fireEvent.click(autoFillBtn);
+
+    expect(screen.getByLabelText('Email Address')).toHaveValue('guest1@test.com');
+    expect(screen.getByLabelText('Password')).toHaveValue('Guest@12345');
+  });
 });
