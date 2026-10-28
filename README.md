@@ -109,5 +109,8 @@ See `docs/` for complete specifications:
 - [Setup macOS](docs/SETUP_MAC.md) — Local environment
 - [Implementation Plan](docs/IMPLEMENTATION_PLAN.md) — Phase-by-phase tasks
 
+## Media Credits
+- Hotel photography: Photo by [Edvin Johansson](https://unsplash.com/photos/9A6Sr-5iaZs) on [Unsplash](https://unsplash.com) (Unsplash License, free for commercial and non-commercial use).
+
 ## License
 MIT

@@ -31,6 +31,11 @@
 **Auth**: required
 **Response 200**: `{ data: { user: { id, email, name, role } } }`
 
+## Config (Public)
+### GET `/config/public`
+**Auth**: none
+**Response 200**: `{ data: { cancellationWindowHours, currency, checkInTime, checkOutTime, paymentMethods, paymentHoldMinutes } }`
+
 ## Rooms (Public)
 ### GET `/rooms`
 **Query**: `checkIn`, `checkOut` (required), `guests`, `minPrice`, `maxPrice`, `type`, `amenities` (comma-separated), `sort` (priceAsc|priceDesc|name|type), `page`, `limit`

@@ -26,6 +26,38 @@ const envSchema = z.object({
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().default('noreply@hotel-booking.test'),
   EMAIL_FROM: z.string().optional(),
+  CURRENCY: z.string().default('INR'),
+  CHECK_IN_TIME: z.string().default('2:00 PM'),
+  CHECK_OUT_TIME: z.string().default('11:00 AM'),
+  PAYMENT_PROVIDER: z.enum(['mock', 'razorpay']).default('mock'),
+  RAZORPAY_KEY_ID: z.string().optional(),
+  RAZORPAY_KEY_SECRET: z.string().optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
+  PAYMENT_HOLD_MINUTES: z.coerce.number().int().positive().default(15),
+}).superRefine((data, ctx) => {
+  if (data.PAYMENT_PROVIDER === 'razorpay') {
+    if (!data.RAZORPAY_KEY_ID) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'RAZORPAY_KEY_ID is required when PAYMENT_PROVIDER=razorpay',
+        path: ['RAZORPAY_KEY_ID'],
+      });
+    }
+    if (!data.RAZORPAY_KEY_SECRET) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'RAZORPAY_KEY_SECRET is required when PAYMENT_PROVIDER=razorpay',
+        path: ['RAZORPAY_KEY_SECRET'],
+      });
+    }
+    if (!data.RAZORPAY_WEBHOOK_SECRET) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'RAZORPAY_WEBHOOK_SECRET is required when PAYMENT_PROVIDER=razorpay',
+        path: ['RAZORPAY_WEBHOOK_SECRET'],
+      });
+    }
+  }
 });
 
 let parsedEnv;
@@ -48,6 +80,10 @@ try {
   throw error;
 }
 
+if (parsedEnv.NODE_ENV !== 'production' && parsedEnv.RAZORPAY_KEY_ID?.startsWith('rzp_live_')) {
+  console.warn('WARNING: Live Razorpay key detected in non-production environment!');
+}
+
 const clientUrls = parsedEnv.CLIENT_URL
   ? parsedEnv.CLIENT_URL.split(',').map((url) => url.trim()).filter(Boolean)
   : ['http://localhost:5173'];
@@ -62,6 +98,14 @@ const env = {
   clientUrls,
   cancellationWindowHours: parsedEnv.CANCELLATION_WINDOW_HOURS,
   maxStayNights: parsedEnv.MAX_STAY_NIGHTS,
+  currency: parsedEnv.CURRENCY,
+  checkInTime: parsedEnv.CHECK_IN_TIME,
+  checkOutTime: parsedEnv.CHECK_OUT_TIME,
+  paymentProvider: parsedEnv.PAYMENT_PROVIDER,
+  razorpayKeyId: parsedEnv.RAZORPAY_KEY_ID,
+  razorpayKeySecret: parsedEnv.RAZORPAY_KEY_SECRET,
+  razorpayWebhookSecret: parsedEnv.RAZORPAY_WEBHOOK_SECRET,
+  paymentHoldMinutes: parsedEnv.PAYMENT_HOLD_MINUTES,
   smtp: {
     host: parsedEnv.SMTP_HOST,
     port: parsedEnv.SMTP_PORT,

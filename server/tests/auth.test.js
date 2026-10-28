@@ -32,6 +32,20 @@ describe('Health Endpoint', () => {
   });
 });
 
+describe('Public Config Endpoint', () => {
+  it('GET /api/config/public returns server public configuration', async () => {
+    const res = await request(server).get('/api/config/public');
+    expect(res.status).toBe(200);
+    expect(res.body.data).toBeDefined();
+    expect(res.body.data.cancellationWindowHours).toBeDefined();
+    expect(res.body.data.currency).toBe('INR');
+    expect(res.body.data.checkInTime).toBe('2:00 PM');
+    expect(res.body.data.checkOutTime).toBe('11:00 AM');
+    expect(res.body.data.paymentMethods).toContain('online');
+    expect(res.body.data.paymentMethods).toContain('pay_at_hotel');
+  });
+});
+
 describe('Auth Endpoints', () => {
   it('POST /api/auth/register creates user and returns token', async () => {
     const res = await request(server)

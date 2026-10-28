@@ -16,6 +16,7 @@ import { roomRoutes } from './routes/rooms.js';
 import { bookingRoutes } from './routes/bookings.js';
 import { adminRoutes } from './routes/admin.js';
 import { healthRoutes } from './routes/health.js';
+import { configRoutes } from './routes/config.js';
 import { startEmailWorker } from './workers/emailWorker.js';
 
 export function createApp() {
@@ -46,6 +47,7 @@ export function createApp() {
 
   app.use('/health', healthRoutes);
   app.use('/api/health', healthRoutes);
+  app.use('/api/config', configRoutes);
   app.use('/api/auth', authRoutes);
   app.use('/api/rooms', roomRoutes);
   app.use('/api/bookings', bookingRoutes);
