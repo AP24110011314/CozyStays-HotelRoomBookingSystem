@@ -47,17 +47,17 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
   const isOverlay = variant === 'overlay';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 xl:space-y-6">
       {/* 2-column specifications grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5" data-testid="hotel-specs-grid">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3" data-testid="hotel-specs-grid">
         {specs.map((spec) => {
           const Icon = ICON_MAP[spec.icon] || ShieldCheck;
           return (
             <div
               key={spec.id}
-              className={`flex items-start gap-3 p-3 rounded-xl transition-all ${
+              className={`flex items-start gap-2.5 p-2.5 sm:p-3 rounded-xl transition-all ${
                 isOverlay
-                  ? 'bg-[#0c1f19]/92 backdrop-blur-md border border-brass/40 shadow-md hover:border-brass/70'
+                  ? 'bg-forest-950/95 backdrop-blur-md border border-brass/50 shadow-md hover:border-brass'
                   : 'bg-white border border-taupe-300 shadow-xs hover:border-forest/40'
               }`}
             >
@@ -83,7 +83,7 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
                   {spec.title}
                 </p>
                 <p
-                  className={`text-[11px] mt-0.5 leading-snug font-medium ${
+                  className={`text-[11px] mt-0.5 leading-snug font-semibold ${
                     isOverlay ? 'text-taupe-100' : 'text-charcoal-700'
                   }`}
                 >
@@ -97,9 +97,9 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
 
       {/* Trust Badges Row */}
       <div
-        className={`pt-4 border-t flex flex-wrap items-center justify-between gap-3 text-xs ${
+        className={`pt-3 xl:pt-4 border-t flex flex-wrap items-center justify-between gap-3 text-xs ${
           isOverlay
-            ? 'border-brass/30 text-white font-semibold'
+            ? 'border-brass/40 text-white font-semibold'
             : 'border-taupe text-charcoal font-semibold'
         }`}
         data-testid="hotel-trust-row"
@@ -107,11 +107,11 @@ export default function HotelSpecs({ cancellationHours, variant = 'full' }) {
         {HOTEL_CONFIG.trustBadges.map((badge) => {
           const BadgeIcon = ICON_MAP[badge.icon] || CheckCircle2;
           return (
-            <div key={badge.id} className="flex items-center gap-1.5 font-medium">
+            <div key={badge.id} className="flex items-center gap-1.5 font-semibold text-white">
               <BadgeIcon
                 className={`w-3.5 h-3.5 ${isOverlay ? 'text-brass' : 'text-forest'}`}
               />
-              <span>{badge.text}</span>
+              <span className={isOverlay ? 'text-white' : 'text-charcoal'}>{badge.text}</span>
             </div>
           );
         })}

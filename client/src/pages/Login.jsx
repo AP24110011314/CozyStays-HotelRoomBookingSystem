@@ -90,7 +90,7 @@ export default function Login() {
             {HOTEL_CONFIG.mobileChips.map((chip) => (
               <span
                 key={chip}
-                className="text-[11px] font-bold bg-[#0c1f19]/90 border border-brass/50 text-white px-2.5 py-1 rounded-md shadow-xs"
+                className="text-[11px] font-bold bg-forest-950/90 border border-brass/50 text-white px-2.5 py-1 rounded-md shadow-xs"
               >
                 {chip}
               </span>
@@ -100,7 +100,7 @@ export default function Login() {
       </div>
 
       {/* DESKTOP LEFT COLUMN: Photo, Specs & Branding (1024px and up) */}
-      <div className="hidden lg:flex lg:col-span-7 relative flex-col justify-between p-10 xl:p-14 text-ivory overflow-hidden min-h-screen bg-forest-950">
+      <div className="hidden lg:flex lg:col-span-7 relative flex-col justify-between p-6 lg:p-8 xl:p-12 text-ivory min-h-screen bg-forest-950 overflow-y-auto">
         {/* Background Image with optimized <picture> */}
         <picture className="absolute inset-0 z-0">
           <source srcSet="/images/hotel-login.webp" type="image/webp" />
@@ -115,8 +115,8 @@ export default function Login() {
         </picture>
 
         {/* Soft dark gradient overlays */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-forest-950 via-forest-950/80 to-forest-950/40" />
-        <div className="absolute inset-0 z-0 bg-forest-950/30 mix-blend-multiply" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-forest-950 via-forest-950/90 to-forest-950/70" />
+        <div className="absolute inset-0 z-0 bg-forest-950/50 mix-blend-multiply" />
 
         {/* Top Branding */}
         <div className="relative z-10">
@@ -125,10 +125,10 @@ export default function Login() {
               <Hotel className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xl font-black tracking-tight text-ivory block">
+              <span className="text-xl font-black tracking-tight text-white block">
                 {HOTEL_CONFIG.name}
               </span>
-              <span className="text-xs text-brass tracking-wider uppercase font-semibold">
+              <span className="text-xs text-brass tracking-wider uppercase font-bold">
                 Luxury Stays & Suites
               </span>
             </div>
@@ -136,8 +136,8 @@ export default function Login() {
         </div>
 
         {/* Bottom Content: Tagline + Specifications Grid */}
-        <div className="relative z-10 space-y-6 pt-12">
-          <div className="space-y-2 max-w-xl">
+        <div className="relative z-10 space-y-4 xl:space-y-6 pt-6 xl:pt-10">
+          <div className="space-y-1.5 max-w-xl">
             <h2 className="text-2xl xl:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
               {HOTEL_CONFIG.tagline}
             </h2>
@@ -147,7 +147,7 @@ export default function Login() {
           </div>
 
           {/* Specifications */}
-          <div className="pt-2">
+          <div className="pt-1">
             <HotelSpecs
               variant="overlay"
               cancellationHours={config?.cancellationWindowHours}
