@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { LayoutDashboard, BedDouble, CalendarDays, Mail, BarChart3, ArrowLeft, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BedDouble, CalendarDays, Mail, BarChart3, ArrowLeft, LogOut, Menu, X, CreditCard } from 'lucide-react';
 
 export default function AdminLayout() {
   const { logout } = useAuth();
@@ -12,6 +12,7 @@ export default function AdminLayout() {
     { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/admin/rooms', label: 'Rooms', icon: BedDouble },
     { path: '/admin/bookings', label: 'Bookings', icon: CalendarDays },
+    { path: '/admin/payments', label: 'Payments', icon: CreditCard },
     { path: '/admin/occupancy', label: 'Occupancy', icon: BarChart3 },
     { path: '/admin/emails', label: 'Email Queue', icon: Mail },
   ];

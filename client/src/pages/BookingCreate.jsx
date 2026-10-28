@@ -5,11 +5,24 @@ import { format, differenceInDays } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle2, ChevronLeft, Calendar, Users, ShieldCheck, Mail, ArrowRight } from 'lucide-react';
+import {
+  CheckCircle2,
+  ChevronLeft,
+  Calendar,
+  Users,
+  ShieldCheck,
+  Mail,
+  ArrowRight,
+  CreditCard,
+  Hotel,
+  Sparkles,
+} from 'lucide-react';
 import api from '../api/client';
 import toast from 'react-hot-toast';
-import { formatINR } from '../utils/currency';
+import { formatCurrency } from '../utils/currency';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import PaymentModal from '../components/PaymentModal';
+import PaymentBadge from '../components/PaymentBadge';
 
 const bookingSchema = z.object({
   guests: z.number().min(1, 'At least 1 guest required'),
@@ -21,11 +34,31 @@ export default function BookingCreate() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [paymentMethod, setPaymentMethod] = useState('online');
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+
+  // Payment modal state for online flow
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [pendingBooking, setPendingBooking] = useState(null);
+  const [paymentOrderData, setPaymentOrderData] = useState(null);
 
   const checkIn = searchParams.get('checkIn') || format(new Date(Date.now() + 86400000), 'yyyy-MM-dd');
   const checkOut = searchParams.get('checkOut') || format(new Date(Date.now() + 2 * 86400000), 'yyyy-MM-dd');
   const nights = Math.max(1, differenceInDays(new Date(checkOut), new Date(checkIn)) || 1);
+
+  // Fetch public config
+  const { data: publicConfig } = useQuery({
+    queryKey: ['config', 'public'],
+    queryFn: async () => {
+      const response = await api.get('/config/public');
+      return response.data?.data || {};
+    },
+    staleTime: 60 * 1000,
+  });
+
+  const currency = publicConfig?.currency || 'INR';
+  const cancellationWindow = publicConfig?.cancellationWindowHours || 48;
 
   const { data: room, isLoading } = useQuery({
     queryKey: ['room', id],
@@ -51,18 +84,41 @@ export default function BookingCreate() {
         checkIn,
         checkOut,
         guests: data.guests,
+        paymentMethod,
       });
-      return response.data.data;
+      return response.data;
     },
-    onSuccess: (booking) => {
-      toast.success(`Booking confirmed! Reference: ${booking.reference}`);
+    onSuccess: (res) => {
+      const booking = res.data;
+      const payment = res.payment;
+
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      setConfirmedBooking(booking);
+
+      if (paymentMethod === 'online' && payment) {
+        // Online payment: open payment modal/gateway
+        setPendingBooking(booking);
+        setPaymentOrderData(payment);
+        setIsPaymentModalOpen(true);
+      } else {
+        // Pay at hotel: immediately confirmed
+        toast.success(`Booking confirmed! Reference: ${booking.reference}`);
+        setConfirmedBooking(booking);
+      }
     },
     onError: (error) => {
       toast.error(error.response?.data?.error?.message || 'Booking failed');
     },
   });
+
+  const handlePaymentSuccess = (verifiedData) => {
+    const updated = verifiedData.booking || pendingBooking;
+    setConfirmedBooking({
+      ...updated,
+      paymentStatus: 'paid',
+      status: 'upcoming',
+    });
+    setIsPaymentModalOpen(false);
+  };
 
   if (isLoading) {
     return (
@@ -101,20 +157,27 @@ export default function BookingCreate() {
         </div>
 
         <div className="space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 mb-1">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            Instant Reservation Confirmed
+          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
             Booking Confirmed!
           </h1>
           <p className="text-slate-600 text-sm">
-            Your reservation has been successfully booked in our cloud database.
+            Your reservation has been securely confirmed in our database.
           </p>
         </div>
 
         <div className="bg-slate-50 rounded-2xl p-4 sm:p-6 border border-slate-200/80 text-left space-y-4">
           <div className="flex justify-between items-center border-b border-slate-200/60 pb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Booking Reference</span>
-            <span className="font-mono text-base font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg">
-              {confirmedBooking.reference}
-            </span>
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 block">Booking Reference</span>
+              <span className="font-mono text-base font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-lg inline-block mt-0.5">
+                {confirmedBooking.reference}
+              </span>
+            </div>
+            <PaymentBadge status={confirmedBooking.paymentStatus || (paymentMethod === 'online' ? 'paid' : 'pay_at_hotel')} />
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-xs">
@@ -123,8 +186,8 @@ export default function BookingCreate() {
               <p className="font-bold text-slate-900 text-sm">{room.name}</p>
             </div>
             <div>
-              <p className="text-slate-500 font-medium">Total Paid</p>
-              <p className="font-bold text-indigo-600 text-sm">{formatINR(confirmedBooking.totalPrice || totalPrice)}</p>
+              <p className="text-slate-500 font-medium">Total Amount</p>
+              <p className="font-bold text-indigo-600 text-sm">{formatCurrency(confirmedBooking.totalPrice || totalPrice, currency)}</p>
             </div>
             <div>
               <p className="text-slate-500 font-medium">Check-in</p>
@@ -134,6 +197,16 @@ export default function BookingCreate() {
               <p className="text-slate-500 font-medium">Check-out</p>
               <p className="font-semibold text-slate-800">{format(new Date(checkOut), 'EEE, MMM d, yyyy')}</p>
             </div>
+            <div>
+              <p className="text-slate-500 font-medium">Payment Method</p>
+              <p className="font-semibold text-slate-800 capitalize">
+                {confirmedBooking.paymentMethod === 'online' ? 'Paid Online' : 'Pay at Hotel (Front Desk)'}
+              </p>
+            </div>
+            <div>
+              <p className="text-slate-500 font-medium">Cancellation Window</p>
+              <p className="font-semibold text-slate-800">Up to {cancellationWindow}h prior to check-in</p>
+            </div>
           </div>
         </div>
 
@@ -141,7 +214,7 @@ export default function BookingCreate() {
         <div className="flex items-center gap-3 p-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-left text-xs text-indigo-900">
           <Mail className="w-5 h-5 text-indigo-600 flex-shrink-0" />
           <p className="leading-relaxed">
-            A confirmation email with your booking details and a calendar invite (.ics) has been dispatched to your email address!
+            A confirmation email with your booking details and calendar invite (.ics) has been dispatched to your email address!
           </p>
         </div>
 
@@ -179,11 +252,11 @@ export default function BookingCreate() {
 
       <div className="space-y-1">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Confirm Your Reservation</h1>
-        <p className="text-xs sm:text-sm text-slate-500">Review your stay details and finalize your booking</p>
+        <p className="text-xs sm:text-sm text-slate-500">Review your stay details, select payment method, and complete your reservation</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Guest Details Form */}
+        {/* Guest Details & Payment Form */}
         <div className="lg:col-span-2 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
           <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-3">
             <Users className="w-4 h-4 text-indigo-600" />
@@ -239,9 +312,80 @@ export default function BookingCreate() {
               </p>
             </div>
 
+            {/* Payment Method Selector (Radio Cards) */}
+            <div className="space-y-3 pt-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
+                Select Payment Method
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Pay Online Card */}
+                <label
+                  className={`flex flex-col p-4 rounded-2xl border cursor-pointer transition-all ${
+                    paymentMethod === 'online'
+                      ? 'border-indigo-600 bg-indigo-50/60 ring-2 ring-indigo-600/20 shadow-sm'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-indigo-600" />
+                      <span className="font-bold text-slate-900 text-sm">Pay Online</span>
+                    </div>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="online"
+                      checked={paymentMethod === 'online'}
+                      onChange={() => setPaymentMethod('online')}
+                      className="text-indigo-600 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-600">
+                    Instant confirmation via Cards, UPI, Netbanking. 15-minute price hold.
+                  </p>
+                  <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Secure encrypted checkout</span>
+                  </div>
+                </label>
+
+                {/* Pay at Hotel Card */}
+                <label
+                  className={`flex flex-col p-4 rounded-2xl border cursor-pointer transition-all ${
+                    paymentMethod === 'pay_at_hotel'
+                      ? 'border-indigo-600 bg-indigo-50/60 ring-2 ring-indigo-600/20 shadow-sm'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Hotel className="w-5 h-5 text-indigo-600" />
+                      <span className="font-bold text-slate-900 text-sm">Pay at Hotel</span>
+                    </div>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="pay_at_hotel"
+                      checked={paymentMethod === 'pay_at_hotel'}
+                      onChange={() => setPaymentMethod('pay_at_hotel')}
+                      className="text-indigo-600 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-600">
+                    Reserve room now, pay at front desk with Cash or Card upon arrival.
+                  </p>
+                  <div className="mt-3 flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Instant confirmation</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <span>Free cancellation up to 48 hours prior to check-in. Instant confirmation.</span>
+              <span>Free cancellation up to {cancellationWindow} hours prior to check-in. Instant confirmation.</span>
             </div>
 
             <button
@@ -249,7 +393,11 @@ export default function BookingCreate() {
               disabled={createBookingMutation.isPending}
               className="btn-primary w-full justify-center py-4 text-base font-bold shadow-md min-h-[52px]"
             >
-              {createBookingMutation.isPending ? 'Confirming Reservation...' : 'Complete Reservation'}
+              {createBookingMutation.isPending
+                ? 'Processing Reservation...'
+                : paymentMethod === 'online'
+                ? `Proceed to Payment (${formatCurrency(totalPrice, currency)})`
+                : 'Confirm & Pay at Hotel'}
             </button>
           </form>
         </div>
@@ -276,7 +424,7 @@ export default function BookingCreate() {
           <div className="border-t border-slate-100 pt-3 space-y-2 text-xs">
             <div className="flex justify-between text-slate-600">
               <span>Rate per night</span>
-              <span className="font-semibold text-slate-800">{formatINR(room.basePrice)}</span>
+              <span className="font-semibold text-slate-800">{formatCurrency(room.basePrice, currency)}</span>
             </div>
             <div className="flex justify-between text-slate-600">
               <span>Nights</span>
@@ -286,13 +434,33 @@ export default function BookingCreate() {
               <span>Taxes & fees</span>
               <span className="font-semibold text-emerald-600">Included</span>
             </div>
+            <div className="flex justify-between text-slate-600">
+              <span>Payment mode</span>
+              <span className="font-semibold text-indigo-700 capitalize">
+                {paymentMethod === 'online' ? 'Online Gateway' : 'Pay at Hotel'}
+              </span>
+            </div>
             <div className="border-t border-slate-100 pt-2 flex justify-between items-baseline">
               <span className="text-sm font-bold text-slate-900">Total Price</span>
-              <span className="text-xl font-extrabold text-indigo-600">{formatINR(totalPrice)}</span>
+              <span className="text-xl font-extrabold text-indigo-600">{formatCurrency(totalPrice, currency)}</span>
             </div>
           </div>
         </aside>
       </div>
+
+      {/* Payment Gateway Modal (Mock / Razorpay trigger) */}
+      {isPaymentModalOpen && pendingBooking && paymentOrderData && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          booking={pendingBooking}
+          paymentData={paymentOrderData}
+          onSuccess={handlePaymentSuccess}
+          onFailure={() => {
+            // keep modal open or let user retry
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -15,6 +15,7 @@ import AdminRooms from './pages/admin/Rooms';
 import AdminBookings from './pages/admin/Bookings';
 import AdminEmails from './pages/admin/Emails';
 import AdminOccupancy from './pages/admin/Occupancy';
+import AdminPayments from './pages/admin/Payments';
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { isAuthenticated, isAdmin, loading } = useAuth();
@@ -105,6 +106,7 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/rooms" element={<AdminRooms />} />
         <Route path="/admin/bookings" element={<AdminBookings />} />
+        <Route path="/admin/payments" element={<AdminPayments />} />
         <Route path="/admin/emails" element={<AdminEmails />} />
         <Route path="/admin/occupancy" element={<AdminOccupancy />} />
       </Route>

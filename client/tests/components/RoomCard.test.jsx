@@ -8,7 +8,7 @@ const mockRoom = {
   name: 'Deluxe Suite',
   type: 'suite',
   description: 'A luxurious suite with ocean view',
-  basePrice: 250000, // ₹2,500 in paise
+  basePrice: 2500, // ₹2,500
   maxGuests: 4,
   amenities: ['wifi', 'air conditioning', 'tv', 'minibar'],
   photos: ['https://example.com/photo1.jpg'],
@@ -86,7 +86,7 @@ describe('RoomCard', () => {
   });
 
   it('handles different room types', () => {
-    const singleRoom = { ...mockRoom, id: 'room-2', name: 'Single Room', type: 'single', basePrice: 100000 }; // ₹1,000 in paise
+    const singleRoom = { ...mockRoom, id: 'room-2', name: 'Single Room', type: 'single', basePrice: 1000 }; // ₹1,000
     renderRoomCard(singleRoom);
     expect(screen.getByText('Single Room')).toBeInTheDocument();
     expect(screen.getByText('Single')).toBeInTheDocument();

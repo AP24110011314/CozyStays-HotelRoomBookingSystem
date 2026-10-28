@@ -100,3 +100,5 @@ export const HOTEL_CONFIG = {
     'Pay Online or at Hotel',
   ],
 };
+
+export default HOTEL_CONFIG;

@@ -1,37 +1,36 @@
 /**
- * Currency formatting utility for Indian Rupees (INR)
+ * Currency formatting utility using Intl.NumberFormat
  */
 
-export function formatINR(amountInPaise) {
-  if (amountInPaise === null || amountInPaise === undefined) return '₹0';
-  const rupees = amountInPaise / 100;
-  return new Intl.NumberFormat('en-IN', {
+export function formatCurrency(amount, currency = 'INR', options = {}) {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return currency === 'INR' ? '₹0' : '0';
+  }
+  const locale = currency === 'INR' ? 'en-IN' : 'en-US';
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'INR',
+    currency: currency || 'INR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(rupees);
+    ...options,
+  }).format(amount);
 }
 
-export function formatINRWithDecimals(amountInPaise) {
-  if (amountInPaise === null || amountInPaise === undefined) return '₹0.00';
-  const rupees = amountInPaise / 100;
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+export function formatINR(amount) {
+  return formatCurrency(amount, 'INR');
+}
+
+export function formatINRWithDecimals(amount, currency = 'INR') {
+  return formatCurrency(amount, currency, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(rupees);
+  });
 }
 
-export function formatINRCompact(amountInPaise) {
-  if (amountInPaise === null || amountInPaise === undefined) return '₹0';
-  const rupees = amountInPaise / 100;
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+export function formatINRCompact(amount, currency = 'INR') {
+  return formatCurrency(amount, currency, {
     notation: 'compact',
     minimumFractionDigits: 0,
     maximumFractionDigits: 1,
-  }).format(rupees);
+  });
 }

@@ -3,15 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import api from '../../api/client';
 import toast from 'react-hot-toast';
-import { formatINR } from '../../utils/currency';
+import { formatCurrency } from '../../utils/currency';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
-import { Search, Calendar, X, Edit, Eye } from 'lucide-react';
+import { Search, Calendar, X, Edit, Eye, CheckCircle2 } from 'lucide-react';
+import PaymentBadge from '../../components/PaymentBadge';
 
 const statusLabels = {
   upcoming: 'Upcoming',
   active: 'Active',
   completed: 'Completed',
   cancelled: 'Cancelled',
+  pending_payment: 'Pending Payment',
+  expired: 'Expired',
 };
 
 const statusColors = {
@@ -19,6 +22,8 @@ const statusColors = {
   active: 'badge-active',
   completed: 'badge-completed',
   cancelled: 'badge-cancelled',
+  pending_payment: 'badge-warning',
+  expired: 'badge-gray',
 };
 
 export default function AdminBookings() {
@@ -26,6 +31,7 @@ export default function AdminBookings() {
   const queryClient = useQueryClient();
 
   const [status, setStatus] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('');
   const [search, setSearch] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
   const [fromDate, setFromDate] = useState('');
@@ -49,13 +55,14 @@ export default function AdminBookings() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin', 'bookings', status, search, selectedRoom, fromDate, toDate, page],
+    queryKey: ['admin', 'bookings', status, paymentStatus, search, selectedRoom, fromDate, toDate, page],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: '15',
       });
       if (status) params.append('status', status);
+      if (paymentStatus) params.append('paymentStatus', paymentStatus);
       if (search) params.append('search', search);
       if (selectedRoom) params.append('room', selectedRoom);
       if (fromDate) params.append('from', fromDate);
@@ -76,6 +83,22 @@ export default function AdminBookings() {
     },
     onError: (error) => {
       toast.error(error.response?.data?.error?.message || 'Failed to cancel booking');
+    },
+  });
+
+  const markPaidMutation = useMutation({
+    mutationFn: (id) => api.post(`/admin/bookings/${id}/mark-paid`),
+    onSuccess: () => {
+      toast.success('Booking marked as paid at hotel successfully');
+      queryClient.invalidateQueries({ queryKey: ['admin', 'bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'payments'] });
+      if (detailBooking) {
+        setDetailBooking((prev) => ({ ...prev, paymentStatus: 'paid' }));
+      }
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.error?.message || 'Failed to mark booking as paid');
     },
   });
 
@@ -121,32 +144,35 @@ export default function AdminBookings() {
 
   return (
     <div className="space-y-6">
-      {/* Title */}
+      {/* Page Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Booking Management</h1>
-        <p className="text-sm text-slate-500 mt-1">Review, search, inspect, modify, and manage all reservations across the property</p>
+        <h1 className="text-2xl font-bold text-slate-900">Reservations & Bookings</h1>
+        <p className="text-sm text-slate-500">
+          Manage guest bookings, modify reservation dates, and review payment status
+        </p>
       </div>
 
-      {/* Filter and Search Panel */}
+      {/* Filter / Search Bar */}
       <div className="card p-4 sm:p-5 space-y-4">
-        {/* Status Pills */}
-        <div className="flex flex-wrap gap-2 pb-3 border-b border-slate-100">
+        {/* Status Tabs */}
+        <div className="flex flex-wrap gap-2 text-xs border-b border-slate-100 pb-3">
           {[
-            { id: '', label: 'All Bookings' },
-            { id: 'upcoming', label: 'Upcoming' },
-            { id: 'active', label: 'Active Now' },
-            { id: 'past', label: 'Completed' },
-            { id: 'cancelled', label: 'Cancelled' },
+            { label: 'All Statuses', value: '' },
+            { label: 'Upcoming', value: 'upcoming' },
+            { label: 'Pending Payment', value: 'pending_payment' },
+            { label: 'Active', value: 'active' },
+            { label: 'Completed', value: 'completed' },
+            { label: 'Cancelled', value: 'cancelled' },
           ].map((tab) => (
             <button
-              key={tab.id}
+              key={tab.value}
               onClick={() => {
-                setStatus(tab.id);
+                setStatus(tab.value);
                 setPage(1);
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all min-h-[38px] ${
-                status === tab.id
-                  ? 'bg-indigo-600 text-white shadow-sm'
+              className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+                status === tab.value
+                  ? 'bg-slate-900 text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
@@ -155,25 +181,44 @@ export default function AdminBookings() {
           ))}
         </div>
 
-        {/* Inputs Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Reference or Guest Email Search */}
+        {/* Filter inputs */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {/* Search box */}
           <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
+              placeholder="Search reference or guest..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Ref (HB-...) or email"
-              className="input pl-10 text-xs sm:text-sm"
+              className="input pl-9 text-xs sm:text-sm"
             />
           </div>
 
-          {/* Room Filter */}
-          <div>
+          {/* Payment Status Dropdown */}
+          <div className="relative">
+            <select
+              value={paymentStatus}
+              onChange={(e) => {
+                setPaymentStatus(e.target.value);
+                setPage(1);
+              }}
+              className="input text-xs sm:text-sm"
+            >
+              <option value="">All Payments</option>
+              <option value="paid">Paid</option>
+              <option value="pay_at_hotel">Pay at Hotel</option>
+              <option value="pending">Pending</option>
+              <option value="refunded">Refunded</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+
+          {/* Room filter */}
+          <div className="relative">
             <select
               value={selectedRoom}
               onChange={(e) => {
@@ -220,12 +265,13 @@ export default function AdminBookings() {
           </div>
         </div>
 
-        {(search || selectedRoom || fromDate || toDate) && (
+        {(search || paymentStatus || selectedRoom || fromDate || toDate) && (
           <div className="flex items-center justify-between text-xs text-slate-500 pt-2">
             <span>Filtered results active</span>
             <button
               onClick={() => {
                 setSearch('');
+                setPaymentStatus('');
                 setSelectedRoom('');
                 setFromDate('');
                 setToDate('');
@@ -264,8 +310,9 @@ export default function AdminBookings() {
                   <th className="p-4 sm:p-5 min-w-[160px]">Room</th>
                   <th className="p-4 sm:p-5 whitespace-nowrap">Dates</th>
                   <th className="p-4 sm:p-5">Status</th>
+                  <th className="p-4 sm:p-5">Payment</th>
                   <th className="p-4 sm:p-5">Amount</th>
-                  <th className="p-4 sm:p-5 text-right min-w-[180px]">Actions</th>
+                  <th className="p-4 sm:p-5 text-right min-w-[200px]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -289,11 +336,30 @@ export default function AdminBookings() {
                         {statusLabels[booking.status] || booking.status}
                       </span>
                     </td>
+                    <td className="p-4 sm:p-5 whitespace-nowrap">
+                      <div className="flex flex-col gap-1">
+                        <PaymentBadge status={booking.paymentStatus} />
+                        <span className="text-[10px] text-slate-400 capitalize font-medium">
+                          {booking.paymentMethod === 'online' ? 'Online' : 'Pay at Hotel'}
+                        </span>
+                      </div>
+                    </td>
                     <td className="p-4 sm:p-5 font-bold text-slate-900 whitespace-nowrap">
-                      {formatINR(booking.totalPrice)}
+                      {formatCurrency(booking.totalPrice)}
                     </td>
                     <td className="p-4 sm:p-5 text-right whitespace-nowrap">
                       <div className="inline-flex items-center gap-1.5">
+                        {booking.paymentStatus === 'pay_at_hotel' && booking.status !== 'cancelled' && (
+                          <button
+                            onClick={() => markPaidMutation.mutate(booking.id)}
+                            disabled={markPaidMutation.isPending}
+                            className="btn-success text-xs px-2.5 py-1.5 min-h-[36px]"
+                            title="Mark pay-at-hotel booking as paid at front desk"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                            Mark Paid
+                          </button>
+                        )}
                         <button
                           onClick={() => setDetailBooking(booking)}
                           className="btn-secondary text-xs px-2.5 py-1.5 min-h-[36px]"
@@ -340,22 +406,23 @@ export default function AdminBookings() {
 
           {/* Pagination */}
           {data?.meta && data.meta.totalPages > 1 && (
-            <div className="p-4 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm">
-              <span className="text-slate-500">
-                Page {page} of {data.meta.totalPages} ({data.meta.total} total)
-              </span>
-              <div className="flex items-center gap-2">
+            <div className="p-4 sm:p-5 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm text-slate-500">
+              <div>
+                Showing page <span className="font-semibold text-slate-800">{data.meta.page}</span> of{' '}
+                <span className="font-semibold text-slate-800">{data.meta.totalPages}</span> ({data.meta.total} total)
+              </div>
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page <= 1}
-                  className="btn-secondary text-xs px-3 py-1.5 min-h-[34px]"
+                  disabled={data.meta.page <= 1}
+                  className="btn-secondary text-xs px-3 py-1.5 min-h-[36px] disabled:opacity-40"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(data.meta.totalPages, p + 1))}
-                  disabled={page >= data.meta.totalPages}
-                  className="btn-secondary text-xs px-3 py-1.5 min-h-[34px]"
+                  disabled={data.meta.page >= data.meta.totalPages}
+                  className="btn-secondary text-xs px-3 py-1.5 min-h-[36px] disabled:opacity-40"
                 >
                   Next
                 </button>
@@ -365,14 +432,14 @@ export default function AdminBookings() {
         </div>
       )}
 
-      {/* View Detail Modal */}
+      {/* Booking Details Modal */}
       {detailBooking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden">
             <div className="flex items-center justify-between p-5 border-b border-slate-100">
               <div>
-                <h3 className="font-bold text-slate-900">Reservation Details</h3>
-                <p className="text-xs font-mono text-indigo-600">{detailBooking.reference}</p>
+                <h3 className="font-bold text-slate-900 text-lg">Booking Details</h3>
+                <p className="text-xs font-mono text-indigo-600 font-semibold">{detailBooking.reference}</p>
               </div>
               <button
                 onClick={() => setDetailBooking(null)}
@@ -382,18 +449,18 @@ export default function AdminBookings() {
               </button>
             </div>
             <div className="p-5 space-y-4 text-sm">
-              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-slate-400">Guest Name</p>
-                  <p className="font-semibold text-slate-800">{detailBooking.guest?.name || 'N/A'}</p>
+                  <p className="font-semibold text-slate-800">{detailBooking.guest?.name || 'Guest'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Guest Email</p>
-                  <p className="font-semibold text-slate-800 truncate">{detailBooking.guest?.email || 'N/A'}</p>
+                  <p className="text-xs text-slate-400">Email Address</p>
+                  <p className="font-semibold text-slate-800 truncate">{detailBooking.guest?.email}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-400">Room</p>
-                  <p className="font-semibold text-slate-800">{detailBooking.room?.name || 'N/A'}</p>
+                  <p className="font-semibold text-slate-800">{detailBooking.room?.name || 'Room'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-400">Party Size</p>
@@ -408,31 +475,53 @@ export default function AdminBookings() {
                   <p className="font-semibold text-slate-800">{format(new Date(detailBooking.checkOut), 'MMM d, yyyy')}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-400">Status</p>
+                  <p className="text-xs text-slate-400">Booking Status</p>
                   <span className={statusColors[detailBooking.status] || 'badge-gray'}>
                     {statusLabels[detailBooking.status] || detailBooking.status}
                   </span>
                 </div>
                 <div>
+                  <p className="text-xs text-slate-400">Payment Status</p>
+                  <PaymentBadge status={detailBooking.paymentStatus} />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Payment Method</p>
+                  <p className="font-semibold text-slate-800 capitalize">
+                    {detailBooking.paymentMethod === 'online' ? 'Online Gateway' : 'Pay at Hotel'}
+                  </p>
+                </div>
+                <div>
                   <p className="text-xs text-slate-400">Total Price</p>
-                  <p className="font-bold text-indigo-600">{formatINR(detailBooking.totalPrice)}</p>
+                  <p className="font-bold text-indigo-600">{formatCurrency(detailBooking.totalPrice)}</p>
                 </div>
               </div>
             </div>
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-              {detailBooking.status !== 'cancelled' ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleCancel(detailBooking.id, detailBooking.reference);
-                    setDetailBooking(null);
-                  }}
-                  disabled={cancelBookingMutation.isPending}
-                  className="btn-danger text-xs px-3 py-2 min-h-[36px]"
-                >
-                  Cancel Reservation
-                </button>
-              ) : <div />}
+              <div className="flex items-center gap-2">
+                {detailBooking.paymentStatus === 'pay_at_hotel' && detailBooking.status !== 'cancelled' && (
+                  <button
+                    type="button"
+                    onClick={() => markPaidMutation.mutate(detailBooking.id)}
+                    disabled={markPaidMutation.isPending}
+                    className="btn-success text-xs px-3 py-2 min-h-[36px]"
+                  >
+                    Mark Paid
+                  </button>
+                )}
+                {detailBooking.status !== 'cancelled' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleCancel(detailBooking.id, detailBooking.reference);
+                      setDetailBooking(null);
+                    }}
+                    disabled={cancelBookingMutation.isPending}
+                    className="btn-danger text-xs px-3 py-2 min-h-[36px]"
+                  >
+                    Cancel Reservation
+                  </button>
+                )}
+              </div>
               <button onClick={() => setDetailBooking(null)} className="btn-secondary text-xs px-4 py-2">
                 Close
               </button>

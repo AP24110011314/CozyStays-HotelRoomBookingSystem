@@ -2,19 +2,35 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format, differenceInDays } from 'date-fns';
-import { ChevronLeft, Calendar, Users, X, Edit3, Trash2, Mail, ShieldAlert } from 'lucide-react';
+import {
+  ChevronLeft,
+  Calendar,
+  Users,
+  X,
+  Edit3,
+  Trash2,
+  Mail,
+  ShieldAlert,
+  CreditCard,
+  RotateCcw,
+} from 'lucide-react';
 import api from '../api/client';
 import toast from 'react-hot-toast';
-import { formatINR } from '../utils/currency';
+import { formatCurrency } from '../utils/currency';
 import DateRangePicker from '../components/DateRangePicker';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { useAuth } from '../contexts/AuthContext';
+import PaymentBadge from '../components/PaymentBadge';
+import HoldCountdown from '../components/HoldCountdown';
+import PaymentModal from '../components/PaymentModal';
 
 const statusLabels = {
   upcoming: 'Upcoming',
   active: 'Active',
   completed: 'Completed',
   cancelled: 'Cancelled',
+  pending_payment: 'Pending Payment',
+  expired: 'Expired',
 };
 
 const statusColors = {
@@ -22,6 +38,8 @@ const statusColors = {
   active: 'badge-success',
   completed: 'badge-gray',
   cancelled: 'badge-danger',
+  pending_payment: 'badge-warning',
+  expired: 'badge-gray',
 };
 
 export default function BookingDetail() {
@@ -32,6 +50,22 @@ export default function BookingDetail() {
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
   const [newCheckIn, setNewCheckIn] = useState('');
   const [newCheckOut, setNewCheckOut] = useState('');
+
+  // Payment modal state
+  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+  const [payOrderData, setPayOrderData] = useState(null);
+
+  // Fetch public config
+  const { data: publicConfig } = useQuery({
+    queryKey: ['config', 'public'],
+    queryFn: async () => {
+      const response = await api.get('/config/public');
+      return response.data?.data || {};
+    },
+    staleTime: 60 * 1000,
+  });
+
+  const currency = publicConfig?.currency || 'INR';
 
   const { data: booking, isLoading, error } = useQuery({
     queryKey: ['booking', id],
@@ -48,13 +82,28 @@ export default function BookingDetail() {
       const response = await api.delete(`/bookings/${id}`);
       return response.data;
     },
-    onSuccess: () => {
-      toast.success('Booking cancelled successfully');
+    onSuccess: (res) => {
+      const msg = res.message || 'Booking cancelled successfully';
+      toast.success(msg);
       queryClient.invalidateQueries({ queryKey: ['booking', id] });
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
     },
     onError: (err) => {
       toast.error(err.response?.data?.error?.message || 'Failed to cancel booking');
+    },
+  });
+
+  const payMutation = useMutation({
+    mutationFn: async () => {
+      const response = await api.post(`/bookings/${id}/pay`);
+      return response.data?.data;
+    },
+    onSuccess: (orderData) => {
+      setPayOrderData(orderData);
+      setIsPayModalOpen(true);
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.error?.message || 'Failed to initialize payment');
     },
   });
 
@@ -91,6 +140,12 @@ export default function BookingDetail() {
     }
   };
 
+  const handlePaymentSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['booking', id] });
+    queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    setIsPayModalOpen(false);
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-6 animate-pulse">
@@ -117,6 +172,7 @@ export default function BookingDetail() {
   }
 
   const nights = differenceInDays(new Date(booking.checkOut), new Date(booking.checkIn)) || 1;
+  const isPendingPayment = booking.status === 'pending_payment';
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
@@ -151,13 +207,14 @@ export default function BookingDetail() {
 
           <div className="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                 <span className="badge-indigo px-3 py-1 text-xs font-bold uppercase backdrop-blur-md">
                   {booking.room?.type}
                 </span>
-                <span className={`${statusColors[booking.status]} px-3 py-1 text-xs font-bold uppercase shadow-sm`}>
-                  {statusLabels[booking.status]}
+                <span className={`${statusColors[booking.status] || 'badge-gray'} px-3 py-1 text-xs font-bold uppercase shadow-sm`}>
+                  {statusLabels[booking.status] || booking.status}
                 </span>
+                <PaymentBadge status={booking.paymentStatus} />
               </div>
               <h1 className="text-xl sm:text-3xl font-extrabold">{booking.room?.name}</h1>
             </div>
@@ -173,6 +230,51 @@ export default function BookingDetail() {
 
         {/* Details & Actions Section */}
         <div className="p-6 sm:p-8 space-y-6">
+          {/* Pending Payment Alert Banner with Countdown */}
+          {isPendingPayment && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-amber-700" />
+                  <span className="font-bold text-sm text-amber-950">Room Held for Payment</span>
+                </div>
+                <p className="text-xs text-amber-800">
+                  Your room dates are held exclusively for you. Please complete checkout before the timer expires.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                {booking.holdExpiresAt && (
+                  <HoldCountdown
+                    expiresAt={booking.holdExpiresAt}
+                    onExpire={() => queryClient.invalidateQueries({ queryKey: ['booking', id] })}
+                  />
+                )}
+                <button
+                  type="button"
+                  onClick={() => payMutation.mutate()}
+                  disabled={payMutation.isPending}
+                  className="btn-primary text-xs py-2 px-4 whitespace-nowrap min-h-[40px]"
+                >
+                  {payMutation.isPending ? 'Opening...' : 'Complete Payment'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Refund Notice if Cancelled & Paid */}
+          {booking.status === 'cancelled' && (booking.paymentStatus === 'refunded' || booking.paymentStatus === 'partially_refunded') && (
+            <div className="p-4 rounded-2xl bg-purple-50 border border-purple-100 flex items-start gap-3 text-xs text-purple-900">
+              <RotateCcw className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Refund Processed</p>
+                <p className="text-purple-700">
+                  Payment for this reservation was refunded back to your original payment method.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Stay Details & Pricing Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Stay Details */}
@@ -210,19 +312,25 @@ export default function BookingDetail() {
               <div className="space-y-2 text-xs divide-y divide-slate-200/60">
                 <div className="flex justify-between py-1.5">
                   <span className="text-slate-500">Rate per night</span>
-                  <span className="font-bold text-slate-900">{formatINR(booking.room?.basePrice)}</span>
+                  <span className="font-bold text-slate-900">{formatCurrency(booking.room?.basePrice, currency)}</span>
                 </div>
                 <div className="flex justify-between py-1.5">
                   <span className="text-slate-500">Nights</span>
                   <span className="font-bold text-slate-900">{nights}</span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-slate-500">Taxes & Fees</span>
-                  <span className="font-semibold text-emerald-600">Included</span>
+                  <span className="text-slate-500">Payment Method</span>
+                  <span className="font-semibold text-slate-800 capitalize">
+                    {booking.paymentMethod === 'online' ? 'Online Payment' : 'Pay at Hotel'}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1.5">
+                  <span className="text-slate-500">Payment Status</span>
+                  <PaymentBadge status={booking.paymentStatus} />
                 </div>
                 <div className="flex justify-between py-2 border-t border-slate-300">
-                  <span className="font-bold text-slate-900 text-sm">Total Paid</span>
-                  <span className="font-extrabold text-indigo-600 text-lg">{formatINR(booking.totalPrice)}</span>
+                  <span className="font-bold text-slate-900 text-sm">Total Amount</span>
+                  <span className="font-extrabold text-indigo-600 text-lg">{formatCurrency(booking.totalPrice, currency)}</span>
                 </div>
               </div>
             </div>
@@ -237,7 +345,7 @@ export default function BookingDetail() {
           </div>
 
           {/* Actions: Modify & Cancel (if eligible) */}
-          {booking.status !== 'cancelled' && booking.status !== 'completed' && (
+          {booking.status !== 'cancelled' && booking.status !== 'completed' && booking.status !== 'expired' && (
             <div className="flex flex-col sm:flex-row gap-3 pt-2 border-t border-slate-100">
               <button
                 type="button"
@@ -270,6 +378,12 @@ export default function BookingDetail() {
           {booking.status === 'cancelled' && (
             <div className="p-4 rounded-2xl bg-rose-50 border border-rose-100 text-center text-xs text-rose-700">
               This reservation was cancelled. All reserved room nights have been released back to availability.
+            </div>
+          )}
+
+          {booking.status === 'expired' && (
+            <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 text-center text-xs text-slate-700">
+              This booking hold expired because payment was not completed within 15 minutes. The room has been released.
             </div>
           )}
         </div>
@@ -334,6 +448,17 @@ export default function BookingDetail() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Payment Gateway Modal */}
+      {isPayModalOpen && payOrderData && (
+        <PaymentModal
+          isOpen={isPayModalOpen}
+          onClose={() => setIsPayModalOpen(false)}
+          booking={booking}
+          paymentData={payOrderData}
+          onSuccess={handlePaymentSuccess}
+        />
       )}
     </div>
   );
