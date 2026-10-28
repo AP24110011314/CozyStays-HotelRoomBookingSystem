@@ -17,7 +17,9 @@ import { bookingRoutes } from './routes/bookings.js';
 import { adminRoutes } from './routes/admin.js';
 import { healthRoutes } from './routes/health.js';
 import { configRoutes } from './routes/config.js';
+import { paymentRoutes } from './routes/payments.js';
 import { startEmailWorker } from './workers/emailWorker.js';
+import { startHoldExpiryWorker } from './workers/holdExpiryWorker.js';
 
 export function createApp() {
   const app = express();
@@ -34,6 +36,13 @@ export function createApp() {
     credentials: true,
   }));
   app.use(morgan('dev'));
+
+  // Webhook raw body parser (must precede express.json)
+  app.use('/api/payments/webhook', express.raw({ type: 'application/json' }), (req, res, next) => {
+    req.rawBody = req.body;
+    next();
+  });
+
   app.use(express.json());
 
   const limiter = rateLimit({
@@ -51,6 +60,7 @@ export function createApp() {
   app.use('/api/auth', authRoutes);
   app.use('/api/rooms', roomRoutes);
   app.use('/api/bookings', bookingRoutes);
+  app.use('/api/payments', paymentRoutes);
   app.use('/api/admin', adminRoutes);
 
   app.use(notFoundHandler);
@@ -63,6 +73,7 @@ async function start() {
   try {
     await connectDB();
     startEmailWorker();
+    startHoldExpiryWorker();
     const app = createApp();
     app.listen(env.port, () => {
       console.log(`Server running on port ${env.port} (${env.nodeEnv})`);

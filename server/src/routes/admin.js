@@ -11,7 +11,8 @@ const router = express.Router();
 router.use(authenticate, authorize('admin'));
 
 const bookingsListSchema = z.object({
-  status: z.enum(['upcoming', 'active', 'completed', 'cancelled']).optional(),
+  status: z.enum(['upcoming', 'active', 'completed', 'cancelled', 'pending_payment', 'expired']).optional(),
+  paymentStatus: z.enum(['pending', 'paid', 'failed', 'refunded', 'partially_refunded', 'pay_at_hotel']).optional(),
   from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   guestEmail: z.string().email().optional(),
@@ -20,6 +21,20 @@ const bookingsListSchema = z.object({
   search: z.string().optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
+});
+
+const paymentsListSchema = z.object({
+  status: z.enum(['pending', 'paid', 'failed', 'refunded', 'partially_refunded', 'pay_at_hotel']).optional(),
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  q: z.string().optional(),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(50).default(10),
+});
+
+const refundBodySchema = z.object({
+  amount: z.number().int().positive().optional(),
+  reason: z.string().optional(),
 });
 
 const occupancySchema = z.object({
@@ -73,6 +88,9 @@ router.get('/stats', adminController.getStats);
 router.get('/occupancy', validateQuery(occupancySchema), adminController.getOccupancy);
 router.get('/bookings', validateQuery(bookingsListSchema), adminController.listBookings);
 router.delete('/bookings/:id', validateParams(retrySchema), adminController.cancelBooking);
+router.post('/bookings/:id/mark-paid', validateParams(idSchema), adminController.markBookingPaid);
+router.get('/payments', validateQuery(paymentsListSchema), adminController.listPayments);
+router.post('/payments/:id/refund', validateParams(idSchema), validateBody(refundBodySchema), adminController.refundPayment);
 router.get('/failed-emails', validateQuery(failedEmailsSchema), adminController.listFailedEmails);
 router.post('/failed-emails/:id/retry', validateParams(retrySchema), adminController.retryEmail);
 

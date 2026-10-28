@@ -111,4 +111,35 @@ export const adminController = {
       next(error);
     }
   },
+
+  async listPayments(req, res, next) {
+    try {
+      const { listPayments: listPaymentsService } = await import('../services/payment.service.js');
+      const result = await listPaymentsService(req.validatedQuery || req.query);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async markBookingPaid(req, res, next) {
+    try {
+      const { adminMarkBookingPaid } = await import('../services/payment.service.js');
+      const result = await adminMarkBookingPaid(req.validatedParams.id);
+      res.json({ data: result });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async refundPayment(req, res, next) {
+    try {
+      const { adminRefundPayment } = await import('../services/payment.service.js');
+      const { amount, reason } = req.validatedBody || {};
+      const result = await adminRefundPayment(req.validatedParams.id, amount, reason);
+      res.json({ data: result });
+    } catch (error) {
+      next(error);
+    }
+  },
 };

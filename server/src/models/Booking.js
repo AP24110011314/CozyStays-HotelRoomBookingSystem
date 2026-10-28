@@ -37,8 +37,22 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['upcoming', 'active', 'completed', 'cancelled'],
-    default: 'upcoming',
+    enum: ['pending_payment', 'confirmed', 'cancelled', 'expired', 'upcoming', 'active', 'completed'],
+    default: 'confirmed',
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['online', 'pay_at_hotel'],
+    default: 'pay_at_hotel',
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'paid', 'failed', 'refunded', 'partially_refunded', 'pay_at_hotel'],
+    default: 'pay_at_hotel',
+  },
+  holdExpiresAt: {
+    type: Date,
+    default: null,
   },
   cancelledAt: {
     type: Date,
@@ -50,5 +64,6 @@ const bookingSchema = new mongoose.Schema({
 bookingSchema.index({ user: 1, createdAt: -1 });
 bookingSchema.index({ room: 1, checkIn: 1 });
 bookingSchema.index({ status: 1 });
+bookingSchema.index({ holdExpiresAt: 1 }, { sparse: true });
 
 export const Booking = mongoose.model('Booking', bookingSchema);

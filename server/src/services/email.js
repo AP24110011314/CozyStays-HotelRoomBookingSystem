@@ -18,6 +18,15 @@ function escapeHtml(str) {
 const EMAIL_TEMPLATES = {
   confirmation: (booking, room, user, nights) => {
     const bookingUrl = `${env.clientUrl}/bookings/${booking._id}`;
+    const isOnline = booking.paymentMethod === 'online';
+    const paymentMethodLabel = isOnline ? 'Paid Online' : 'Pay at Hotel';
+    const paymentStatusLabel = isOnline
+      ? 'Paid'
+      : 'Pending payment at check-in';
+    const paymentAmountLabel = isOnline
+      ? `Amount Paid: ${formatPrice(booking.totalPrice)}`
+      : `Amount to Pay at Hotel: ${formatPrice(booking.totalPrice)}`;
+
     return {
       subject: `Booking Confirmed — ${booking.reference}`,
       html: `
@@ -32,6 +41,9 @@ const EMAIL_TEMPLATES = {
           <li><strong>Nights:</strong> ${nights.length}</li>
           <li><strong>Guests:</strong> ${booking.guests}</li>
           <li><strong>Total:</strong> ${escapeHtml(formatPrice(booking.totalPrice))}</li>
+          <li><strong>Payment Method:</strong> ${escapeHtml(paymentMethodLabel)}</li>
+          <li><strong>Payment Status:</strong> ${escapeHtml(paymentStatusLabel)}</li>
+          <li><strong>${escapeHtml(paymentAmountLabel)}</strong></li>
         </ul>
         <p><strong>Cancellation Policy:</strong> Free cancellation up to ${env.cancellationWindowHours} hours before check-in.</p>
         <p><a href="${bookingUrl}">View your booking details online</a></p>
@@ -51,6 +63,9 @@ Check-out: ${formatDate(booking.checkOut)}
 Nights: ${nights.length}
 Guests: ${booking.guests}
 Total: ${formatPrice(booking.totalPrice)}
+Payment Method: ${paymentMethodLabel}
+Payment Status: ${paymentStatusLabel}
+${paymentAmountLabel}
 
 Cancellation Policy: Free cancellation up to ${env.cancellationWindowHours} hours before check-in.
 
@@ -63,6 +78,18 @@ We look forward to your stay!
 
   modification: (booking, room, user, nights, oldData) => {
     const bookingUrl = `${env.clientUrl}/bookings/${booking._id}`;
+    const oldTotal = room.basePrice * dateRange(oldData.checkIn, oldData.checkOut).length;
+    const newTotal = booking.totalPrice;
+    const diff = oldTotal - newTotal;
+    const isOnline = booking.paymentMethod === 'online';
+    let refundNoticeHtml = '';
+    let refundNoticeText = '';
+
+    if (isOnline && diff > 0) {
+      refundNoticeHtml = `<p><strong>Refund Issued:</strong> A difference of ${escapeHtml(formatPrice(diff))} has been refunded to your original payment method (expected in 5–7 business days).</p>`;
+      refundNoticeText = `Refund Issued: A difference of ${formatPrice(diff)} has been refunded to your original payment method (expected in 5–7 business days).\n`;
+    }
+
     return {
       subject: `Booking Modified — ${booking.reference}`,
       html: `
@@ -75,8 +102,9 @@ We look forward to your stay!
           <tr><td>Check-out</td><td>${escapeHtml(formatDate(oldData.checkOut))}</td><td>${escapeHtml(formatDate(booking.checkOut))}</td></tr>
           <tr><td>Nights</td><td>${dateRange(oldData.checkIn, oldData.checkOut).length}</td><td>${nights.length}</td></tr>
           <tr><td>Guests</td><td>${oldData.guests}</td><td>${booking.guests}</td></tr>
-          <tr><td>Total</td><td>${escapeHtml(formatPrice(room.basePrice * dateRange(oldData.checkIn, oldData.checkOut).length))}</td><td>${escapeHtml(formatPrice(booking.totalPrice))}</td></tr>
+          <tr><td>Total</td><td>${escapeHtml(formatPrice(oldTotal))}</td><td>${escapeHtml(formatPrice(booking.totalPrice))}</td></tr>
         </table>
+        ${refundNoticeHtml}
         <p><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</p>
         <p><strong>Reference:</strong> ${escapeHtml(booking.reference)}</p>
         <p><a href="${bookingUrl}">View your updated booking online</a></p>
@@ -92,8 +120,8 @@ Check-in: ${formatDate(oldData.checkIn)} -> ${formatDate(booking.checkIn)}
 Check-out: ${formatDate(oldData.checkOut)} -> ${formatDate(booking.checkOut)}
 Nights: ${dateRange(oldData.checkIn, oldData.checkOut).length} -> ${nights.length}
 Guests: ${oldData.guests} -> ${booking.guests}
-Total: ${formatPrice(room.basePrice * dateRange(oldData.checkIn, oldData.checkOut).length)} -> ${formatPrice(booking.totalPrice)}
-
+Total: ${formatPrice(oldTotal)} -> ${formatPrice(booking.totalPrice)}
+${refundNoticeText}
 Room: ${room.name} (${room.type})
 Reference: ${booking.reference}
 
@@ -104,6 +132,19 @@ View your updated booking online: ${bookingUrl}
 
   cancellation: (booking, room, user, nights) => {
     const bookingUrl = `${env.clientUrl}/bookings/${booking._id}`;
+    const isOnline = booking.paymentMethod === 'online';
+    const isPaid = ['paid', 'partially_refunded', 'refunded'].includes(booking.paymentStatus);
+    let refundInfoHtml = '';
+    let refundInfoText = '';
+
+    if (isOnline && isPaid) {
+      refundInfoHtml = `<p><strong>Refund Amount:</strong> ${escapeHtml(formatPrice(booking.totalPrice))} has been credited to your payment provider and should reflect in your account within 5–7 business days.</p>`;
+      refundInfoText = `Refund Amount: ${formatPrice(booking.totalPrice)} has been credited to your payment provider and should reflect in your account within 5–7 business days.\n`;
+    } else if (booking.paymentMethod === 'pay_at_hotel') {
+      refundInfoHtml = `<p><strong>Payment Notice:</strong> This was a Pay at Hotel reservation. No charges were made.</p>`;
+      refundInfoText = `Payment Notice: This was a Pay at Hotel reservation. No charges were made.\n`;
+    }
+
     return {
       subject: `Booking Cancelled — ${booking.reference}`,
       html: `
@@ -119,7 +160,7 @@ View your updated booking online: ${bookingUrl}
           <li><strong>Guests:</strong> ${booking.guests}</li>
           <li><strong>Total:</strong> ${escapeHtml(formatPrice(booking.totalPrice))}</li>
         </ul>
-        <p>If you are eligible for a refund, it will be processed according to our policy.</p>
+        ${refundInfoHtml}
         <p><a href="${bookingUrl}">View booking status online</a></p>
       `,
       text: `
@@ -137,8 +178,7 @@ Nights: ${nights.length}
 Guests: ${booking.guests}
 Total: ${formatPrice(booking.totalPrice)}
 
-If you are eligible for a refund, it will be processed according to our policy.
-
+${refundInfoText}
 View booking status online: ${bookingUrl}
       `,
     };

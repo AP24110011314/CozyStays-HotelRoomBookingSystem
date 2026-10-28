@@ -10,7 +10,22 @@ export const bookingController = {
   async create(req, res, next) {
     try {
       const booking = await createBooking(req.user.id, req.validatedBody);
-      res.status(201).json({ data: booking });
+      if (booking.payment) {
+        const { payment, ...bookingData } = booking;
+        res.status(201).json({ data: bookingData, payment });
+      } else {
+        res.status(201).json({ data: booking });
+      }
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async pay(req, res, next) {
+    try {
+      const { createPaymentOrder } = await import('../services/payment.service.js');
+      const order = await createPaymentOrder(req.validatedParams.id, req.user.id);
+      res.json({ data: order });
     } catch (error) {
       next(error);
     }

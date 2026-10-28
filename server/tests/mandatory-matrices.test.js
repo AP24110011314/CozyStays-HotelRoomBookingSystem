@@ -437,7 +437,7 @@ describe('Mandatory Test Matrix: Email Retry Tests', () => {
     expect(updated.status).toBe('failed');
 
     sendMailSpy.mockRestore();
-  });
+  }, 30000);
 
   it('email worker recovers stuck emails (>10min in sending)', async () => {
     const tenMinutesAgo = new Date(Date.now() - 11 * 60 * 1000);

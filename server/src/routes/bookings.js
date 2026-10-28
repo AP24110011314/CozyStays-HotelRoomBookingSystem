@@ -12,10 +12,11 @@ const createSchema = z.object({
   checkIn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   checkOut: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   guests: z.number().int().positive(),
+  paymentMethod: z.enum(['online', 'pay_at_hotel']).default('pay_at_hotel'),
 });
 
 const listSchema = z.object({
-  status: z.enum(['upcoming', 'active', 'past', 'cancelled']).optional(),
+  status: z.enum(['all', 'upcoming', 'active', 'completed', 'cancelled', 'pending_payment', 'expired', 'past']).optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(50).default(10),
 });
@@ -35,6 +36,7 @@ const idSchema = z.object({
 router.use(authenticate);
 
 router.post('/', validateBody(createSchema), bookingController.create);
+router.post('/:id/pay', validateParams(idSchema), bookingController.pay);
 router.get('/', validateQuery(listSchema), bookingController.list);
 router.get('/:id', validateParams(idSchema), bookingController.getById);
 router.patch('/:id', validateParams(idSchema), validateBody(modifySchema), bookingController.modify);

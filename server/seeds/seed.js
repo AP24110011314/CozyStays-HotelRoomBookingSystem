@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 
 import env from '../src/config/env.js';
 import { syncAllIndexes } from '../src/config/db.js';
-import { User, Room, Booking, RoomNight, EmailOutbox } from '../src/models/index.js';
+import { User, Room, Booking, RoomNight, EmailOutbox, Payment } from '../src/models/index.js';
 import { generateReference } from '../src/utils/reference.js';
 import { toUTCDateOnly, dateRange } from '../src/utils/dates.js';
 import { searchRooms } from '../src/services/rooms.js';
@@ -54,6 +54,7 @@ export async function runSeed() {
     bookings: await Booking.countDocuments(),
     roomNights: await RoomNight.countDocuments(),
     emailOutbox: await EmailOutbox.countDocuments(),
+    payments: await Payment.countDocuments(),
   };
 
   const totalExisting = Object.values(existingCounts).reduce((a, b) => a + b, 0);
@@ -64,12 +65,13 @@ export async function runSeed() {
   console.log(` - bookings:     ${existingCounts.bookings}`);
   console.log(` - room_nights:  ${existingCounts.roomNights}`);
   console.log(` - email_outbox: ${existingCounts.emailOutbox}`);
+  console.log(` - payments:     ${existingCounts.payments}`);
   console.log(` Total to delete: ${totalExisting} documents\n`);
 
   console.log('Planned additions:');
   console.log(' - 3 users (1 admin, 2 guests)');
-  console.log(' - 20 rooms across 4 types (single, double, deluxe, suite)');
-  console.log(' - 8 bookings (2 past, 2 active, 3 upcoming, 1 cancelled) with matching RoomNights\n');
+  console.log(' - 20 rooms across 4 types (single, double, deluxe, suite) with INR pricing (₹1,500 - ₹15,000)');
+  console.log(' - 8 bookings (2 past, 2 active, 3 upcoming, 1 cancelled) with matching RoomNights and Payment records\n');
 
   // Safety confirmation check
   const hasYesFlag = process.argv.includes('--yes') || process.argv.includes('-y');
@@ -91,6 +93,7 @@ export async function runSeed() {
     Booking.deleteMany({}),
     RoomNight.deleteMany({}),
     EmailOutbox.deleteMany({}),
+    Payment.deleteMany({}),
   ]);
   console.log('   Application collections cleared.');
 
@@ -127,35 +130,35 @@ export async function runSeed() {
   console.log('   Created guest1: guest1@test.com');
   console.log('   Created guest2: guest2@test.com');
 
-  console.log('4. Seeding 20 rooms (4 types with varied amenities and working image URLs)...');
+  console.log('4. Seeding 20 rooms (4 types with realistic rupee prices ₹1,500 - ₹15,000)...');
   const roomDefinitions = [
-    // 5 Single Rooms ($85 - $115)
-    { type: 'single', name: 'Cozy Single Studio 101', basePrice: 8500, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'desk'] },
-    { type: 'single', name: 'Executive Single 102', basePrice: 9500, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'minibar', 'desk'] },
-    { type: 'single', name: 'Standard Single 103', basePrice: 9000, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'safe'] },
-    { type: 'single', name: 'Garden Single 104', basePrice: 10500, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'balcony', 'coffee-maker'] },
-    { type: 'single', name: 'City View Single 105', basePrice: 11500, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'safe', 'desk', 'balcony'] },
+    // 5 Single Rooms (₹1,500 - ₹2,500)
+    { type: 'single', name: 'Cozy Single Studio 101', basePrice: 1500, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'desk'] },
+    { type: 'single', name: 'Executive Single 102', basePrice: 1800, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'minibar', 'desk'] },
+    { type: 'single', name: 'Standard Single 103', basePrice: 2000, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'safe'] },
+    { type: 'single', name: 'Garden Single 104', basePrice: 2200, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'balcony', 'coffee-maker'] },
+    { type: 'single', name: 'City View Single 105', basePrice: 2500, maxGuests: 1, amenities: ['wifi', 'tv', 'ac', 'safe', 'desk', 'balcony'] },
 
-    // 6 Double Rooms ($130 - $175)
-    { type: 'double', name: 'Classic Double 201', basePrice: 13000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'safe', 'coffee-maker'] },
-    { type: 'double', name: 'Superior Double 202', basePrice: 14500, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe'] },
-    { type: 'double', name: 'Deluxe Double 203', basePrice: 15500, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'minibar', 'balcony'] },
-    { type: 'double', name: 'Balcony Double 204', basePrice: 16000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'balcony', 'bathtub'] },
-    { type: 'double', name: 'Panoramic Double 205', basePrice: 17000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony'] },
-    { type: 'double', name: 'Courtyard Double 206', basePrice: 14000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'coffee-maker', 'desk'] },
+    // 6 Double Rooms (₹3,000 - ₹5,000)
+    { type: 'double', name: 'Classic Double 201', basePrice: 3000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'safe', 'coffee-maker'] },
+    { type: 'double', name: 'Superior Double 202', basePrice: 3500, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe'] },
+    { type: 'double', name: 'Deluxe Double 203', basePrice: 4000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'minibar', 'balcony'] },
+    { type: 'double', name: 'Balcony Double 204', basePrice: 4200, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'balcony', 'bathtub'] },
+    { type: 'double', name: 'Panoramic Double 205', basePrice: 4500, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony'] },
+    { type: 'double', name: 'Courtyard Double 206', basePrice: 5000, maxGuests: 2, amenities: ['wifi', 'tv', 'ac', 'coffee-maker', 'desk'] },
 
-    // 5 Deluxe Rooms ($210 - $270)
-    { type: 'deluxe', name: 'Deluxe King 301', basePrice: 21000, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'bathtub', 'coffee-maker'] },
-    { type: 'deluxe', name: 'Deluxe Ocean View 302', basePrice: 24500, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'balcony', 'ocean-view', 'bathtub'] },
-    { type: 'deluxe', name: 'Deluxe Grand Corner 303', basePrice: 23500, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub'] },
-    { type: 'deluxe', name: 'Deluxe Sky Terrace 304', basePrice: 26000, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'balcony', 'ocean-view', 'safe'] },
-    { type: 'deluxe', name: 'Deluxe Family Room 305', basePrice: 27000, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'bathtub', 'coffee-maker'] },
+    // 5 Deluxe Rooms (₹6,000 - ₹8,500)
+    { type: 'deluxe', name: 'Deluxe King 301', basePrice: 6000, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'bathtub', 'coffee-maker'] },
+    { type: 'deluxe', name: 'Deluxe Ocean View 302', basePrice: 6500, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'balcony', 'ocean-view', 'bathtub'] },
+    { type: 'deluxe', name: 'Deluxe Grand Corner 303', basePrice: 7000, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub'] },
+    { type: 'deluxe', name: 'Deluxe Sky Terrace 304', basePrice: 7500, maxGuests: 3, amenities: ['wifi', 'tv', 'ac', 'minibar', 'balcony', 'ocean-view', 'safe'] },
+    { type: 'deluxe', name: 'Deluxe Family Room 305', basePrice: 8500, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'bathtub', 'coffee-maker'] },
 
-    // 4 Suites ($350 - $480)
-    { type: 'suite', name: 'Executive Suite 401', basePrice: 35000, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker', 'ocean-view'] },
-    { type: 'suite', name: 'Penthouse Suite 402', basePrice: 42000, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker', 'ocean-view', 'desk'] },
-    { type: 'suite', name: 'Royal Garden Suite 403', basePrice: 39000, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker'] },
-    { type: 'suite', name: 'Presidential Suite 404', basePrice: 48000, maxGuests: 6, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker', 'ocean-view', 'desk'] },
+    // 4 Suites (₹10,000 - ₹15,000)
+    { type: 'suite', name: 'Executive Suite 401', basePrice: 10000, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker', 'ocean-view'] },
+    { type: 'suite', name: 'Penthouse Suite 402', basePrice: 11500, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker', 'ocean-view', 'desk'] },
+    { type: 'suite', name: 'Royal Garden Suite 403', basePrice: 13000, maxGuests: 4, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker'] },
+    { type: 'suite', name: 'Presidential Suite 404', basePrice: 15000, maxGuests: 6, amenities: ['wifi', 'tv', 'ac', 'minibar', 'safe', 'balcony', 'bathtub', 'coffee-maker', 'ocean-view', 'desk'] },
   ];
 
   // Working high-res room images
@@ -205,23 +208,95 @@ export async function runSeed() {
   }
   console.log(`   Created ${createdRooms.length} rooms.`);
 
-  console.log('5. Seeding 8 sample bookings (past, current, future, one cancelled)...');
+  console.log('5. Seeding 8 sample bookings (past, current, future, one cancelled) with payments...');
   const now = new Date();
   const todayMidnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
   const bookingConfigs = [
     // 2 Past bookings
-    { guest: guest1, room: createdRooms[0], offsetDays: -12, nightsCount: 3, guests: 1, status: 'upcoming' },
-    { guest: guest2, room: createdRooms[1], offsetDays: -6, nightsCount: 3, guests: 2, status: 'upcoming' },
+    {
+      guest: guest1,
+      room: createdRooms[0],
+      offsetDays: -12,
+      nightsCount: 3,
+      guests: 1,
+      status: 'confirmed',
+      paymentMethod: 'online',
+      paymentStatus: 'paid',
+    },
+    {
+      guest: guest2,
+      room: createdRooms[1],
+      offsetDays: -6,
+      nightsCount: 3,
+      guests: 2,
+      status: 'confirmed',
+      paymentMethod: 'pay_at_hotel',
+      paymentStatus: 'paid',
+    },
     // 2 Current active bookings (checkIn <= today < checkOut)
-    { guest: guest1, room: createdRooms[2], offsetDays: -1, nightsCount: 3, guests: 1, status: 'upcoming' },
-    { guest: guest2, room: createdRooms[6], offsetDays: -2, nightsCount: 5, guests: 2, status: 'upcoming' },
+    {
+      guest: guest1,
+      room: createdRooms[2],
+      offsetDays: -1,
+      nightsCount: 3,
+      guests: 1,
+      status: 'confirmed',
+      paymentMethod: 'online',
+      paymentStatus: 'paid',
+    },
+    {
+      guest: guest2,
+      room: createdRooms[6],
+      offsetDays: -2,
+      nightsCount: 5,
+      guests: 2,
+      status: 'confirmed',
+      paymentMethod: 'pay_at_hotel',
+      paymentStatus: 'pay_at_hotel',
+    },
     // 3 Future upcoming bookings
-    { guest: guest1, room: createdRooms[11], offsetDays: 4, nightsCount: 3, guests: 3, status: 'upcoming' },
-    { guest: guest2, room: createdRooms[12], offsetDays: 10, nightsCount: 4, guests: 2, status: 'upcoming' },
-    { guest: guest1, room: createdRooms[16], offsetDays: 18, nightsCount: 3, guests: 4, status: 'upcoming' },
-    // 1 Cancelled booking
-    { guest: guest2, room: createdRooms[17], offsetDays: 8, nightsCount: 3, guests: 2, status: 'cancelled' },
+    {
+      guest: guest1,
+      room: createdRooms[11],
+      offsetDays: 4,
+      nightsCount: 3,
+      guests: 3,
+      status: 'confirmed',
+      paymentMethod: 'online',
+      paymentStatus: 'paid',
+    },
+    {
+      guest: guest2,
+      room: createdRooms[12],
+      offsetDays: 10,
+      nightsCount: 4,
+      guests: 2,
+      status: 'confirmed',
+      paymentMethod: 'pay_at_hotel',
+      paymentStatus: 'pay_at_hotel',
+    },
+    {
+      guest: guest1,
+      room: createdRooms[16],
+      offsetDays: 18,
+      nightsCount: 3,
+      guests: 4,
+      status: 'confirmed',
+      paymentMethod: 'pay_at_hotel',
+      paymentStatus: 'pay_at_hotel',
+    },
+    // 1 Cancelled booking (refunded)
+    {
+      guest: guest2,
+      room: createdRooms[17],
+      offsetDays: 8,
+      nightsCount: 3,
+      guests: 2,
+      status: 'cancelled',
+      paymentMethod: 'online',
+      paymentStatus: 'refunded',
+    },
   ];
 
   let totalRoomNightsCreated = 0;
@@ -241,8 +316,56 @@ export async function runSeed() {
       guests: cfg.guests,
       totalPrice,
       status: cfg.status,
+      paymentMethod: cfg.paymentMethod,
+      paymentStatus: cfg.paymentStatus,
       cancelledAt: cfg.status === 'cancelled' ? new Date() : undefined,
     });
+
+    // Create Payment record
+    const amountInPaise = Math.round(totalPrice * 100);
+    if (cfg.paymentStatus === 'paid') {
+      await Payment.create({
+        booking: booking._id,
+        user: cfg.guest._id,
+        amount: amountInPaise,
+        currency: env.currency || 'INR',
+        method: cfg.paymentMethod,
+        provider: cfg.paymentMethod === 'online' ? 'mock' : null,
+        providerOrderId: `mock_order_seed_${reference}`,
+        providerPaymentId: `mock_pay_seed_${reference}`,
+        status: 'paid',
+        paidAt: new Date(),
+      });
+    } else if (cfg.paymentStatus === 'refunded') {
+      await Payment.create({
+        booking: booking._id,
+        user: cfg.guest._id,
+        amount: amountInPaise,
+        currency: env.currency || 'INR',
+        method: 'online',
+        provider: 'mock',
+        providerOrderId: `mock_order_seed_${reference}`,
+        providerPaymentId: `mock_pay_seed_${reference}`,
+        status: 'refunded',
+        refundedAmount: amountInPaise,
+        refunds: [{
+          providerRefundId: `mock_rfnd_seed_${reference}`,
+          amount: amountInPaise,
+          createdAt: new Date(),
+        }],
+        paidAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      });
+    } else {
+      await Payment.create({
+        booking: booking._id,
+        user: cfg.guest._id,
+        amount: amountInPaise,
+        currency: env.currency || 'INR',
+        method: 'pay_at_hotel',
+        provider: null,
+        status: 'pay_at_hotel',
+      });
+    }
 
     // Only active, past, and upcoming bookings hold RoomNights (cancelled bookings release nights)
     if (cfg.status !== 'cancelled') {
@@ -255,7 +378,7 @@ export async function runSeed() {
       totalRoomNightsCreated += roomNightDocs.length;
     }
 
-    console.log(`   Booking ${reference} (${cfg.status}): ${cfg.guest.name} in ${cfg.room.name}`);
+    console.log(`   Booking ${reference} (${cfg.status}, ${cfg.paymentStatus}): ${cfg.guest.name} in ${cfg.room.name}`);
   }
 
   console.log(`\n========================================`);
@@ -267,6 +390,7 @@ export async function runSeed() {
     bookings: await Booking.countDocuments(),
     roomNights: await RoomNight.countDocuments(),
     emailOutbox: await EmailOutbox.countDocuments(),
+    payments: await Payment.countDocuments(),
   };
 
   console.log(`Final Collection Counts:`);
@@ -275,6 +399,7 @@ export async function runSeed() {
   console.log(` - bookings:     ${finalCounts.bookings} (expected: 8)`);
   console.log(` - room_nights:  ${finalCounts.roomNights} (expected: ${totalRoomNightsCreated})`);
   console.log(` - email_outbox: ${finalCounts.emailOutbox}`);
+  console.log(` - payments:     ${finalCounts.payments} (expected: 8)`);
 
   // Test sample search
   console.log('\nRunning sample availability search...');
@@ -290,7 +415,7 @@ export async function runSeed() {
 
   console.log(`Sample search for ${searchCheckIn} to ${searchCheckOut} (guests: 2): found ${searchResults.meta.total} available rooms.`);
   if (searchResults.data.length > 0) {
-    console.log(`First available room: "${searchResults.data[0].name}" ($${(searchResults.data[0].totalPrice / 100).toFixed(2)} total for ${searchResults.data[0].nights} nights)`);
+    console.log(`First available room: "${searchResults.data[0].name}" (₹${searchResults.data[0].totalPrice.toLocaleString('en-IN')} total for ${searchResults.data[0].nights} nights)`);
   }
 
   console.log('\nSeed completed successfully!');

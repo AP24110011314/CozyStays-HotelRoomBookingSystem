@@ -37,22 +37,44 @@ export async function getStats() {
   });
   const occupancyPct = totalRoomNights > 0 ? Math.round((bookedRoomNights / totalRoomNights) * 100) : 0;
 
-  // Revenue last 30 days
+  // Revenue last 30 days (counting only paid amounts minus refunds)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const revenueResult = await Booking.aggregate([
+  const { Payment } = await import('../models/Payment.js');
+  const paymentRevenueResult = await Payment.aggregate([
     {
       $match: {
         createdAt: { $gte: thirtyDaysAgo },
-        status: { $ne: 'cancelled' },
+        status: { $in: ['paid', 'partially_refunded', 'refunded'] },
       },
     },
     {
-      $group: { _id: null, total: { $sum: '$totalPrice' } },
+      $group: {
+        _id: null,
+        totalPaise: { $sum: { $subtract: ['$amount', { $ifNull: ['$refundedAmount', 0] }] } },
+      },
     },
   ]);
-  const revenue30d = revenueResult.length > 0 ? revenueResult[0].total : 0;
+
+  let revenue30d = 0;
+  if (paymentRevenueResult.length > 0) {
+    revenue30d = Math.round(paymentRevenueResult[0].totalPaise / 100);
+  } else {
+    // Fallback if no payment records exist yet in legacy db
+    const bookingRevenue = await Booking.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: thirtyDaysAgo },
+          status: { $in: ['confirmed', 'completed', 'active', 'upcoming'] },
+        },
+      },
+      {
+        $group: { _id: null, total: { $sum: '$totalPrice' } },
+      },
+    ]);
+    revenue30d = bookingRevenue.length > 0 ? bookingRevenue[0].total : 0;
+  }
 
   return {
     totalRooms,
@@ -149,7 +171,7 @@ export async function getOccupancy(params) {
 }
 
 export async function listBookings(params) {
-  const { status, from, to, guestEmail, room, reference, search, page = 1, limit = 10 } = params;
+  const { status, paymentStatus, from, to, guestEmail, room, reference, search, page = 1, limit = 10 } = params;
 
   const query = {};
 
@@ -162,12 +184,20 @@ export async function listBookings(params) {
       query.checkIn = { $lte: now };
       query.checkOut = { $gt: now };
       query.status = { $ne: 'cancelled' };
-    } else if (status === 'past') {
+    } else if (status === 'past' || status === 'completed') {
       query.checkOut = { $lte: now };
       query.status = { $ne: 'cancelled' };
     } else if (status === 'cancelled') {
       query.status = 'cancelled';
+    } else if (status === 'pending_payment') {
+      query.status = 'pending_payment';
+    } else if (status === 'expired') {
+      query.status = 'expired';
     }
+  }
+
+  if (paymentStatus) {
+    query.paymentStatus = paymentStatus;
   }
 
   if (from || to) {
@@ -230,8 +260,12 @@ export async function listBookings(params) {
     checkOut: booking.checkOut,
     guests: booking.guests,
     totalPrice: booking.totalPrice,
+    paymentMethod: booking.paymentMethod || 'pay_at_hotel',
+    paymentStatus: booking.paymentStatus || 'pay_at_hotel',
+    holdExpiresAt: booking.holdExpiresAt || null,
     status: booking.status,
     createdAt: booking.createdAt,
+    cancelledAt: booking.cancelledAt || null,
   }));
 
   return { data, meta: { page, limit, total, totalPages } };
