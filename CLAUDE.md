@@ -1,4 +1,4 @@
-# CLAUDE.md — Rules for this Project
+# CLAUDE.md — CozyStays Rules
 
 ## Core Principles
 - **Documentation is source of truth**: All docs in `docs/` are authoritative. If code and docs conflict, fix the code.

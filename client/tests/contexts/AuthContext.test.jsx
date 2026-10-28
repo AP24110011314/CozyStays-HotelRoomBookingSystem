@@ -4,6 +4,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '../../src/contexts/AuthContext';
 import api from '../../src/api/client';
+import { getStoredToken } from '../../src/utils/token';
 
 // Mock the API client
 vi.mock('../../src/api/client', () => ({
@@ -96,7 +97,7 @@ describe('AuthContext', () => {
       email: 'test@example.com',
       password: 'password',
     });
-    expect(localStorage.getItem('token')).toBe('mock-jwt-token');
+    expect(getStoredToken()).toBe('mock-jwt-token');
   });
 
   it('handles login error', async () => {
@@ -167,7 +168,7 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('user').textContent).toBe('null');
     });
 
-    expect(localStorage.getItem('token')).toBeNull();
+    expect(getStoredToken()).toBeNull();
   });
 
   it('fetches current user on init when token exists', async () => {
@@ -194,6 +195,6 @@ describe('AuthContext', () => {
       expect(screen.getByTestId('user').textContent).toBe('null');
     });
 
-    expect(localStorage.getItem('token')).toBeNull();
+    expect(getStoredToken()).toBeNull();
   });
 });

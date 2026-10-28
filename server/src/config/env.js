@@ -3,6 +3,7 @@ import { z } from 'zod';
 const isTest = process.env.NODE_ENV === 'test' || Boolean(process.env.VITEST);
 
 const envSchema = z.object({
+  APP_NAME: z.string().default('CozyStays'),
   PORT: z.coerce.number().int().positive().default(5001),
   NODE_ENV: z.enum(['development', 'production', 'test']).default(isTest ? 'test' : 'development'),
   MONGODB_URI: isTest
@@ -24,7 +25,7 @@ const envSchema = z.object({
   SMTP_PORT: z.coerce.number().int().positive().default(2525),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
-  SMTP_FROM: z.string().default('noreply@hotel-booking.test'),
+  SMTP_FROM: z.string().default('CozyStays <no-reply@cozystays.test>'),
   EMAIL_FROM: z.string().optional(),
   CURRENCY: z.string().default('INR'),
   CHECK_IN_TIME: z.string().default('2:00 PM'),
@@ -89,6 +90,7 @@ const clientUrls = parsedEnv.CLIENT_URL
   : ['http://localhost:5173'];
 
 const env = {
+  appName: parsedEnv.APP_NAME || 'CozyStays',
   port: parsedEnv.PORT,
   nodeEnv: parsedEnv.NODE_ENV,
   mongodbUri: parsedEnv.MONGODB_URI,

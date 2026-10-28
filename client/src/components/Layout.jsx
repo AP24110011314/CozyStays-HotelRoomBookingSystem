@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Hotel, Calendar, ShieldCheck, Menu, X, LogOut, User } from 'lucide-react';
+import logoSvg from '../assets/logo.svg';
+import { HOTEL_CONFIG } from '../config/hotel';
 
 export default function Layout() {
   const { user, isAdmin, logout } = useAuth();
@@ -26,13 +28,11 @@ export default function Layout() {
             <div className="flex items-center gap-8">
               <Link
                 to="/"
-                className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2.5 min-h-[44px]"
+                className="flex items-center gap-2.5 min-h-[44px]"
                 onClick={() => setMobileMenuOpen(false)}
+                title={HOTEL_CONFIG.name}
               >
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm">
-                  <Hotel className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <span className="tracking-tight">Hotel Booking</span>
+                <img src={logoSvg} alt={HOTEL_CONFIG.name} className="h-9 sm:h-10 w-auto" />
               </Link>
 
               {/* Desktop Nav */}
@@ -178,7 +178,7 @@ export default function Layout() {
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto py-6">
         <div className="container-main flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500 text-center sm:text-left">
-          <p>Hotel Booking System &copy; 2026. All rights reserved.</p>
+          <p>{HOTEL_CONFIG.name} &copy; 2026. All rights reserved.</p>
           <p className="flex items-center gap-2 justify-center">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             Cloud Database Connected

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { LayoutDashboard, BedDouble, CalendarDays, Mail, BarChart3, ArrowLeft, LogOut, Menu, X, CreditCard } from 'lucide-react';
+import { HOTEL_CONFIG } from '../config/hotel';
 
 export default function AdminLayout() {
   const { logout } = useAuth();
@@ -34,7 +35,7 @@ export default function AdminLayout() {
                 </div>
                 <div className="flex flex-col">
                   <span className="leading-tight font-bold tracking-tight">Admin Portal</span>
-                  <span className="text-[10px] text-indigo-600 font-semibold uppercase tracking-wider">Hotel Management</span>
+                  <span className="text-[10px] text-indigo-600 font-semibold uppercase tracking-wider">{HOTEL_CONFIG.name} Management</span>
                 </div>
               </Link>
 
@@ -150,7 +151,7 @@ export default function AdminLayout() {
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 mt-auto py-6">
         <div className="container-main flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500 text-center sm:text-left">
-          <p>Hotel Booking System — Administrator Panel</p>
+          <p>{HOTEL_CONFIG.name} — Administrator Panel</p>
           <p className="flex items-center gap-2 justify-center">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             Admin API Authenticated

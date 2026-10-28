@@ -38,25 +38,25 @@ All templates receive: `booking`, `room`, `user`, `nights`, `totalPrice`, `refer
 ## .ics Generation
 ```javascript
 function generateICS(booking, room, user, type = 'confirmation') {
-  const uid = `${booking.reference}@hotel-booking`;
+  const uid = `${booking.reference}@cozystays`;
   const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const dtstart = booking.checkIn.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const dtend = booking.checkOut.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   
   let summary, description, status;
   if (type === 'cancellation') {
-    summary = `CANCELLED: ${room.name} - ${booking.reference}`;
+    summary = `CANCELLED: ${room.name} - ${booking.reference} | CozyStays`;
     description = `This booking has been cancelled.`;
     status = 'CANCELLED';
   } else {
-    summary = `${room.name} - ${booking.reference}`;
+    summary = `${room.name} - ${booking.reference} | CozyStays`;
     description = `Guests: ${booking.guests}\nTotal: ${formatPrice(booking.totalPrice)}`;
     status = 'CONFIRMED';
   }
   
   return `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Hotel Booking//EN
+PRODID:-//CozyStays//EN
 METHOD:${type === 'cancellation' ? 'CANCEL' : 'REQUEST'}
 BEGIN:VEVENT
 UID:${uid}

@@ -1,17 +1,17 @@
 export function generateICS(booking, room, user, type = 'confirmation') {
-  const uid = `${booking.reference}@hotel-booking`;
+  const uid = `${booking.reference}@cozystays`;
   const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const dtstart = new Date(booking.checkIn).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const dtend = new Date(booking.checkOut).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
   let summary, description, status, method;
   if (type === 'cancellation') {
-    summary = `CANCELLED: ${room.name} - ${booking.reference}`;
+    summary = `CANCELLED: ${room.name} - ${booking.reference} | CozyStays`;
     description = `This booking has been cancelled.`;
     status = 'CANCELLED';
     method = 'CANCEL';
   } else {
-    summary = `${room.name} - ${booking.reference}`;
+    summary = `${room.name} - ${booking.reference} | CozyStays`;
     description = `Guests: ${booking.guests}\nTotal: ${formatPrice(booking.totalPrice)}`;
     status = 'CONFIRMED';
     method = 'REQUEST';
@@ -19,7 +19,7 @@ export function generateICS(booking, room, user, type = 'confirmation') {
 
   return `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Hotel Booking//EN
+PRODID:-//CozyStays//EN
 METHOD:${method}
 BEGIN:VEVENT
 UID:${uid}

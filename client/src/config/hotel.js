@@ -1,5 +1,5 @@
 export const HOTEL_CONFIG = {
-  name: 'The Grand Horizon Hotel',
+  name: import.meta.env.VITE_APP_NAME || 'CozyStays',
   tagline: 'Experience unparalleled comfort, serenity, and world-class hospitality.',
   checkInTime: '2:00 PM',
   checkOutTime: '11:00 AM',

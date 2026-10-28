@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/public', (req, res) => {
   res.json({
     data: {
+      appName: env.appName,
       cancellationWindowHours: env.cancellationWindowHours,
       currency: env.currency,
       checkInTime: env.checkInTime,

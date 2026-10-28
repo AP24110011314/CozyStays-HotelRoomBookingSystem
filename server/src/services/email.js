@@ -4,6 +4,7 @@ import { Room, User } from '../models/index.js';
 import { formatPrice, formatDate } from '../utils/format.js';
 import { generateICS } from '../utils/ics.js';
 import { dateRange } from '../utils/dates.js';
+import { wrapEmailTemplate } from '../emails/theme.js';
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
@@ -27,30 +28,36 @@ const EMAIL_TEMPLATES = {
       ? `Amount Paid: ${formatPrice(booking.totalPrice)}`
       : `Amount to Pay at Hotel: ${formatPrice(booking.totalPrice)}`;
 
+    const contentHtml = `
+      <p>Dear ${escapeHtml(user.name)},</p>
+      <p>Your booking has been confirmed. Here are the details:</p>
+      <ul style="padding-left: 20px; line-height: 1.8;">
+        <li><strong>Reference:</strong> ${escapeHtml(booking.reference)}</li>
+        <li><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</li>
+        <li><strong>Check-in:</strong> ${escapeHtml(formatDate(booking.checkIn))}</li>
+        <li><strong>Check-out:</strong> ${escapeHtml(formatDate(booking.checkOut))}</li>
+        <li><strong>Nights:</strong> ${nights.length}</li>
+        <li><strong>Guests:</strong> ${booking.guests}</li>
+        <li><strong>Total:</strong> ${escapeHtml(formatPrice(booking.totalPrice))}</li>
+        <li><strong>Payment Method:</strong> ${escapeHtml(paymentMethodLabel)}</li>
+        <li><strong>Payment Status:</strong> ${escapeHtml(paymentStatusLabel)}</li>
+        <li><strong>${escapeHtml(paymentAmountLabel)}</strong></li>
+      </ul>
+      <p><strong>Cancellation Policy:</strong> Free cancellation up to ${env.cancellationWindowHours} hours before check-in.</p>
+      <p>We look forward to welcoming you to ${escapeHtml(env.appName)}!</p>
+    `;
+
     return {
-      subject: `Booking Confirmed — ${booking.reference}`,
-      html: `
-        <h1>Booking Confirmed</h1>
-        <p>Dear ${escapeHtml(user.name)},</p>
-        <p>Your booking has been confirmed. Here are the details:</p>
-        <ul>
-          <li><strong>Reference:</strong> ${escapeHtml(booking.reference)}</li>
-          <li><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</li>
-          <li><strong>Check-in:</strong> ${escapeHtml(formatDate(booking.checkIn))}</li>
-          <li><strong>Check-out:</strong> ${escapeHtml(formatDate(booking.checkOut))}</li>
-          <li><strong>Nights:</strong> ${nights.length}</li>
-          <li><strong>Guests:</strong> ${booking.guests}</li>
-          <li><strong>Total:</strong> ${escapeHtml(formatPrice(booking.totalPrice))}</li>
-          <li><strong>Payment Method:</strong> ${escapeHtml(paymentMethodLabel)}</li>
-          <li><strong>Payment Status:</strong> ${escapeHtml(paymentStatusLabel)}</li>
-          <li><strong>${escapeHtml(paymentAmountLabel)}</strong></li>
-        </ul>
-        <p><strong>Cancellation Policy:</strong> Free cancellation up to ${env.cancellationWindowHours} hours before check-in.</p>
-        <p><a href="${bookingUrl}">View your booking details online</a></p>
-        <p>We look forward to your stay!</p>
-      `,
+      subject: `Booking Confirmed — ${booking.reference} | ${env.appName}`,
+      html: wrapEmailTemplate({
+        title: 'Booking Confirmed',
+        content: contentHtml,
+        ctaLabel: 'View Your Booking',
+        ctaUrl: bookingUrl,
+        appName: env.appName,
+      }),
       text: `
-Booking Confirmed
+Booking Confirmed — ${env.appName}
 
 Dear ${user.name},
 
@@ -72,7 +79,10 @@ Cancellation Policy: Free cancellation up to ${env.cancellationWindowHours} hour
 View your booking details online: ${bookingUrl}
 
 We look forward to your stay!
-      `,
+
+Warm regards,
+The ${env.appName} Team
+      `.trim(),
     };
   },
 
@@ -90,27 +100,33 @@ We look forward to your stay!
       refundNoticeText = `Refund Issued: A difference of ${formatPrice(diff)} has been refunded to your original payment method (expected in 5–7 business days).\n`;
     }
 
+    const contentHtml = `
+      <p>Dear ${escapeHtml(user.name)},</p>
+      <p>Your booking has been modified. Here are the changes:</p>
+      <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%; border-color: #E5E0D8; margin: 16px 0;">
+        <tr style="background-color: #FAF9F6;"><th style="padding: 8px; text-align: left;">Field</th><th style="padding: 8px; text-align: left;">Old</th><th style="padding: 8px; text-align: left;">New</th></tr>
+        <tr><td style="padding: 8px;">Check-in</td><td style="padding: 8px;">${escapeHtml(formatDate(oldData.checkIn))}</td><td style="padding: 8px;">${escapeHtml(formatDate(booking.checkIn))}</td></tr>
+        <tr><td style="padding: 8px;">Check-out</td><td style="padding: 8px;">${escapeHtml(formatDate(oldData.checkOut))}</td><td style="padding: 8px;">${escapeHtml(formatDate(booking.checkOut))}</td></tr>
+        <tr><td style="padding: 8px;">Nights</td><td style="padding: 8px;">${dateRange(oldData.checkIn, oldData.checkOut).length}</td><td style="padding: 8px;">${nights.length}</td></tr>
+        <tr><td style="padding: 8px;">Guests</td><td style="padding: 8px;">${oldData.guests}</td><td style="padding: 8px;">${booking.guests}</td></tr>
+        <tr><td style="padding: 8px;">Total</td><td style="padding: 8px;">${escapeHtml(formatPrice(oldTotal))}</td><td style="padding: 8px;">${escapeHtml(formatPrice(booking.totalPrice))}</td></tr>
+      </table>
+      ${refundNoticeHtml}
+      <p><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</p>
+      <p><strong>Reference:</strong> ${escapeHtml(booking.reference)}</p>
+    `;
+
     return {
-      subject: `Booking Modified — ${booking.reference}`,
-      html: `
-        <h1>Booking Modified</h1>
-        <p>Dear ${escapeHtml(user.name)},</p>
-        <p>Your booking has been modified. Here are the changes:</p>
-        <table border="1" cellpadding="5" cellspacing="0">
-          <tr><th></th><th>Old</th><th>New</th></tr>
-          <tr><td>Check-in</td><td>${escapeHtml(formatDate(oldData.checkIn))}</td><td>${escapeHtml(formatDate(booking.checkIn))}</td></tr>
-          <tr><td>Check-out</td><td>${escapeHtml(formatDate(oldData.checkOut))}</td><td>${escapeHtml(formatDate(booking.checkOut))}</td></tr>
-          <tr><td>Nights</td><td>${dateRange(oldData.checkIn, oldData.checkOut).length}</td><td>${nights.length}</td></tr>
-          <tr><td>Guests</td><td>${oldData.guests}</td><td>${booking.guests}</td></tr>
-          <tr><td>Total</td><td>${escapeHtml(formatPrice(oldTotal))}</td><td>${escapeHtml(formatPrice(booking.totalPrice))}</td></tr>
-        </table>
-        ${refundNoticeHtml}
-        <p><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</p>
-        <p><strong>Reference:</strong> ${escapeHtml(booking.reference)}</p>
-        <p><a href="${bookingUrl}">View your updated booking online</a></p>
-      `,
+      subject: `Booking Modified — ${booking.reference} | ${env.appName}`,
+      html: wrapEmailTemplate({
+        title: 'Booking Modified',
+        content: contentHtml,
+        ctaLabel: 'View Updated Booking',
+        ctaUrl: bookingUrl,
+        appName: env.appName,
+      }),
       text: `
-Booking Modified
+Booking Modified — ${env.appName}
 
 Dear ${user.name},
 
@@ -126,7 +142,10 @@ Room: ${room.name} (${room.type})
 Reference: ${booking.reference}
 
 View your updated booking online: ${bookingUrl}
-      `,
+
+Warm regards,
+The ${env.appName} Team
+      `.trim(),
     };
   },
 
@@ -145,26 +164,32 @@ View your updated booking online: ${bookingUrl}
       refundInfoText = `Payment Notice: This was a Pay at Hotel reservation. No charges were made.\n`;
     }
 
+    const contentHtml = `
+      <p>Dear ${escapeHtml(user.name)},</p>
+      <p>Your booking has been cancelled. Here are the details:</p>
+      <ul style="padding-left: 20px; line-height: 1.8;">
+        <li><strong>Reference:</strong> ${escapeHtml(booking.reference)}</li>
+        <li><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</li>
+        <li><strong>Check-in:</strong> ${escapeHtml(formatDate(booking.checkIn))}</li>
+        <li><strong>Check-out:</strong> ${escapeHtml(formatDate(booking.checkOut))}</li>
+        <li><strong>Nights:</strong> ${nights.length}</li>
+        <li><strong>Guests:</strong> ${booking.guests}</li>
+        <li><strong>Total:</strong> ${escapeHtml(formatPrice(booking.totalPrice))}</li>
+      </ul>
+      ${refundInfoHtml}
+    `;
+
     return {
-      subject: `Booking Cancelled — ${booking.reference}`,
-      html: `
-        <h1>Booking Cancelled</h1>
-        <p>Dear ${escapeHtml(user.name)},</p>
-        <p>Your booking has been cancelled. Here are the details:</p>
-        <ul>
-          <li><strong>Reference:</strong> ${escapeHtml(booking.reference)}</li>
-          <li><strong>Room:</strong> ${escapeHtml(room.name)} (${escapeHtml(room.type)})</li>
-          <li><strong>Check-in:</strong> ${escapeHtml(formatDate(booking.checkIn))}</li>
-          <li><strong>Check-out:</strong> ${escapeHtml(formatDate(booking.checkOut))}</li>
-          <li><strong>Nights:</strong> ${nights.length}</li>
-          <li><strong>Guests:</strong> ${booking.guests}</li>
-          <li><strong>Total:</strong> ${escapeHtml(formatPrice(booking.totalPrice))}</li>
-        </ul>
-        ${refundInfoHtml}
-        <p><a href="${bookingUrl}">View booking status online</a></p>
-      `,
+      subject: `Booking Cancelled — ${booking.reference} | ${env.appName}`,
+      html: wrapEmailTemplate({
+        title: 'Booking Cancelled',
+        content: contentHtml,
+        ctaLabel: 'View Booking Status',
+        ctaUrl: bookingUrl,
+        appName: env.appName,
+      }),
       text: `
-Booking Cancelled
+Booking Cancelled — ${env.appName}
 
 Dear ${user.name},
 
@@ -180,7 +205,10 @@ Total: ${formatPrice(booking.totalPrice)}
 
 ${refundInfoText}
 View booking status online: ${bookingUrl}
-      `,
+
+Warm regards,
+The ${env.appName} Team
+      `.trim(),
     };
   },
 };

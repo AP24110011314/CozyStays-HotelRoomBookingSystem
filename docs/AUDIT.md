@@ -1,4 +1,4 @@
-# Audit Report — Hotel Booking System
+# Audit Report — CozyStays
 
 **Date**: 2026-10-29
 **Auditor**: Antigravity (Advanced Agentic Assistant)

@@ -37,6 +37,7 @@ describe('Public Config Endpoint', () => {
     const res = await request(server).get('/api/config/public');
     expect(res.status).toBe(200);
     expect(res.body.data).toBeDefined();
+    expect(res.body.data.appName).toBe('CozyStays');
     expect(res.body.data.cancellationWindowHours).toBeDefined();
     expect(res.body.data.currency).toBe('INR');
     expect(res.body.data.checkInTime).toBe('2:00 PM');

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48" fill="none">
+  <!-- Mark Badge -->
+  <rect x="2" y="4" width="40" height="40" rx="10" fill="#1B4D3E" />
+  <!-- House Roof in Brass -->
+  <path d="M12 24 L22 14 L32 24" stroke="#C5A059" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Bed Base in Brass -->
+  <path d="M14 27 H30 V33 H14 Z" fill="#C5A059" rx="2" />
+  <circle cx="18" cy="24" r="2.5" fill="#C5A059" />
+  <circle cx="26" cy="24" r="2.5" fill="#C5A059" />
+  <!-- Wordmark -->
+  <text x="52" y="30" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="21" font-weight="800" letter-spacing="-0.5" fill="currentColor">
+    Cozy<tspan fill="#C5A059">Stays</tspan>
+  </text>
+</svg>

@@ -1,24 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <defs>
-    <linearGradient id="hotelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#4f46e5" />
-      <stop offset="100%" stop-color="#3b82f6" />
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="112" fill="url(#hotelGrad)" />
-  <!-- Hotel Bed & Headboard Mark -->
-  <g fill="#ffffff" transform="translate(64, 96)">
+  <!-- Forest Green Canvas -->
+  <rect width="512" height="512" rx="112" fill="#1B4D3E" />
+  <!-- Muted Brass Cozy House & Bed Mark -->
+  <g fill="#C5A059" stroke="#C5A059" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Star Accent -->
+    <path d="M256 70 L266 94 L292 96 L272 114 L278 140 L256 126 L234 140 L240 114 L220 96 L246 94 Z" stroke-width="0" />
+    <!-- Roof Silhouette -->
+    <path d="M120 220 L256 110 L392 220" fill="none" stroke-width="32" />
     <!-- Headboard -->
-    <rect x="32" y="48" width="320" height="40" rx="12" />
+    <rect x="160" y="230" width="192" height="32" rx="8" stroke-width="0" />
     <!-- Pillows -->
-    <rect x="56" y="104" width="112" height="64" rx="16" opacity="0.9" />
-    <rect x="216" y="104" width="112" height="64" rx="16" opacity="0.9" />
-    <!-- Mattress & Base -->
-    <rect x="32" y="176" width="320" height="88" rx="18" />
+    <rect x="180" y="274" width="68" height="40" rx="10" fill="#E5E0D8" stroke-width="0" opacity="0.9" />
+    <rect x="264" y="274" width="68" height="40" rx="10" fill="#E5E0D8" stroke-width="0" opacity="0.9" />
+    <!-- Mattress & Frame -->
+    <rect x="144" y="324" width="224" height="64" rx="16" stroke-width="0" />
     <!-- Bed Legs -->
-    <rect x="44" y="264" width="28" height="48" rx="8" />
-    <rect x="312" y="264" width="28" height="48" rx="8" />
-    <!-- Hotel Star Accent Above -->
-    <path d="M192,0 L204,26 L232,28 L210,48 L216,76 L192,62 L168,76 L174,48 L152,28 L180,26 Z" fill="#fbbf24" />
+    <rect x="164" y="388" width="24" height="40" rx="6" stroke-width="0" />
+    <rect x="324" y="388" width="24" height="40" rx="6" stroke-width="0" />
   </g>
 </svg>

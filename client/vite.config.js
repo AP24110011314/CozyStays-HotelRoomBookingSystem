@@ -5,6 +5,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const apiUrl = env.VITE_API_URL || 'http://localhost:5001/api';
   const target = apiUrl.replace(/\/api\/?$/, '');
+  const appName = env.VITE_APP_NAME || 'CozyStays';
+  process.env.VITE_APP_NAME = appName;
 
   return {
     plugins: [react()],

@@ -1,6 +1,6 @@
-# Hotel Booking System
+# CozyStays
 
-A full-stack hotel/room booking system built with Node.js, Express, MongoDB, React, and Vite.
+Hotel / room booking system
 
 ## Stack
 - **Server**: Express, Mongoose, Zod, JWT, bcryptjs, Helmet, CORS, Rate-limit, Morgan, Nodemailer

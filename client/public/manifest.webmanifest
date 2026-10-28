@@ -1,11 +1,11 @@
 {
-  "name": "Hotel Booking System",
-  "short_name": "Hotel Booking",
-  "description": "Modern hotel and room reservation system with real-time availability",
+  "name": "CozyStays",
+  "short_name": "CozyStays",
+  "description": "Boutique hotel and room reservation system with real-time availability",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#FAF9F6",
+  "theme_color": "#1B4D3E",
   "icons": [
     {
       "src": "/icon-192.png",

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../api/client';
+import { getStoredToken, setStoredToken, removeStoredToken } from '../utils/token';
 
 const AuthContext = createContext(null);
 
@@ -8,7 +9,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = useCallback(async () => {
-    const token = localStorage.getItem('token');
+    const token = getStoredToken();
     if (!token) {
       setLoading(false);
       return;
@@ -17,7 +18,7 @@ export function AuthProvider({ children }) {
       const response = await api.get('/auth/me');
       setUser(response.data.data);
     } catch {
-      localStorage.removeItem('token');
+      removeStoredToken();
       setUser(null);
     } finally {
       setLoading(false);
@@ -31,7 +32,7 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const response = await api.post('/auth/login', { email, password });
     const { token, user: userData } = response.data.data;
-    localStorage.setItem('token', token);
+    setStoredToken(token);
     setUser(userData);
     return userData;
   };
@@ -39,13 +40,13 @@ export function AuthProvider({ children }) {
   const register = async (name, email, password) => {
     const response = await api.post('/auth/register', { name, email, password });
     const { token, user: userData } = response.data.data;
-    localStorage.setItem('token', token);
+    setStoredToken(token);
     setUser(userData);
     return userData;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    removeStoredToken();
     setUser(null);
   };
 

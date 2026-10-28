@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
-
-const PROJECT_NAME = 'Hotel Booking System';
+import { HOTEL_CONFIG } from '../config/hotel';
 
 export function useDocumentTitle(title) {
   useEffect(() => {
+    const appName = HOTEL_CONFIG.name || 'CozyStays';
     if (title) {
-      document.title = `${title} | ${PROJECT_NAME}`;
+      if (title.endsWith(appName)) {
+        document.title = title;
+      } else {
+        document.title = `${title} | ${appName}`;
+      }
     } else {
-      document.title = PROJECT_NAME;
+      document.title = appName;
     }
   }, [title]);
 }

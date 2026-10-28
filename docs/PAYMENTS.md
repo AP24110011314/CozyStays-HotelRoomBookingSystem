@@ -1,7 +1,7 @@
 # Payment Processing Specification
 
 ## 1. Overview
-The Hotel Booking System supports two distinct payment methods at checkout:
+CozyStays supports two distinct payment methods at checkout:
 1. **Pay Online**: Instant payment processing via Cards, UPI, and Netbanking using Razorpay (or a built-in Mock provider for test environments without API keys).
 2. **Pay at Hotel**: The guest confirms their stay immediately and pays in person during check-in or checkout.
 

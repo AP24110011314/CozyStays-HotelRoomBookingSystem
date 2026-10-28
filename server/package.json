@@ -1,8 +1,8 @@
 {
-  "name": "hotel-booking-server",
+  "name": "cozystays-server",
   "version": "1.0.0",
   "type": "module",
-  "description": "Hotel Booking API Server",
+  "description": "CozyStays API Server",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
