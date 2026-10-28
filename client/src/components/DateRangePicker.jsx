@@ -41,7 +41,7 @@ export default function DateRangePicker({ checkIn, checkOut, onChange }) {
   const tomorrow = addDays(new Date(), 1);
 
   return (
-    <div className="bg-white rounded-2xl p-2 sm:p-4 border border-slate-200/80 shadow-sm overflow-x-auto flex justify-center">
+    <div className="bg-white rounded-2xl p-3 sm:p-5 border border-slate-200/80 shadow-sm overflow-x-auto flex justify-center">
       <DayPicker
         mode="range"
         selected={range}
@@ -50,26 +50,27 @@ export default function DateRangePicker({ checkIn, checkOut, onChange }) {
         toDate={addDays(new Date(), 365)}
         numberOfMonths={isMobile ? 1 : 2}
         classNames={{
-          root: 'flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center max-w-full',
-          month: 'w-full max-w-[280px] sm:w-72 sm:min-w-72',
-          month_caption: 'text-sm font-semibold text-slate-900 mb-2',
-          month_captionLabel: 'text-sm font-semibold text-slate-900',
-          month_grid: 'gap-1 w-full',
-          day: 'w-9 h-9 sm:w-10 sm:h-10 rounded-xl font-medium transition-all duration-200 hover:bg-indigo-50 text-slate-700',
-          day_today: 'bg-indigo-50 text-indigo-700 font-semibold',
-          day_selected: 'bg-indigo-600 text-white hover:bg-indigo-700',
-          day_range_start: 'bg-indigo-600 text-white rounded-l-xl',
-          day_range_end: 'bg-indigo-600 text-white rounded-r-xl',
-          day_range_middle: 'bg-indigo-50 text-indigo-700 rounded-none',
-          day_disabled: 'text-slate-300 opacity-40 cursor-not-allowed',
-          day_outside: 'text-slate-300',
-          weekdays: 'text-xs font-medium text-slate-400',
-          weekday: 'w-9 h-8 sm:w-10 sm:h-8',
+          months: 'flex flex-col md:flex-row gap-6 lg:gap-10 justify-center items-center md:items-start p-1 sm:p-2',
+          month: 'bg-slate-50/70 p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs w-full max-w-[320px] sm:w-[320px] space-y-3',
+          caption: 'flex items-center justify-between pb-3 mb-2 border-b border-slate-200/60 relative',
+          caption_label: 'text-sm font-bold text-slate-800 tracking-tight',
+          nav: 'flex items-center gap-1.5',
+          nav_button: 'w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-white border border-slate-200/60 shadow-xs transition-all active:scale-95',
+          table: 'w-full border-separate border-spacing-y-1.5 border-spacing-x-1',
+          head_row: 'flex justify-between mb-1',
+          head_cell: 'w-9 sm:w-10 text-center text-[11px] font-bold text-slate-400 uppercase tracking-wider',
+          row: 'flex justify-between w-full',
+          cell: 'text-center p-0 relative',
+          day: 'w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs sm:text-sm font-medium transition-all duration-150 flex items-center justify-center text-slate-700 hover:bg-indigo-50 hover:text-indigo-600',
         }}
-        modifiers={{
-          blocked: {
-            className: 'text-slate-300 opacity-40 cursor-not-allowed',
-          },
+        modifiersClassNames={{
+          selected: 'bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-sm shadow-indigo-600/30',
+          range_start: 'rounded-xl bg-indigo-600 text-white font-bold shadow-sm',
+          range_end: 'rounded-xl bg-indigo-600 text-white font-bold shadow-sm',
+          range_middle: 'bg-indigo-100/90 text-indigo-800 font-semibold rounded-lg hover:bg-indigo-100',
+          today: 'border-2 border-indigo-500 text-indigo-700 font-bold',
+          disabled: 'text-slate-300 opacity-40 cursor-not-allowed hover:bg-transparent',
+          outside: 'text-slate-300 opacity-30',
         }}
       />
     </div>

@@ -419,7 +419,20 @@ export default function AdminBookings() {
                 </div>
               </div>
             </div>
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+              {detailBooking.status !== 'cancelled' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCancel(detailBooking.id, detailBooking.reference);
+                    setDetailBooking(null);
+                  }}
+                  disabled={cancelBookingMutation.isPending}
+                  className="btn-danger text-xs px-3 py-2 min-h-[36px]"
+                >
+                  Cancel Reservation
+                </button>
+              ) : <div />}
               <button onClick={() => setDetailBooking(null)} className="btn-secondary text-xs px-4 py-2">
                 Close
               </button>

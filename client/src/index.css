@@ -120,3 +120,39 @@
     @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2;
   }
 }
+
+/* React Day Picker Enhancements — Separate Months and Dates with Clean Spacing */
+.rdp-months {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 2.5rem !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+}
+
+@media (max-width: 768px) {
+  .rdp-months {
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    align-items: center !important;
+  }
+}
+
+.rdp-month {
+  margin: 0 !important;
+}
+
+.rdp-table {
+  border-collapse: separate !important;
+  border-spacing: 0.25rem 0.35rem !important;
+  margin: 0 auto !important;
+}
+
+.rdp-cell {
+  padding: 0 !important;
+}
+
+.rdp-nav {
+  position: static !important;
+}

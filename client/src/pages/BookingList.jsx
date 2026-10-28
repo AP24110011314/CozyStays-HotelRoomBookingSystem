@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Calendar, ChevronRight, ChevronLeft, ArrowRight, BedDouble } from 'lucide-react';
@@ -24,6 +24,7 @@ const statusColors = {
 
 export default function BookingList() {
   useDocumentTitle('My Bookings');
+  const queryClient = useQueryClient();
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
 
@@ -37,17 +38,23 @@ export default function BookingList() {
     },
   });
 
-  const cancelBooking = async (e, bookingId, bookingRef) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!window.confirm(`Are you sure you want to cancel booking ${bookingRef}?`)) return;
-    try {
-      await api.delete(`/bookings/${bookingId}`);
-      toast.success('Booking cancelled');
-      window.location.reload();
-    } catch (error) {
+  const cancelMutation = useMutation({
+    mutationFn: async (bookingId) => {
+      const response = await api.delete(`/bookings/${bookingId}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success('Booking cancelled successfully');
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+    },
+    onError: (error) => {
       toast.error(error.response?.data?.error?.message || 'Failed to cancel booking');
-    }
+    },
+  });
+
+  const handleCancelBooking = (bookingId, bookingRef) => {
+    if (!window.confirm(`Are you sure you want to cancel booking ${bookingRef}?`)) return;
+    cancelMutation.mutate(bookingId);
   };
 
   const bookingsList = data?.data || [];
@@ -125,13 +132,15 @@ export default function BookingList() {
       ) : (
         <div className="space-y-4">
           {bookingsList.map((booking) => (
-            <Link
+            <div
               key={booking.id}
-              to={`/bookings/${booking.id}`}
-              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 block group"
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group"
             >
               {/* Left room info */}
-              <div className="flex items-center gap-4">
+              <Link
+                to={`/bookings/${booking.id}`}
+                className="flex items-center gap-4 min-w-0 flex-1 hover:opacity-90 transition-opacity"
+              >
                 <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
                   {booking.room?.photos?.[0] ? (
                     <img
@@ -162,7 +171,7 @@ export default function BookingList() {
                     {booking.room?.type} Suite &bull; {booking.guests} Guest{booking.guests !== 1 ? 's' : ''}
                   </p>
                 </div>
-              </div>
+              </Link>
 
               {/* Middle dates & pricing */}
               <div className="flex flex-row md:flex-col justify-between md:items-end text-xs text-slate-600 border-t md:border-t-0 pt-3 md:pt-0">
@@ -185,17 +194,27 @@ export default function BookingList() {
                 {booking.canCancel && booking.status !== 'cancelled' && (
                   <button
                     type="button"
-                    onClick={(e) => cancelBooking(e, booking.id, booking.reference)}
+                    onClick={() => handleCancelBooking(booking.id, booking.reference)}
+                    disabled={cancelMutation.isPending}
                     className="btn-danger text-xs px-3 py-2 min-h-[36px]"
                   >
-                    Cancel
+                    {cancelMutation.isPending ? 'Cancelling...' : 'Cancel'}
                   </button>
                 )}
-                <div className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 group-hover:text-indigo-600 flex items-center justify-center">
-                  <ChevronRight className="w-4 h-4" />
-                </div>
+                {booking.status === 'upcoming' && !booking.canCancel && (
+                  <span className="text-[11px] text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
+                    48h window closed
+                  </span>
+                )}
+                <Link
+                  to={`/bookings/${booking.id}`}
+                  className="btn-secondary text-xs px-3 py-2 min-h-[36px] inline-flex items-center gap-1 group-hover:border-indigo-300"
+                >
+                  <span>Details</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-600" />
+                </Link>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

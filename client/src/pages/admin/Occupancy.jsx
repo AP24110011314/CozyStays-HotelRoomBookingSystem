@@ -95,15 +95,14 @@ export default function AdminOccupancy() {
       ) : (
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[800px]">
+            <table className="w-full min-w-[1400px]">
               <thead>
                 <tr className="bg-gray-50 text-left text-sm font-medium text-gray-600 border-b border-gray-100">
-                  <th className="p-4 sm:p-6 font-medium w-48 sticky left-0 bg-white z-10">Room</th>
+                  <th className="p-4 font-semibold w-56 sticky left-0 bg-white z-10 border-r border-gray-100 shadow-xs">Room</th>
                   {days.map((day) => (
-                    <th key={day} className="p-4 sm:p-6 font-medium w-16 text-center">
-                      {format(new Date(day), 'd')}
-                      <br />
-                      <span className="text-xs text-gray-400">{format(new Date(day), 'EEE')}</span>
+                    <th key={day} className="px-2 py-3 font-medium min-w-[44px] text-center">
+                      <span className="block text-sm font-bold text-gray-800">{format(new Date(day), 'd')}</span>
+                      <span className="text-[11px] font-semibold text-gray-400 uppercase">{format(new Date(day), 'EEE')}</span>
                     </th>
                   ))}
                 </tr>
@@ -111,7 +110,7 @@ export default function AdminOccupancy() {
               <tbody className="divide-y divide-gray-100">
                 {data?.rooms?.map((room) => (
                   <tr key={room.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="p-4 sm:p-6 font-medium sticky left-0 bg-white z-10 w-48 border-r border-gray-100">
+                    <td className="p-4 font-medium sticky left-0 bg-white z-10 w-56 border-r border-gray-100 shadow-xs">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-indigo-100 to-amber-100 flex-shrink-0">
                           {room.photos && room.photos.length > 0 ? (
@@ -124,23 +123,23 @@ export default function AdminOccupancy() {
                             </div>
                           )}
                         </div>
-                        <span className="truncate">{room.name}</span>
+                        <span className="truncate text-sm font-semibold text-gray-800">{room.name}</span>
                       </div>
                     </td>
                     {room.nights?.map((night) => (
-                      <td key={night.date} className="p-4 sm:p-6 text-center">
+                      <td key={night.date} className="px-1 py-3 text-center">
                         {night.booked ? (
-                          <div className="w-10 h-10 mx-auto rounded-full bg-red-100 flex items-center justify-center relative group" title={night.booking?.reference}>
-                            <span className="text-red-600 text-lg font-medium">●</span>
+                          <div className="w-8 h-8 mx-auto rounded-full bg-red-100 flex items-center justify-center relative group" title={night.booking?.reference}>
+                            <span className="text-red-600 text-sm font-bold">●</span>
                             {night.booking?.reference && (
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-md">
                                 {night.booking.reference}
                               </div>
                             )}
                           </div>
                         ) : (
-                          <div className="w-10 h-10 mx-auto rounded-full bg-green-100 flex items-center justify-center">
-                            <span className="text-green-600 text-lg font-medium">●</span>
+                          <div className="w-8 h-8 mx-auto rounded-full bg-green-100 flex items-center justify-center">
+                            <span className="text-green-600 text-sm font-bold">●</span>
                           </div>
                         )}
                       </td>

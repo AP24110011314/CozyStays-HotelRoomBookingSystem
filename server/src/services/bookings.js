@@ -278,10 +278,16 @@ export async function cancelBooking(bookingId, userId, isAdmin) {
     return getBookingWithRoom(booking._id); // idempotent
   }
 
-  // Cancellation window: checkIn - now > cancellationWindowHours (admin bypass)
+  // Cancellation window: checkIn - now > cancellationWindowHours (admin bypass) or 24h booking grace period
   if (!isAdmin) {
-    const hoursUntilCheckIn = (booking.checkIn - new Date()) / (1000 * 60 * 60);
-    if (hoursUntilCheckIn <= env.cancellationWindowHours) {
+    const now = new Date();
+    if (now >= new Date(booking.checkOut)) {
+      throw new AppError(ERROR_CODES.VALIDATION_ERROR, 'Cannot cancel a completed booking');
+    }
+    const hoursUntilCheckIn = (new Date(booking.checkIn) - now) / (1000 * 60 * 60);
+    const hoursSinceCreated = booking.createdAt ? (now - new Date(booking.createdAt)) / (1000 * 60 * 60) : Infinity;
+    const withinGracePeriod = hoursSinceCreated <= 24 && now < new Date(booking.checkIn);
+    if (hoursUntilCheckIn <= env.cancellationWindowHours && !withinGracePeriod) {
       throw new AppError(ERROR_CODES.CANCEL_WINDOW_EXPIRED, `Cancellation window expired (${env.cancellationWindowHours} hours before check-in)`);
     }
   }
@@ -312,8 +318,12 @@ export function getDerivedStatus(booking) {
 export function canCancel(booking, isAdmin) {
   if (booking.status === 'cancelled') return false;
   if (isAdmin) return true;
-  const hoursUntilCheckIn = (booking.checkIn - new Date()) / (1000 * 60 * 60);
-  return hoursUntilCheckIn > env.cancellationWindowHours;
+  const now = new Date();
+  if (now >= new Date(booking.checkOut)) return false;
+  const hoursUntilCheckIn = (new Date(booking.checkIn) - now) / (1000 * 60 * 60);
+  const hoursSinceCreated = booking.createdAt ? (now - new Date(booking.createdAt)) / (1000 * 60 * 60) : Infinity;
+  const withinGracePeriod = hoursSinceCreated <= 24 && now < new Date(booking.checkIn);
+  return hoursUntilCheckIn > env.cancellationWindowHours || withinGracePeriod;
 }
 
 async function getBookingWithRoom(bookingId) {

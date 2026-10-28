@@ -238,27 +238,8 @@ export async function listBookings(params) {
 }
 
 export async function cancelBooking(bookingId) {
-  const booking = await Booking.findById(bookingId);
-  if (!booking) {
-    throw new AppError(ERROR_CODES.NOT_FOUND, 'Booking not found');
-  }
-
-  if (booking.status === 'cancelled') {
-    return booking;
-  }
-
-  // Admin bypasses 48h window
-  await RoomNight.deleteMany({ booking: bookingId });
-
-  booking.status = 'cancelled';
-  booking.cancelledAt = new Date();
-  await booking.save();
-
-  // Enqueue cancellation email
-  const { enqueueCancellationEmail } = await import('./email.js');
-  enqueueCancellationEmail(booking).catch((err) => console.error('Failed to enqueue cancellation email:', err));
-
-  return booking;
+  const { cancelBooking: bookingCancel } = await import('./bookings.js');
+  return bookingCancel(bookingId, null, true);
 }
 
 export async function listFailedEmails(params) {

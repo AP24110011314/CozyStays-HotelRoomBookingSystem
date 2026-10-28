@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { formatINR } from '../utils/currency';
 import DateRangePicker from '../components/DateRangePicker';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { useAuth } from '../contexts/AuthContext';
 
 const statusLabels = {
   upcoming: 'Upcoming',
@@ -27,6 +28,7 @@ export default function BookingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
   const [newCheckIn, setNewCheckIn] = useState('');
   const [newCheckOut, setNewCheckOut] = useState('');
@@ -246,7 +248,7 @@ export default function BookingDetail() {
                 Modify Stay Dates
               </button>
 
-              {booking.canCancel ? (
+              {(isAdmin || booking.canCancel) ? (
                 <button
                   type="button"
                   onClick={handleCancel}
