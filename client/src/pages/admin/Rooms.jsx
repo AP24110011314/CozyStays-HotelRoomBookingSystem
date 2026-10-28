@@ -270,14 +270,14 @@ export default function AdminRooms() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="basePrice" className="label">Base Price per Night (in Cents, e.g. 15000 = $150.00)</label>
+                  <label htmlFor="basePrice" className="label">Base Price per Night (₹, e.g. 3500)</label>
                   <input
                     id="basePrice"
                     type="number"
                     min="100"
                     {...register('basePrice', { valueAsNumber: true })}
                     className="input"
-                    placeholder="15000"
+                    placeholder="3500"
                   />
                   {errors.basePrice && <p className="mt-1 text-xs text-rose-600">{errors.basePrice.message}</p>}
                 </div>
