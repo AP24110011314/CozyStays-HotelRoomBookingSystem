@@ -98,7 +98,7 @@ if (parsedEnv.NODE_ENV !== 'production' && parsedEnv.RAZORPAY_KEY_ID?.startsWith
 }
 
 const clientUrls = parsedEnv.CLIENT_URL
-  ? parsedEnv.CLIENT_URL.split(',').map((url) => url.trim()).filter(Boolean)
+  ? parsedEnv.CLIENT_URL.split(',').map((url) => url.trim().replace(/\/+$/, '')).filter(Boolean)
   : ['http://localhost:5173'];
 
 const env = {

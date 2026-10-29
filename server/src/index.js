@@ -27,7 +27,10 @@ export function createApp() {
   app.use(helmet());
   app.use(cors({
     origin: (origin, callback) => {
-      if (!origin || env.clientUrls.includes(origin)) {
+      if (!origin) return callback(null, true);
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      const isAllowed = env.clientUrls.some((u) => u.replace(/\/+$/, '') === normalizedOrigin);
+      if (isAllowed) {
         callback(null, true);
       } else {
         callback(new Error(`CORS blocked for origin: ${origin}`));
