@@ -24,6 +24,13 @@ beforeEach(async () => {
 });
 
 describe('Health Endpoint', () => {
+  it('GET / returns api status ok', async () => {
+    const res = await request(server).get('/');
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(res.body.message).toContain('CozyStays API is running');
+  });
+
   it('GET /api/health returns ok', async () => {
     const res = await request(server).get('/api/health');
     expect(res.status).toBe(200);

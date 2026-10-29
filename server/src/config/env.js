@@ -63,6 +63,13 @@ const envSchema = z.object({
         path: ['RAZORPAY_KEY_SECRET'],
       });
     }
+    if (!data.RAZORPAY_WEBHOOK_SECRET) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'RAZORPAY_WEBHOOK_SECRET is required when PAYMENT_PROVIDER=razorpay',
+        path: ['RAZORPAY_WEBHOOK_SECRET'],
+      });
+    }
   }
 });
 

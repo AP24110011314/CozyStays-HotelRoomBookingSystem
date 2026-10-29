@@ -46,6 +46,14 @@ export function createApp() {
   app.use(express.json());
 
   // Public unthrottled endpoints
+  app.get('/', (req, res) => {
+    res.json({
+      status: 'ok',
+      message: `${env.appName} API is running`,
+      health: '/api/health',
+      timestamp: new Date().toISOString(),
+    });
+  });
   app.use('/health', healthRoutes);
   app.use('/api/health', healthRoutes);
   app.use('/api/config', configRoutes);
