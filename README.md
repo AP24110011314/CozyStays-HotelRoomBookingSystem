@@ -14,6 +14,39 @@ Hotel / room booking system
 - macOS, Node 20+
 - MongoDB Atlas cluster connection URI (default) or optional local MongoDB (`brew install mongodb-community@7.0`)
 
+
+###Screenshots
+
+1. Login Page
+
+<div align="center">
+  <img src="screenshots/login.png" alt="CozyStays Login Page" width="85%" style="margin: 20px; border-radius: 10px;" />
+</div>
+<br/>
+
+2. User Dashboard
+
+<div align="center">
+  <img src="screenshots/dashboard.png" alt="CozyStays User Dashboard" width="85%" style="margin: 20px; border-radius: 10px;" />
+</div>
+<br/>
+
+3. Booking Page
+
+<div align="center">
+  <img src="screenshots/booking.png" alt="CozyStays Booking Page" width="85%" style="margin: 20px; border-radius: 10px;" />
+</div>
+<br/>
+
+4. Admin Dashboard
+
+<div align="center">
+  <img src="screenshots/admin.png" alt="CozyStays Admin Dashboard" width="85%" style="margin: 20px; border-radius: 10px;" />
+</div>
+
+
+
+
 ### Setup
 ```bash
 # 1. Server
